@@ -1,0 +1,20 @@
+[package]
+name = "egdata-api-test-support"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+async-trait.workspace = true
+axum.workspace = true
+bson.workspace = true
+chrono.workspace = true
+egdata-core = { path = "../egdata-core" }
+egdata-api-state = { path = "../egdata-api-state" }
+hex.workspace = true
+http-body-util.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tokio.workspace = true

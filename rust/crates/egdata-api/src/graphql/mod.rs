@@ -439,7 +439,8 @@ fn graphql_errors(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{middleware::test_support::test_app_state, state::ApiConfig};
+    use crate::state::ApiConfig;
+    use egdata_api_test_support::test_app_state;
     use tower::ServiceExt;
 
     #[tokio::test]

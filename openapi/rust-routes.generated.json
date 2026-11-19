@@ -3,222 +3,222 @@
     {
       "method": "DELETE",
       "path": "/offers/{id}/reviews",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "DELETE",
       "path": "/push/unsubscribe/{subscriptionId}",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "DELETE",
       "path": "/users/epic",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "GET",
       "path": "/accounts",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/active-sales",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/admin",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/assets/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/auth",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/auth/discord/callback",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/auth/discord/link",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/auth/logout",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/auth/refresh",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/auth/v2/refresh",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "GET",
       "path": "/autocomplete",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/base-game/{namespace}",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/root_reads.rs"
     },
     {
       "method": "GET",
       "path": "/builds",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}/files",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}/history",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}/install-options",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}/items",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{id}/tree",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/builds/{targetId}/compare/{baseId}",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/changelist",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/changelist/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/root_reads.rs"
     },
     {
       "method": "GET",
       "path": "/collections/{slug}",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/collections/{slug}/{week}",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/collections/{slug}/{week}/og",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "GET",
       "path": "/countries",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/doc",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/donate/key/{code}",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/featured",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/franchises/{slug}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/free-games",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/history",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/mobile",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/og",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/search",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/sellers",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/free-games/stats",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/free_games.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/game-awards",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/game-awards/og",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
@@ -228,782 +228,782 @@
     {
       "method": "GET",
       "path": "/health",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/items",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/items-from-offer/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/root_reads.rs"
     },
     {
       "method": "GET",
       "path": "/items-sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/sitemaps.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/sitemaps.rs"
     },
     {
       "method": "GET",
       "path": "/items/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/sitemaps.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/sitemaps.rs"
     },
     {
       "method": "GET",
       "path": "/items/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/items/{id}/assets",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/items/{id}/builds",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/items/{id}/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/items/{id}/offer",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/latest-games",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/launcher/sandbox/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/launcher/sandbox/{id}/items",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/launcher/sandbox/{id}/offers",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/multisearch",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/multisearch.rs"
     },
     {
       "method": "GET",
       "path": "/multisearch/items",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/multisearch.rs"
     },
     {
       "method": "GET",
       "path": "/multisearch/offers",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/multisearch.rs"
     },
     {
       "method": "GET",
       "path": "/multisearch/sellers",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/multisearch.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/multisearch.rs"
     },
     {
       "method": "GET",
       "path": "/offer-by-slug/{slug}",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/offers",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/events",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/events/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/featured-discounts",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/genres",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/latest-achievements",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/latest-released",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/top-sellers",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/top-wishlisted",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/upcoming",
-      "file": "rust/crates/egdata-api/src/legacy/offer_discovery.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/achievements",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/age-rating",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/assets",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/builds",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/bundle",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/offer_history.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_history.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/changelog/stats",
-      "file": "rust/crates/egdata-api/src/legacy/offer_history.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_history.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/collection",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/collections/{collection}",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/features",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/franchises",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/genres",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/giveaways",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/has-prepurchase",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/has-regular",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/hltb",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/igdb",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/in-bundle",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/items",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/mappings",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/media",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/og",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/og.webp",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/overview",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/ownership",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/polls",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/price",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/price-history",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/price-stats",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/price/fairness",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/ratings",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/regional-price",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/related",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/requirements",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/reviews",
-      "file": "rust/crates/egdata-api/src/legacy/offer_history.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_history.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/reviews-summary",
-      "file": "rust/crates/egdata-api/src/legacy/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/reviews/permissions",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/suggestions",
-      "file": "rust/crates/egdata-api/src/legacy/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/technologies",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/offers/{id}/tops",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/open-api.json",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/ping",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/leaderboard",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/me",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/achievements",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/achievements/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/games",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/information",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/random-game",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/rare-achievements",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/rare-achievements/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/profiles/{id}/refresh-status",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/promotions",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/promotions-sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/sitemaps.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/sitemaps.rs"
     },
     {
       "method": "GET",
       "path": "/promotions/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/promotions/{id}/cover",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/push/subscribe",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/push/subscriptions",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/push/subscriptions/{subscriptionId}",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/push/topics/stats",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/push/vapid-public-key",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/region",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/regions",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/robots.txt",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/sales",
-      "file": "rust/crates/egdata-api/src/legacy/top_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/top_reads.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/achievements",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/assets",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/base-game",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/builds",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/items",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/offers",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/og",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/og.webp",
-      "file": "rust/crates/egdata-api/src/legacy/og_editorial.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/og_editorial.rs"
     },
     {
       "method": "GET",
       "path": "/sandboxes/{sandboxId}/stats",
-      "file": "rust/crates/egdata-api/src/legacy/catalog/sandbox.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog/sandbox.rs"
     },
     {
       "method": "GET",
       "path": "/search",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/search/extra.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search/extra.rs"
     },
     {
       "method": "GET",
       "path": "/search/developers",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/offer-types",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/publishers",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/tags",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/v2/search",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/search/{id}/count",
-      "file": "rust/crates/egdata-api/src/legacy/search/extra.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search/extra.rs"
     },
     {
       "method": "GET",
       "path": "/sellers",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/sellers/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/sellers/{id}/cover",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/sellers/{id}/stats",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/legacy/sitemaps.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/sitemaps.rs"
     },
     {
       "method": "GET",
       "path": "/stats",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/stats/creations/monthly",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/stats/creations/yearly",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/stats/homepage",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/stats/releases/monthly",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/stats/releases/yearly",
-      "file": "rust/crates/egdata-api/src/legacy/stats.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/stats.rs"
     },
     {
       "method": "GET",
       "path": "/tags",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/ui",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/users",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/users-service",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/users/check-epic",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "GET",
       "path": "/users/discord",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "PATCH",
       "path": "/admin/offers",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "PATCH",
       "path": "/auth/refresh",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "PATCH",
       "path": "/auth/refresh-admin",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "PATCH",
       "path": "/free-games/index",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PATCH",
       "path": "/offers/{id}/reviews",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "PATCH",
       "path": "/refresh-meilisearch",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PATCH",
       "path": "/refresh/changelog",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PATCH",
       "path": "/refresh/items",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PATCH",
       "path": "/refresh/offers",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PATCH",
       "path": "/refresh/sellers",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "POST",
       "path": "/admin/offers",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/auth/avatar",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "POST",
       "path": "/auth/challenge",
-      "file": "rust/crates/egdata-api/src/legacy/mod.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/lib.rs"
     },
     {
       "method": "POST",
       "path": "/auth/persist",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "POST",
       "path": "/auth/v2/persist",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "POST",
       "path": "/auth/v2/save-state",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "POST",
       "path": "/auth/v2/validate-state",
-      "file": "rust/crates/egdata-api/src/legacy/auth.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/auth.rs"
     },
     {
       "method": "POST",
       "path": "/builds/resolve-launcher-records",
-      "file": "rust/crates/egdata-api/src/legacy/builds.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/builds.rs"
     },
     {
       "method": "POST",
       "path": "/catalog/hydrate",
-      "file": "rust/crates/egdata-api/src/legacy/system.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/system.rs"
     },
     {
       "method": "POST",
       "path": "/donate/key/{code}",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
@@ -1013,899 +1013,899 @@
     {
       "method": "POST",
       "path": "/items/bulk",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "POST",
       "path": "/items/bulk-regen",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "POST",
       "path": "/items/bulk/offers",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "POST",
       "path": "/offers/bulk-regen",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "POST",
       "path": "/offers/exists",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "POST",
       "path": "/offers/slugs",
-      "file": "rust/crates/egdata-api/src/legacy/offers.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/offers.rs"
     },
     {
       "method": "POST",
       "path": "/offers/{id}/reviews",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/ping",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops/root_reads.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops/root_reads.rs"
     },
     {
       "method": "POST",
       "path": "/push/send",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/push/send-to-user",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/push/subscribe",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/push/topics/subscribe",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/push/topics/unsubscribe",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/search",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "POST",
       "path": "/search/natural-language",
-      "file": "rust/crates/egdata-api/src/legacy/search/extra.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search/extra.rs"
     },
     {
       "method": "POST",
       "path": "/search/v2/search",
-      "file": "rust/crates/egdata-api/src/legacy/search.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/search.rs"
     },
     {
       "method": "POST",
       "path": "/users-service/ownership",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/users-service/playtime",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/users/discord",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "POST",
       "path": "/users/find-or-create",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     },
     {
       "method": "PUT",
       "path": "/items/regen/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/catalog.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/catalog.rs"
     },
     {
       "method": "PUT",
       "path": "/offers/regen-by-id/{id}",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PUT",
       "path": "/offers/regen/{slug}",
-      "file": "rust/crates/egdata-api/src/legacy/root_and_ops.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/root_and_ops.rs"
     },
     {
       "method": "PUT",
       "path": "/profiles/{id}/refresh",
-      "file": "rust/crates/egdata-api/src/legacy/profiles.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/profiles.rs"
     },
     {
       "method": "PUT",
       "path": "/users/epic",
-      "file": "rust/crates/egdata-api/src/legacy/account_admin.rs"
+      "file": "rust/crates/egdata-routes-legacy/src/account_admin.rs"
     }
   ],
   "v1Routes": [
     {
       "method": "GET",
       "path": "/v1/active-sales",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/assets/{id}",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/autocomplete",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/base-game/{namespace}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}/files",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}/history",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}/install-options",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}/items",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{id}/tree",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/builds/{targetId}/compare/{baseId}",
-      "file": "rust/crates/egdata-api/src/v1/builds.rs"
+      "file": "rust/crates/egdata-routes-v1/src/builds.rs"
     },
     {
       "method": "GET",
       "path": "/v1/changelist",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/changelist/{id}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/changelog",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/collections/{slug}",
-      "file": "rust/crates/egdata-api/src/v1/collections.rs"
+      "file": "rust/crates/egdata-routes-v1/src/collections.rs"
     },
     {
       "method": "GET",
       "path": "/v1/collections/{slug}/{week}",
-      "file": "rust/crates/egdata-api/src/v1/collections.rs"
+      "file": "rust/crates/egdata-routes-v1/src/collections.rs"
     },
     {
       "method": "GET",
       "path": "/v1/collections/{slug}/{week}/og",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/countries",
-      "file": "rust/crates/egdata-api/src/v1/catalog.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/v1/featured",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/franchises/{slug}",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/history",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/mobile",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/og",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/search",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/sellers",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/free-games/stats",
-      "file": "rust/crates/egdata-api/src/v1/free_games.rs"
+      "file": "rust/crates/egdata-routes-v1/src/free_games.rs"
     },
     {
       "method": "GET",
       "path": "/v1/game-awards",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/game-awards/og",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/health",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items-from-offer/{id}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items-sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/{id}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/{id}/assets",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/{id}/builds",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/{id}/changelog",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/items/{id}/offer",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "GET",
       "path": "/v1/latest-games",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/multisearch/items",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/multisearch/offers",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/multisearch/sellers",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offer-by-slug/{slug}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/events",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/events/{id}",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/featured-discounts",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/genres",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/latest-achievements",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/latest-released",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/top-sellers",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/top-wishlisted",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/upcoming",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/achievements",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/age-rating",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/assets",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/builds",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/bundle",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/changelog",
-      "file": "rust/crates/egdata-api/src/v1/offer_details.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_details.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/changelog/stats",
-      "file": "rust/crates/egdata-api/src/v1/offer_details.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_details.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/collection",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/collections/{collection}",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/features",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/franchises",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/genres",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/giveaways",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/has-prepurchase",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/has-regular",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/hltb",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/igdb",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/in-bundle",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/items",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/mappings",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/media",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/og",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/og.webp",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/overview",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/polls",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/price",
-      "file": "rust/crates/egdata-api/src/v1/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/price-history",
-      "file": "rust/crates/egdata-api/src/v1/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/price-stats",
-      "file": "rust/crates/egdata-api/src/v1/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/price/fairness",
-      "file": "rust/crates/egdata-api/src/v1/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/ratings",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/regional-price",
-      "file": "rust/crates/egdata-api/src/v1/offer_prices.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_prices.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/related",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/requirements",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/reviews",
-      "file": "rust/crates/egdata-api/src/v1/offer_details.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_details.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/reviews-summary",
-      "file": "rust/crates/egdata-api/src/v1/offer_details.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_details.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/suggestions",
-      "file": "rust/crates/egdata-api/src/v1/offer_relations.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_relations.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/technologies",
-      "file": "rust/crates/egdata-api/src/v1/offer_metadata.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_metadata.rs"
     },
     {
       "method": "GET",
       "path": "/v1/offers/{id}/tops",
-      "file": "rust/crates/egdata-api/src/v1/offer_insights.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offer_insights.rs"
     },
     {
       "method": "GET",
       "path": "/v1/open-api.json",
-      "file": "rust/crates/egdata-api/src/v1/mod.rs"
+      "file": "rust/crates/egdata-routes-v1/src/lib.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/leaderboard",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/achievements",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/achievements/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/games",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/information",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/random-game",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/rare-achievements",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/profiles/{id}/rare-achievements/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/v1/profiles.rs"
+      "file": "rust/crates/egdata-routes-v1/src/profiles.rs"
     },
     {
       "method": "GET",
       "path": "/v1/promotions",
-      "file": "rust/crates/egdata-api/src/v1/promotions.rs"
+      "file": "rust/crates/egdata-routes-v1/src/promotions.rs"
     },
     {
       "method": "GET",
       "path": "/v1/promotions-sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/promotions/{id}",
-      "file": "rust/crates/egdata-api/src/v1/promotions.rs"
+      "file": "rust/crates/egdata-routes-v1/src/promotions.rs"
     },
     {
       "method": "GET",
       "path": "/v1/promotions/{id}/cover",
-      "file": "rust/crates/egdata-api/src/v1/promotions.rs"
+      "file": "rust/crates/egdata-routes-v1/src/promotions.rs"
     },
     {
       "method": "GET",
       "path": "/v1/region",
-      "file": "rust/crates/egdata-api/src/v1/catalog.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/v1/regions",
-      "file": "rust/crates/egdata-api/src/v1/catalog.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog.rs"
     },
     {
       "method": "GET",
       "path": "/v1/robots.txt",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sales",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/achievements",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/assets",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/base-game",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/builds",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/changelog",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/items",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/offers",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/og",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/og.webp",
-      "file": "rust/crates/egdata-api/src/v1/og.rs"
+      "file": "rust/crates/egdata-routes-v1/src/og.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sandboxes/{sandboxId}/stats",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sandboxes.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sandboxes.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/changelog",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/developers",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/offer-types",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/publishers",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/tags",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/{id}",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/search/{id}/count",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sellers",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sellers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sellers/{id}",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sellers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sellers/{id}/cover",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sellers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sellers/{id}/stats",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/sellers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/sellers.rs"
     },
     {
       "method": "GET",
       "path": "/v1/sitemap.xml",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats/creations/monthly",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats/creations/yearly",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats/homepage",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats/releases/monthly",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/stats/releases/yearly",
-      "file": "rust/crates/egdata-api/src/v1/system.rs"
+      "file": "rust/crates/egdata-routes-v1/src/system.rs"
     },
     {
       "method": "GET",
       "path": "/v1/tags",
-      "file": "rust/crates/egdata-api/src/v1/catalog_discovery.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_discovery.rs"
     },
     {
       "method": "POST",
       "path": "/v1/builds/resolve-launcher-records",
-      "file": "rust/crates/egdata-api/src/v1/build_launcher.rs"
+      "file": "rust/crates/egdata-routes-v1/src/build_launcher.rs"
     },
     {
       "method": "POST",
       "path": "/v1/catalog/hydrate",
-      "file": "rust/crates/egdata-api/src/v1/catalog.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog.rs"
     },
     {
       "method": "POST",
       "path": "/v1/items/bulk",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "POST",
       "path": "/v1/items/bulk/offers",
-      "file": "rust/crates/egdata-api/src/v1/catalog_list/items.rs"
+      "file": "rust/crates/egdata-routes-v1/src/catalog_list/items.rs"
     },
     {
       "method": "POST",
       "path": "/v1/offers/exists",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "POST",
       "path": "/v1/offers/slugs",
-      "file": "rust/crates/egdata-api/src/v1/offers.rs"
+      "file": "rust/crates/egdata-routes-v1/src/offers.rs"
     },
     {
       "method": "POST",
       "path": "/v1/search",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },
     {
       "method": "POST",
       "path": "/v1/search/natural-language",
-      "file": "rust/crates/egdata-api/src/v1/search.rs"
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
     }
   ]
 }

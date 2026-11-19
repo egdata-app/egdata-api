@@ -78,7 +78,7 @@ const fixture = {
 };
 const outputPath = path.join(
   root,
-  "rust/crates/egdata-api/src/v1/fixtures/build-comparison-node.json",
+  "rust/crates/egdata-routes-v1/src/fixtures/build-comparison-node.json",
 );
 await mkdir(path.dirname(outputPath), { recursive: true });
 const fixtureText = `${JSON.stringify(fixture, null, 2)}\n`;

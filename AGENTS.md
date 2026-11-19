@@ -1,41 +1,91 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents working in this repository.
 
 ## Project Overview
 
-egdata-api is a TypeScript REST API and GraphQL server for Epic Games Store data. It provides endpoints for game offers, items, prices, user profiles, free games, and related data. The API serves https://egdata.app.
+egdata-api serves Epic Games Store data (offers, items, prices, profiles, free games, search) for https://egdata.app. The repository contains **two parallel implementations of the same API**:
+
+- **Node.js (TypeScript)** — the production origin. Hono REST server plus an Apollo GraphQL server, registered in `src/index.ts`, serving on port 4000.
+- **Rust (`rust/`)** — a reimplementation of the full surface (154 documented `/v1` operations, 120 legacy operations, and `/graphql`), verified against Node with fixture oracles and HTTP comparisons. A staging candidate exists; **production traffic still goes to Node** until the cutover gates pass. `rust/MIGRATION.md` is the authoritative migration checkpoint; `rust/README.md` documents the local Rust runtime.
+
+Behavior changes usually must be made in **both origins** and kept compatible. Never remove or degrade the Node rollback path.
+
+## Repository Layout
+
+| Path | Contents |
+| --- | --- |
+| `src/` | Node API: routes, GraphQL, middleware, clients, services, Trigger.dev jobs. `src/v1/` holds the versioned surface (router, pagination, cursors, errors, serialization). |
+| `rust/` | Cargo workspace (12 crates), pinned toolchain (`rust/rust-toolchain.toml`), fixture checkers, benchmark (`rust/bench/`) |
+| `apps/docs/` | Public docs site (Fumadocs); generated from the OpenAPI contract |
+| `dashboard/` | Dashboard app with its own build/tests (`pnpm dashboard:*`) |
+| `openapi/` | Published OpenAPI contracts; declarative sources in `openapi/source/` |
+| `changes/` | Release-policy records, assessments, endpoint registry (append-only) |
+| `docs/` | Internal policy and rollout documentation (`docs/release-policy.md` is the source of truth for the policy below) |
+| `scripts/` | Changelog, OpenAPI, release-check, and dev tooling (run via tsx) |
+| `tests/` | Vitest suites, including the Node↔Rust oracle tests |
 
 ## Development Commands
 
+### Node (from repository root)
+
 ```bash
-# Install dependencies (uses pnpm)
 pnpm install
-
-# Start development server with hot reload (runs on port 4000)
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-
-# Start Redis (required, WSL)
-sudo service redis-server start
-
-# Lint and format (uses Biome)
-pnpm biome check .
-pnpm biome check --write .
+pnpm dev          # hot-reload dev server on port 4000
+pnpm build        # rslib build to dist/
+pnpm start        # production server (uses --env-file=.env)
+pnpm test         # vitest run
+pnpm test:live    # tests against live services (separate config)
+pnpm typecheck    # tsc --noEmit
+pnpm biome check --write .   # lint/format
 ```
 
-## Documentation & Release Policy
+Redis is required for cache-dependent routes (on Windows/WSL: `sudo service redis-server start`).
 
-Every public behavior change needs a validated, dated JSON record in `changes/records/` enumerating all affected stable operation IDs. Generate `CHANGELOG.md`, histories, and the manifest with `pnpm changelog:generate`; do not edit generated output. Unrelated maintenance and documentation-only changes need no public entries. API implementation, contracts, shared middleware, and gateway changes require a current validated impact assessment (`pnpm changelog:assess --base <base-ref>`), including explicit reasons for preserved behavior. Merged records and endpoint identities are append-only; corrections use new records. No bypass label. See `docs/release-policy.md`.
+### Rust
 
-Any structural public endpoint change must also update the public docs in `apps/docs/` and the OpenAPI contract in `src/openapi/` or `openapi/`. Structural endpoint changes include adding, removing, or renaming routes, HTTP methods, query/path/body parameters, filters, sort options, request validation, response fields, status codes, authentication requirements, pagination behavior, documented errors, or deprecations.
+Run the local Rust origin from the repository root, reusing the Node checkout's dotenv:
 
-When changing public routes, run the relevant checks before handoff:
+```powershell
+node rust/scripts/dev.mjs --env-file "C:/path/to/egdata-api/.env" --port 4001
+```
+
+Cargo commands must run from `rust/` so the pinned toolchain is selected:
+
+```powershell
+cargo test --workspace
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets   # CI runs with -D warnings
+cargo run -p egdata-api --bin generate-openapi -- --check --require-handlers
+```
+
+Ops commands (from the root): `pnpm v1:indexes`, `pnpm v1:search-mappings`, `pnpm anti-abuse:ops` (invoke `rust/scripts/ops.mjs`). `pnpm v1:indexes` is a slow administrative provisioning step that must not run in the HTTP startup path.
+
+## CI and Quality Gates
+
+The `Test` workflow (`.github/workflows/test.yml`) gates:
+
+- **Node job**: `pnpm build`, `pnpm test`, `pnpm openapi:check`, `pnpm docs:build`, `pnpm docs:check`, `pnpm readme:check`, `pnpm release:check`, dashboard tests/build.
+- **rust-http-parity**: Clippy with warnings denied, plus `node rust/scripts/check-http-oracles.mjs`.
+- **rust-packaged-parity**: builds `Dockerfile.rust` and compares the packaged origin against Node over HTTP.
+- **rust-coverage**: LLVM coverage with disposable services; **minimum 99% lines and 99% regions, workspace-wide**. Never lower thresholds or add exclusions to make the migration look ready.
+
+`pnpm biome check .` and `pnpm typecheck` are intentionally **not** CI-gated (pre-existing errors); run them locally when touching affected areas.
+
+Production deployment is manual: a maintainer must run the `Test` workflow on `main` with `deploy_production` enabled (Coolify). Keep Dokploy `autoDeploy` disabled for the production API.
+
+## Release Policy
+
+Every public behavior change needs a validated, dated JSON record in `changes/records/` enumerating all affected stable operation IDs; GraphQL entries enumerate affected `Type.field` names. Unrelated maintenance and documentation-only changes need no record. Merged records and endpoint identities are append-only; corrections append a new record with `corrects`. There is no bypass label.
+
+Workflow (`docs/release-policy.md`):
+
+1. `pnpm changelog:new <unique-id> v1:<operationId> [legacy:<operationId> ...]`
+2. Describe concrete before/after behavior, compatibility, client action, and test/contract references.
+3. Structural endpoint changes (routes, methods, parameters, filters, sorts, validation, response fields, status codes, auth, pagination, errors, deprecations) must also update the public docs in `apps/docs/` and the OpenAPI contract in `openapi/` / `src/openapi/`.
+4. API implementation, contracts, shared middleware, and gateway changes require a current validated impact assessment: `pnpm changelog:assess --base <base-ref>`. Classify every unknown source file; each operation needs a new record ID or a concrete preserved-behavior explanation. **Rust source and Cargo/toolchain changes also invalidate the assessment digest** — refresh it after any Rust change.
+
+Before handoff on public routes:
 
 ```bash
 pnpm openapi:generate
@@ -44,66 +94,70 @@ pnpm docs:check
 pnpm release:check --base <base-ref>
 ```
 
-## Architecture
+Check commands never write files. Do not edit generated output (`CHANGELOG.md`, histories, manifest, OpenAPI files). CI cannot establish semantic equivalence; reviewers must.
 
-### Framework & Runtime
-- **Runtime**: Node.js 22
-- **Web Framework**: Hono (lightweight, Express-like)
-- **Build Tool**: rslib (Rust-based bundler, outputs ESM to `/dist`)
+## Rust Workspace
+
+| Crate | Responsibility |
+| --- | --- |
+| `egdata-core` | Domain logic: catalog, builds, pricing, abuse, and the `v1` query/pagination/cursor/serialization helpers |
+| `egdata-infra` | Service adapters: MongoDB, Redis, OpenSearch/MeiliSearch, Postgres (Better Auth sessions), Epic client, notifications, job API, OG rendering |
+| `egdata-graphql` | async-graphql schema, resolvers, persisted queries, validation (Apollo-compatible surface) |
+| `egdata-api-state` | `AppState`, `ApiConfig`, SSR telemetry buffering |
+| `egdata-http-core` | Middleware stack, `/v1` request context, and handler helpers shared by both surfaces |
+| `egdata-openapi` | OpenAPI document builders and contract diffing (no routes) |
+| `egdata-routes-v1` | `/v1` handlers and route inventory |
+| `egdata-routes-legacy` | Unversioned (`/offers`, `/items`, …) handlers |
+| `egdata-api` | Binary, runtime wiring, GraphQL HTTP bridge, tooling CLI |
+| `egdata-api-test-support`, `egdata-api-oracle` | Test-only doubles and fixture-oracle replay |
+| `egdata-diff` | Differential request runner for origin comparison |
+
+**Layering rule**: `egdata-routes-v1` and `egdata-routes-legacy` must not depend on each other — shared helpers go in `egdata-http-core` so both surfaces compile concurrently.
+
+Workspace lints deny all warnings (`[workspace.lints]` in `rust/Cargo.toml`, inherited via `[lints] workspace = true`). Keep production code free of `.unwrap()`/`.expect()` panic paths; test code (inline `#[cfg(test)]` modules, `tests/`, oracle crates) is the acceptable home for unwraps.
+
+### Node↔Rust parity testing
+
+```powershell
+node rust/scripts/check-http-oracles.mjs      # canonical Node fixtures replayed against Rust
+node rust/scripts/check-launcher-fixtures.mjs
+node rust/scripts/check-collation-fixtures.mjs
+pnpm exec tsx rust/scripts/check-sandbox-fixtures.ts
+node rust/scripts/generate-build-compare-oracle.mjs --check
+node rust/scripts/check-item-bulk-fixtures.mjs
+node rust/scripts/check-og-fixtures.mjs
+node rust/scripts/check-franchise-number-fixtures.mjs
+node rust/scripts/test-services.mjs --compare-origins   # packaged image vs Node (Docker)
+```
+
+Checkers **never rewrite fixtures**. To regenerate a suite after a deliberate canonical Node change, set `$env:RUST_ORACLE_WRITE = '1'`, re-run the specific vitest suite, remove the variable, and re-run the checker.
+
+## Node Architecture
+
+- **Runtime**: Node.js 22, ESM, built with rslib to `dist/`
+- **Web framework**: Hono 4; routes are feature-based and registered via `app.route()` in `src/index.ts`
 - **GraphQL**: Apollo Server with custom Hono middleware
-
-### Data Layer
-- **Primary Database**: MongoDB via Mongoose (TLS/X.509 auth)
-- **Caching**: Redis/IORedis for response caching and rate limiting
-- **Search**: MeiliSearch (primary) and OpenSearch (analytics)
-- **Schemas**: External packages `@egdata/core.schemas.*` define Mongoose models (Offer, Item, PriceEngine, Tags, etc.)
-
-### Key Directories
-- `src/routes/` - Feature-based REST endpoint handlers (offers.ts is the largest at ~110KB)
-- `src/db/` - MongoDB connection and local Mongoose schemas (events, reviews, users, auth)
-- `src/clients/` - External service clients (Redis, Epic Games GraphQL, Discord, MeiliSearch, Telegram)
-- `src/utils/` - Shared utilities (auth, JWT, image processing, data transformations)
-- `src/graphql/` - Apollo Server setup, typedefs, and resolvers
-- `src/middlewares/` - Hono middleware (JWT auth, Apollo integration)
-- `src/trigger/` - Scheduled background jobs via Trigger.dev
-
-### Entry Point
-`src/index.ts` initializes the Hono app, registers all routes via `app.route()`, and starts the server on port 4000.
-
-### Route Registration Pattern
-Routes are organized by feature and registered in `src/index.ts`:
-```typescript
-app.route("/offers", OffersRoute);
-app.route("/search", SearchRoute);
-// etc.
-```
-
-### Caching Pattern
-Redis cache-aside pattern is used throughout:
-```typescript
-const cached = await client.get(cacheKey);
-if (cached) return c.json(JSON.parse(cached));
-// ... fetch from DB ...
-await client.set(cacheKey, JSON.stringify(result), "EX", ttlSeconds);
-```
-
-### Image Generation
-Some routes (collections, profiles) use JSX with Satori + Resvg to generate OG images on-demand. These files have `.tsx` extension.
-
-## External Schemas
-
-The project uses shared Mongoose schemas from `@egdata/core.schemas.*` packages:
-- `Offer` - Game offers/products
-- `Item` - Game items and content
-- `PriceEngine` - Regional pricing data
-- `Tags`, `TagModel` - Game categorization
-- `Asset`, `Seller`, `Changelog`, etc.
+- **Primary database**: MongoDB via the **native `mongodb` driver** (TLS/X.509 auth) — not Mongoose. Shared Mongoose-style schemas are NOT used; `@egdata/core.schemas.*` dev-dependencies provide shared schema/type definitions
+- **Caching**: Redis cache-aside pattern throughout (`src/`). Shared Redis also holds OAuth state, saved searches (`q:*`), and cooldowns; a dedicated `CACHE_REDIS_*` connection backs the response cache (failures become misses)
+- **Search**: MeiliSearch (primary) and OpenSearch (analytics/search)
+- **Auth**: Better Auth sessions in Postgres (`NEON_CONNECTION_URI`), JWT middleware
+- **Background jobs**: Trigger.dev (`src/trigger/`, `trigger.config.ts`); offer/item/achievement regeneration submits signed jobs to the Temporal job API
+- **OG images**: Satori + Resvg JSX rendering in `.tsx` route files (Rust uses `takumi`)
 
 ## Environment Variables
 
-Key variables (see `.env.example`):
-- `MONGO_URL`, `MONGO_CA`, `MONGO_CERT` - MongoDB connection
-- `REDISHOST`, `REDISPORT`, `REDISPASSWORD` - Redis connection
-- `MEILISEARCH_API_KEY`, `MEILISEARCH_INSTANCE` - Search engine
-- `EPIC_CLIENT_ID`, `EPIC_CLIENT_SECRET` - Epic Games OAuth
-- `JWT_SECRET`, `JWT_PUBLIC_KEY` - Authentication
+There is no `.env.example`; `README.md` and `rust/README.md` document the variables. Key groups:
+
+- `MONGO_URL`, `MONGO_CA`, `MONGO_CERT` — MongoDB (certificate paths resolve relative to the dotenv file)
+- `REDISHOST`, `REDISPORT`, `REDISPASSWORD`, optional `REDISUSER`/`REDISTLS` — shared Redis
+- `CACHE_REDIS_HOST/PORT/PASSWORD/USER/TLS` — optional dedicated response cache (falls back to shared Redis)
+- `OPENSEARCH_URL/USERNAME/PASSWORD`, `MEILISEARCH_API_KEY`, `MEILISEARCH_INSTANCE` — search
+- `EPIC_CLIENT_ID`, `EPIC_CLIENT_SECRET` — Epic Games OAuth
+- `BETTER_AUTH_SECRETS` (rotating `version:secret` list, first key signs cookies), `BETTER_AUTH_SECRET`, `AUTH_SECRET` — cookie/session signing
+- `NEON_CONNECTION_URI` — Postgres session store
+- `JOB_API_BASE_URL`, `JOB_API_KEY_ID`, `JOB_API_SECRET` — Temporal job API
+- `ORIGIN_AUTH_TOKEN`, `V1_WORKER_TOKEN`, `ORIGIN_AUTH_REQUIRED` — gateway/origin authentication
+- `UPSTREAM_API_ORIGIN` — production origin selection; `RUST_SHADOW_ORIGIN`/`RUST_SHADOW_TOKEN` — staging traffic comparison
+- `NODE_ICU_LOCALE` — seller collation locale matching between origins
+
+Quote dotenv passwords containing `#` (single quotes) so dotenv does not treat them as comments. Configuration errors must never dump connection strings or secrets.

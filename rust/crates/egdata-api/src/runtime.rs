@@ -339,7 +339,7 @@ mod tests {
             v1_worker_auth_required: true,
             ..Default::default()
         };
-        let app = application(crate::middleware::test_support::test_app_state(config));
+        let app = application(egdata_api_test_support::test_app_state(config));
         let denied = app
             .clone()
             .oneshot(
@@ -376,7 +376,7 @@ mod tests {
     #[tokio::test]
     async fn v1_compression_head_and_cors_match_node_oracle() {
         use http_body_util::BodyExt;
-        let app = application(crate::middleware::test_support::test_app_state(
+        let app = application(egdata_api_test_support::test_app_state(
             crate::state::ApiConfig {
                 origin_auth_token: Some("compression-test-token".into()),
                 ..Default::default()
@@ -512,7 +512,7 @@ mod tests {
         let address = listener.local_addr().unwrap();
         let (tx, rx) = tokio::sync::oneshot::channel();
         let state =
-            crate::middleware::test_support::test_app_state(crate::state::ApiConfig::default());
+            egdata_api_test_support::test_app_state(crate::state::ApiConfig::default());
         let task = tokio::spawn(serve(listener, state, async {
             let _ = rx.await;
         }));

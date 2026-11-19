@@ -1,0 +1,25 @@
+[package]
+name = "egdata-api-oracle"
+version.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+async-trait.workspace = true
+axum.workspace = true
+bson.workspace = true
+chrono.workspace = true
+egdata-api = { path = "../egdata-api" }
+egdata-api-test-support = { path = "../egdata-api-test-support" }
+egdata-core = { path = "../egdata-core" }
+egdata-http-core = { path = "../egdata-http-core" }
+egdata-infra = { path = "../egdata-infra" }
+egdata-routes-v1 = { path = "../egdata-routes-v1" }
+futures.workspace = true
+http-body-util.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tower.workspace = true
+uuid.workspace = true
