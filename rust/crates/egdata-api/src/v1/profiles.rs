@@ -130,7 +130,7 @@ fn cursor_token(
         })
         .collect::<Vec<_>>();
     let filter_order: &[&str] = match binding.operation.as_str() {
-        "profiles.games" => &["profileId", "sort", "platinum"],
+        "profiles.games" => &["profileId", "sort", "platinum", "filter"],
         "profiles.achievements" => &["profileId"],
         _ => &[],
     };
@@ -991,14 +991,57 @@ fn games_base(id: &str, platinum: bool) -> Vec<Value> {
     stages
 }
 
+fn game_filter_match_stage(filter: &str) -> Option<Value> {
+    match filter {
+        "completed" => Some(json!({"$match":{"$expr":{"$gte":["$completionPercentage",1]}}})),
+        "in-progress" => Some(json!({
+            "$match": {
+                "$expr": {
+                    "$and": [
+                        {"$gt": ["$totalUnlocked", 0]},
+                        {"$lt": ["$completionPercentage", 1]},
+                        {"$eq": [{"$size": {"$ifNull": ["$playerAwards", []]}}, 0]}
+                    ]
+                }
+            }
+        })),
+        "near-platinum" => Some(json!({
+            "$match": {
+                "$expr": {
+                    "$and": [
+                        {"$gt": ["$totalUnlocked", 0]},
+                        {"$gte": ["$completionPercentage", 0.8]},
+                        {"$lt": ["$completionPercentage", 1]},
+                        {"$eq": [{"$size": {"$ifNull": ["$playerAwards", []]}}, 0]}
+                    ]
+                }
+            }
+        })),
+        _ => None,
+    }
+}
+
+fn games_count_base(id: &str, filter: &str) -> Vec<Value> {
+    let mut stages = games_base(id, filter == "platinum");
+    if let Some(filter_stage) = game_filter_match_stage(filter) {
+        stages.extend([
+            json!({"$lookup":{"from":"achievementsets","localField":"_id","foreignField":"sandboxId","as":"achievementSets"}}),
+            json!({"$addFields":{"totalAchievements":{"$sum":{"$map":{"input":"$achievementSets","as":"s","in":{"$size":{"$ifNull":["$$s.achievements",[]]}}}}}}}),
+            json!({"$addFields":{"completionPercentage":{"$cond":[{"$eq":["$totalAchievements",0]},0,{"$divide":["$totalUnlocked","$totalAchievements"]}]}}}),
+            filter_stage,
+        ]);
+    }
+    stages
+}
+
 fn games_pipeline(
     id: &str,
-    platinum: bool,
+    filter: &str,
     sort: &str,
     last: Option<Vec<Value>>,
     limit: u32,
 ) -> Result<Vec<Document>, ProblemError> {
-    let mut stages = games_base(id, platinum);
+    let mut stages = games_base(id, filter == "platinum");
     stages.extend([
         json!({"$lookup":{"from":"offers","let":{"sbx":"$_id"},"pipeline":[{"$match":{"$expr":{"$and":[{"$eq":["$namespace","$$sbx"]},{"$eq":["$offerType","BASE_GAME"]},{"$eq":["$isCodeRedemptionOnly",false]}]}}},{"$sort":{"isDisplayable":-1,"title":1,"lastModifiedDate":-1}},{"$limit":1},{"$project":{"_id":0,"id":1,"namespace":1,"keyImages":1,"title":1,"productSlug":1}}],"as":"offer"}}),
         json!({"$unwind":{"path":"$offer","preserveNullAndEmptyArrays":true}}),
@@ -1007,6 +1050,9 @@ fn games_pipeline(
         json!({"$addFields":{"productAchievements":{"totalAchievements":"$totalAchievements","totalProductXP":"$totalProductXP"},"completionPercentage":{"$cond":[{"$eq":["$totalAchievements",0]},0,{"$divide":["$totalUnlocked","$totalAchievements"]}]},"baseOfferForSandbox":{"id":"$offer.id","namespace":"$offer.namespace","keyImages":"$offer.keyImages"},"product":{"name":"$offer.title","slug":"$offer.productSlug"},"sandboxId":"$_id"}}),
         json!({"$project":{"_id":0,"offer":0,"achievementSets":0,"totalAchievements":0,"totalProductXP":0}}),
     ]);
+    if let Some(filter_stage) = game_filter_match_stage(filter) {
+        stages.push(filter_stage);
+    }
     if let Some(values) = last {
         let sort_fields = games_sort_fields(sort);
         let tuple = values
@@ -1031,45 +1077,96 @@ async fn games(
 ) -> Result<Response, V1ErrorResponse> {
     let rid = request_id(ctx, &headers);
     let id = id_or_error(raw, "id").map_err(|e| fail(e, &uri, rid.clone()))?;
-    let mut q = parse_validated_query(&uri, &["limit", "cursor", "sort", "platinum"], |params| {
-        const SORTS: &[&str] = &["completion", "alphabetical", "xp", "achievements"];
-        if params
-            .get("sort")
-            .is_some_and(|value| !SORTS.contains(&value.as_str()))
-        {
-            return vec![egdata_core::v1::ProblemIssue {
-                parameter: Some("sort".into()),
-                pointer: Some("/sort".into()),
-                code: "INVALID_VALUE".into(),
-                message: format!(
-                    "Invalid option: expected one of {}",
-                    SORTS
-                        .iter()
-                        .map(|s| format!(r#""{s}""#))
-                        .collect::<Vec<_>>()
-                        .join("|")
-                ),
-            }];
-        }
-        Vec::new()
-    })
+    let mut q = parse_validated_query(
+        &uri,
+        &["limit", "cursor", "sort", "filter", "platinum"],
+        |params| {
+            const SORTS: &[&str] = &["completion", "alphabetical", "xp", "achievements"];
+            const FILTERS: &[&str] = &[
+                "all",
+                "completed",
+                "near-platinum",
+                "in-progress",
+                "platinum",
+            ];
+            let mut issues = Vec::new();
+            if params
+                .get("sort")
+                .is_some_and(|value| !SORTS.contains(&value.as_str()))
+            {
+                issues.push(egdata_core::v1::ProblemIssue {
+                    parameter: Some("sort".into()),
+                    pointer: Some("/sort".into()),
+                    code: "INVALID_VALUE".into(),
+                    message: format!(
+                        "Invalid option: expected one of {}",
+                        SORTS
+                            .iter()
+                            .map(|s| format!(r#""{s}""#))
+                            .collect::<Vec<_>>()
+                            .join("|")
+                    ),
+                });
+            }
+            if params
+                .get("filter")
+                .is_some_and(|value| !FILTERS.contains(&value.as_str()))
+            {
+                issues.push(egdata_core::v1::ProblemIssue {
+                    parameter: Some("filter".into()),
+                    pointer: Some("/filter".into()),
+                    code: "INVALID_VALUE".into(),
+                    message: format!(
+                        "Invalid option: expected one of {}",
+                        FILTERS
+                            .iter()
+                            .map(|s| format!(r#""{s}""#))
+                            .collect::<Vec<_>>()
+                            .join("|")
+                    ),
+                });
+            }
+            issues
+        },
+    )
     .map_err(|e| fail(e, &uri, rid.clone()))?;
     let (limit, cursor) = parse_pagination_map(&q, 100)
         .map(|p| (p.limit, p.cursor))
         .map_err(|e| fail(e, &uri, rid.clone()))?;
     let sort = q.remove("sort").unwrap_or_else(|| "completion".into());
-    let platinum = parse_boolean(q.get("platinum").map(String::as_str), "platinum")
+    let requested_filter = q.remove("filter").unwrap_or_else(|| "all".into());
+    let platinum_only = parse_boolean(q.get("platinum").map(String::as_str), "platinum")
         .map_err(|e| fail(e, &uri, rid.clone()))?
         .unwrap_or(false);
+    let effective_filter = if requested_filter != "all" {
+        requested_filter.as_str()
+    } else if platinum_only {
+        "platinum"
+    } else {
+        "all"
+    };
+    let effective_platinum = effective_filter == "platinum";
+    let filter_key = match effective_filter {
+        "all" | "platinum" => None,
+        other => Some(other),
+    };
     let order = match sort.as_str() {
         "alphabetical" => "product.name:asc,sandboxId:asc",
         "xp" => "totalXP:desc,product.name:asc,sandboxId:asc",
         "achievements" => "totalUnlocked:desc,product.name:asc,sandboxId:asc",
         _ => "completionPercentage:desc,product.name:asc,sandboxId:asc",
     };
+    let mut binding_filters = serde_json::Map::from_iter([
+        ("profileId".into(), json!(id)),
+        ("sort".into(), json!(sort)),
+        ("platinum".into(), json!(effective_platinum)),
+    ]);
+    if let Some(f) = filter_key {
+        binding_filters.insert("filter".into(), json!(f));
+    }
     let binding = cursor_binding(
         "profiles.games",
-        json!({"profileId":id,"sort":sort,"platinum":platinum}),
+        Value::Object(binding_filters),
         order,
         limit,
     );
@@ -1080,7 +1177,8 @@ async fn games(
             ("limit", json!(limit)),
             ("cursor", json!(cursor)),
             ("sort", json!(sort)),
-            ("platinum", json!(platinum)),
+            ("platinum", json!(effective_platinum)),
+            ("filter", json!(filter_key)),
         ],
     );
     let payload = if let Some(v) = v1_cache_get(s.cache.as_ref(), &key).await {
@@ -1104,19 +1202,23 @@ async fn games(
             .map(|c| cursor_values(&s, &binding, c))
             .transpose()
             .map_err(|e| fail(e, &uri, rid.clone()))?;
-        let page_stages = games_pipeline(&id, platinum, &sort, last, limit)
+        let page_stages = games_pipeline(&id, effective_filter, &sort, last, limit)
             .map_err(|e| fail(e, &uri, rid.clone()))?;
         let (rows, total) = profile_page(
             &s,
             "profiles.games",
-            &[("id", json!(id)), ("platinum", json!(platinum))],
+            &[
+                ("id", json!(id)),
+                ("platinum", json!(effective_platinum)),
+                ("filter", json!(filter_key)),
+            ],
             GAMES_TTL,
             page_stages,
             MongoAggregateOptions {
                 collation: (sort == "alphabetical").then(|| doc! {"locale":"en","strength":2}),
                 ..disk_aggregation()
             },
-            pipeline(games_base(&id, platinum)),
+            pipeline(games_count_base(&id, effective_filter)),
         )
         .await
         .map_err(|e| fail(e, &uri, rid.clone()))?;
@@ -1379,5 +1481,58 @@ mod tests {
                 .iter()
                 .all(|stage| stage.get("$limit").is_none() && stage.get("$group").is_none())
         );
+    }
+
+    #[test]
+    fn games_filter_pipelines_cover_all_variants() {
+        assert!(game_filter_match_stage("all").is_none());
+        assert!(game_filter_match_stage("platinum").is_none());
+        assert_eq!(
+            game_filter_match_stage("completed"),
+            Some(json!({"$match":{"$expr":{"$gte":["$completionPercentage",1]}}}))
+        );
+        assert_eq!(
+            game_filter_match_stage("in-progress"),
+            Some(json!({
+                "$match": {
+                    "$expr": {
+                        "$and": [
+                            {"$gt": ["$totalUnlocked", 0]},
+                            {"$lt": ["$completionPercentage", 1]},
+                            {"$eq": [{"$size": {"$ifNull": ["$playerAwards", []]}}, 0]}
+                        ]
+                    }
+                }
+            }))
+        );
+        assert_eq!(
+            game_filter_match_stage("near-platinum"),
+            Some(json!({
+                "$match": {
+                    "$expr": {
+                        "$and": [
+                            {"$gt": ["$totalUnlocked", 0]},
+                            {"$gte": ["$completionPercentage", 0.8]},
+                            {"$lt": ["$completionPercentage", 1]},
+                            {"$eq": [{"$size": {"$ifNull": ["$playerAwards", []]}}, 0]}
+                        ]
+                    }
+                }
+            }))
+        );
+
+        // `all` and `platinum` keep the historical count base without extra lookups.
+        assert_eq!(games_count_base("p", "all").len(), 4);
+        assert_eq!(games_count_base("p", "platinum").len(), 5);
+        // Completion-based filters look up achievementSets and filter in count pipeline.
+        for f in ["completed", "in-progress", "near-platinum"] {
+            let count_stages = games_count_base("p", f);
+            assert_eq!(count_stages.len(), 8);
+            assert_eq!(count_stages[4]["$lookup"]["from"], "achievementsets");
+            assert_eq!(count_stages[7], game_filter_match_stage(f).unwrap());
+
+            let page_docs = games_pipeline("p", f, "completion", None, 20).unwrap();
+            assert!(page_docs.iter().any(|d| d.contains_key("$match")));
+        }
     }
 }

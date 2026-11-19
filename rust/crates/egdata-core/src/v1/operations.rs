@@ -1539,7 +1539,7 @@ fn profiles_operations() -> Vec<V1OperationMetadata> {
             .resp_desc("`data` contains `epicAccountId`, `displayName`, `avatar`, `linkedAccounts`, `creationDate`, `stats` (`totalGames`, `totalAchievements`, `totalPlayerAwards`, `totalXP`, `reviewsCount`), `donations`, and `discord`.")
             .leg(&["/profiles/{id}/information"]),
         op("listProfileGames", V1HttpMethod::Get, "/v1/profiles/{id}/games", "List profile games", &["Profiles"], V1Scope::ProfilesRead, V1AuthMode::Key)
-            .desc("Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `platinum=true` to keep only games with a platinum award. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.")
+            .desc("Returns one achievement-completion summary per sandbox the profile has played, ordered by the selected `sort` with `sandboxId` as the unique tie-breaker. Use `filter` (`all`, `completed`, `near-platinum`, `in-progress`, or `platinum`) or `platinum=true` to narrow results. `meta.pagination` carries `limit`, `hasMore`, and `nextCursor`; the legacy `page` parameter is replaced by the cursor.")
             .kind(V1ResponseKind::Json)
             .page()
             .policy(V1ExpensivePolicy::Heavy)
@@ -1548,7 +1548,8 @@ fn profiles_operations() -> Vec<V1OperationMetadata> {
                 cursor_parameter(),
                 limit_parameter(100),
                 query_parameter("sort", "Ordering of the games: `completion` (default), `alphabetical`, `xp`, or `achievements`.", json!({ "type": "string", "enum": ["completion", "alphabetical", "xp", "achievements"], "default": "completion" }), Some(false)),
-                query_parameter("platinum", "When true, only games with at least one platinum award are returned.", json!({ "type": "boolean", "default": false }), Some(false)),
+                query_parameter("filter", "Optional completion filter: `all` (default), `completed`, `near-platinum`, `in-progress`, or `platinum`.", json!({ "type": "string", "enum": ["all", "completed", "near-platinum", "in-progress", "platinum"], "default": "all" }), Some(false)),
+                query_parameter("platinum", "When true (and `filter` is omitted or `all`), only games with at least one platinum award are returned.", json!({ "type": "boolean", "default": false }), Some(false)),
             ])
             .resp_desc("`data.achievements` is the page of per-sandbox summaries with `sandboxId`, `totalUnlocked`, `totalXP`, `productAchievements`, `completionPercentage`, `baseOfferForSandbox`, and `product`. The key keeps the legacy name.")
             .leg(&["/profiles/{id}/games"]),

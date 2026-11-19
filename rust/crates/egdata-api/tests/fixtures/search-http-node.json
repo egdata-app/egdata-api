@@ -151,6 +151,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -4750,7 +4751,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"game\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"de-DE\":ordering=\"_score:desc,id:asc\":region=\"EURO\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":null,\"title\":\"Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":1},\"facets\":{},\"result\":{\"tookMs\":5,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":null,\"title\":\"Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":1},\"facets\":{},\"result\":{\"tookMs\":5,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"game\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"de-DE\":ordering=\"_score:desc,id:asc\":region=\"EURO\""
@@ -4797,6 +4798,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -5186,7 +5188,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"none\":filters={\"title\":\"page\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"none\":filters={\"title\":\"page\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -5233,6 +5235,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -5356,7 +5359,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\":facets=\"none\":filters={\"title\":\"page\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-two\",\"namespace\":null,\"title\":\"Page offer-page-two\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-15T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":2,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-two\",\"namespace\":null,\"title\":\"Page offer-page-two\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-15T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":2,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:cursor=\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\":facets=\"none\":filters={\"title\":\"page\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -5403,6 +5406,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -5438,7 +5442,7 @@
       "path": "/v1/search?title=page&limit=1&facets=none"
     },
     "input": {
-      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
+      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InBhZ2UiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInRlY2hub2xvZ2llcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsIm9uU2FsZSI6bnVsbCwicGFzdEdpdmVhd2F5cyI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlIjpudWxsfSwiZmlsdGVySGFzaCI6ImE0ZjE2YTQzYjFkZjc1MDc0ODcxMTEwYWUyNTQwZjI1ZGZmNWE1Nzk1NWMyOGMxNjcyMTg1NzhiOWFlNWU4N2MiLCJvcmRlcmluZyI6Il9zY29yZTpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6WyIyMDI2LTExLTE2VDAwOjAwOjAwLjAwMFoiLCJvZmZlci1wYWdlLW9uZSJdfQ.sTxgoA53weme0zC451pEGIILAHzSMA0nnQAtmGxjDGw\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
       "opensearchCalled": false,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"none\":filters={\"title\":\"page\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -5485,6 +5489,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -5602,7 +5607,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"game\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"en-US\":region=\"EURO\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-b\",\"namespace\":null,\"title\":\"Other Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"DLC\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":3,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-b\",\"namespace\":null,\"title\":\"Other Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"DLC\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":3,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"game\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"en-US\":region=\"EURO\""
@@ -5649,6 +5654,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7544,7 +7550,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"game\",\"offerType\":null,\"tags\":[\"a\",\"z\"],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"de-DE\":region=\"EURO\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiZ2FtZSIsIm9mZmVyVHlwZSI6bnVsbCwidGFncyI6WyJhIiwieiJdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiNWE2MTgyMWUxNzY2OWYwYjk1NmZkY2NlMDg4YWZkYTgyNGFkN2YzNDlkODc4ZjgzMDg3NjIxMDU4ZGU0NmQ5YiIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IkRFIiwibG9jYWxlIjoiZGUtREUiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsIm9mZmVyLXBhZ2Utb25lIl19.f1X_gVQRKsPh7Xyl1V75-EphcK0zn1QwXXMq2O483_k\",\"total\":null},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiZ2FtZSIsIm9mZmVyVHlwZSI6bnVsbCwidGFncyI6WyJhIiwieiJdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiNWE2MTgyMWUxNzY2OWYwYjk1NmZkY2NlMDg4YWZkYTgyNGFkN2YzNDlkODc4ZjgzMDg3NjIxMDU4ZGU0NmQ5YiIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IkRFIiwibG9jYWxlIjoiZGUtREUiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsIm9mZmVyLXBhZ2Utb25lIl19.f1X_gVQRKsPh7Xyl1V75-EphcK0zn1QwXXMq2O483_k\",\"total\":null},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"game\",\"offerType\":null,\"tags\":[\"a\",\"z\"],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"de-DE\":region=\"EURO\""
@@ -7591,6 +7597,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7794,7 +7801,7 @@
       "path": "/v1/multisearch/offers?query=game&tags=z,a&country=DE&locale=de-DE&limit=1"
     },
     "input": {
-      "cachePayload": "{\"hits\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiZ2FtZSIsIm9mZmVyVHlwZSI6bnVsbCwidGFncyI6WyJhIiwieiJdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiNWE2MTgyMWUxNzY2OWYwYjk1NmZkY2NlMDg4YWZkYTgyNGFkN2YzNDlkODc4ZjgzMDg3NjIxMDU4ZGU0NmQ5YiIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IkRFIiwibG9jYWxlIjoiZGUtREUiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsIm9mZmVyLXBhZ2Utb25lIl19.f1X_gVQRKsPh7Xyl1V75-EphcK0zn1QwXXMq2O483_k\",\"total\":null},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
+      "cachePayload": "{\"hits\":[{\"_id\":null,\"id\":\"offer-page-one\",\"namespace\":null,\"title\":\"Page offer-page-one\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-11-16T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":null,\"locale\":\"de-DE\",\"localeStatus\":\"fallback\",\"canonicalLocale\":\"en-US\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiZ2FtZSIsIm9mZmVyVHlwZSI6bnVsbCwidGFncyI6WyJhIiwieiJdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiNWE2MTgyMWUxNzY2OWYwYjk1NmZkY2NlMDg4YWZkYTgyNGFkN2YzNDlkODc4ZjgzMDg3NjIxMDU4ZGU0NmQ5YiIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IkRFIiwibG9jYWxlIjoiZGUtREUiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbIjIwMjYtMTEtMTZUMDA6MDA6MDAuMDAwWiIsIm9mZmVyLXBhZ2Utb25lIl19.f1X_gVQRKsPh7Xyl1V75-EphcK0zn1QwXXMq2O483_k\",\"total\":null},\"result\":{\"tookMs\":6,\"timedOut\":false}}",
       "opensearchCalled": false,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"game\",\"offerType\":null,\"tags\":[\"a\",\"z\"],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"de-DE\":region=\"EURO\""
@@ -7841,6 +7848,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -7921,7 +7929,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"none\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"lastModifiedDate:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"none\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"lastModifiedDate:desc,id:asc\":region=\"US\""
@@ -7968,6 +7976,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -8405,7 +8414,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":true}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":true}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -8452,6 +8461,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -8488,6 +8498,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -9035,7 +9046,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":true}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":true}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\""
@@ -9082,6 +9093,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -9118,6 +9130,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11423,7 +11436,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"space\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"one\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InNwYWNlIiwib2ZmZXJUeXBlIjpudWxsLCJ0YWdzIjpbXSwiY2F0ZWdvcmllcyI6W10sImN1c3RvbUF0dHJpYnV0ZXMiOltdLCJ0ZWNobm9sb2dpZXMiOltdLCJzZWxsZXIiOm51bGwsImRldmVsb3BlckRpc3BsYXlOYW1lIjpudWxsLCJwdWJsaXNoZXJEaXNwbGF5TmFtZSI6bnVsbCwicmVmdW5kVHlwZSI6bnVsbCwiaXNDb2RlUmVkZW1wdGlvbk9ubHkiOm51bGwsImV4Y2x1ZGVCbG9ja2NoYWluIjpudWxsLCJvblNhbGUiOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsImlzTG93ZXN0UHJpY2UiOm51bGwsImlzTG93ZXN0UHJpY2VFdmVyIjpudWxsLCJwcmljZSI6bnVsbH0sImZpbHRlckhhc2giOiJjNzNkMGQyMTFkOGFiOGJkOWFjZTQ2ZmU1ZDkyOTE4YWQ0MTc1YTE3YjYyMTc4MjhmOGZkNDUxNzQyZWZiNWEwIiwib3JkZXJpbmciOiJfc2NvcmU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszLjUsbnVsbCwib25lIl19.FXH3i7W-vri8gPZALAziWR9zt4shX2MB23qt73H1g2g\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":3,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"one\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6InNwYWNlIiwib2ZmZXJUeXBlIjpudWxsLCJ0YWdzIjpbXSwiY2F0ZWdvcmllcyI6W10sImN1c3RvbUF0dHJpYnV0ZXMiOltdLCJ0ZWNobm9sb2dpZXMiOltdLCJzZWxsZXIiOm51bGwsImRldmVsb3BlckRpc3BsYXlOYW1lIjpudWxsLCJwdWJsaXNoZXJEaXNwbGF5TmFtZSI6bnVsbCwicmVmdW5kVHlwZSI6bnVsbCwiaXNDb2RlUmVkZW1wdGlvbk9ubHkiOm51bGwsImV4Y2x1ZGVCbG9ja2NoYWluIjpudWxsLCJvblNhbGUiOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsImlzTG93ZXN0UHJpY2UiOm51bGwsImlzTG93ZXN0UHJpY2VFdmVyIjpudWxsLCJwcmljZSI6bnVsbH0sImZpbHRlckhhc2giOiJjNzNkMGQyMTFkOGFiOGJkOWFjZTQ2ZmU1ZDkyOTE4YWQ0MTc1YTE3YjYyMTc4MjhmOGZkNDUxNzQyZWZiNWEwIiwib3JkZXJpbmciOiJfc2NvcmU6ZGVzYyxpZDphc2MiLCJjb3VudHJ5IjoiVVMiLCJsb2NhbGUiOiJlbi1VUyIsImxpbWl0IjoxLCJpYXQiOjE3OTQ4NzM2MDAwMDAsImxhc3QiOlszLjUsbnVsbCwib25lIl19.FXH3i7W-vri8gPZALAziWR9zt4shX2MB23qt73H1g2g\",\"total\":null},\"facets\":{},\"result\":{\"tookMs\":3,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"space\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -11470,6 +11483,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -11977,6 +11991,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -16726,7 +16741,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"upcoming:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":\"A\",\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6bnVsbCwib2ZmZXJUeXBlIjpudWxsLCJ0YWdzIjpbXSwiY2F0ZWdvcmllcyI6W10sImN1c3RvbUF0dHJpYnV0ZXMiOltdLCJ0ZWNobm9sb2dpZXMiOltdLCJzZWxsZXIiOm51bGwsImRldmVsb3BlckRpc3BsYXlOYW1lIjpudWxsLCJwdWJsaXNoZXJEaXNwbGF5TmFtZSI6bnVsbCwicmVmdW5kVHlwZSI6bnVsbCwiaXNDb2RlUmVkZW1wdGlvbk9ubHkiOm51bGwsImV4Y2x1ZGVCbG9ja2NoYWluIjpudWxsLCJvblNhbGUiOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsImlzTG93ZXN0UHJpY2UiOm51bGwsImlzTG93ZXN0UHJpY2VFdmVyIjpudWxsLCJwcmljZSI6bnVsbH0sImZpbHRlckhhc2giOiIyYzI4NTEwMWY5MDhmZjgxZDlhNmQ5Y2NhNDI4NWE0MmI1ZGU5Yjk5OTFiN2VkNmVlMDc0ZjRiZWE2MDFjZmNlIiwib3JkZXJpbmciOiJ1cGNvbWluZzpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W3RydWUsbnVsbCwxZS03LDFlKzIxLDMuMjUsInRleHQiLHsiYiI6MSwiYSI6Mn0sWzIsMV1dfQ.HODd-NhZEYkO678JYiw5fvRp3cfvUITmjRCKz2wP09I\",\"total\":2},\"facets\":{},\"result\":{\"tookMs\":0.125,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":\"A\",\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJzZWFyY2gub2ZmZXJzIiwiZmlsdGVycyI6eyJ0aXRsZSI6bnVsbCwib2ZmZXJUeXBlIjpudWxsLCJ0YWdzIjpbXSwiY2F0ZWdvcmllcyI6W10sImN1c3RvbUF0dHJpYnV0ZXMiOltdLCJ0ZWNobm9sb2dpZXMiOltdLCJzZWxsZXIiOm51bGwsImRldmVsb3BlckRpc3BsYXlOYW1lIjpudWxsLCJwdWJsaXNoZXJEaXNwbGF5TmFtZSI6bnVsbCwicmVmdW5kVHlwZSI6bnVsbCwiaXNDb2RlUmVkZW1wdGlvbk9ubHkiOm51bGwsImV4Y2x1ZGVCbG9ja2NoYWluIjpudWxsLCJvblNhbGUiOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsImlzTG93ZXN0UHJpY2UiOm51bGwsImlzTG93ZXN0UHJpY2VFdmVyIjpudWxsLCJwcmljZSI6bnVsbH0sImZpbHRlckhhc2giOiIyYzI4NTEwMWY5MDhmZjgxZDlhNmQ5Y2NhNDI4NWE0MmI1ZGU5Yjk5OTFiN2VkNmVlMDc0ZjRiZWE2MDFjZmNlIiwib3JkZXJpbmciOiJ1cGNvbWluZzpkZXNjLGlkOmFzYyIsImNvdW50cnkiOiJVUyIsImxvY2FsZSI6ImVuLVVTIiwibGltaXQiOjEsImlhdCI6MTc5NDg3MzYwMDAwMCwibGFzdCI6W3RydWUsbnVsbCwxZS03LDFlKzIxLDMuMjUsInRleHQiLHsiYiI6MSwiYSI6Mn0sWzIsMV1dfQ.HODd-NhZEYkO678JYiw5fvRp3cfvUITmjRCKz2wP09I\",\"total\":2},\"facets\":{},\"result\":{\"tookMs\":0.125,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=1:locale=\"en-US\":ordering=\"upcoming:desc,id:asc\":region=\"US\""
@@ -16773,6 +16788,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -17304,7 +17320,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"hi\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"en-US\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":\"A\",\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiaGkiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiMDgxZDY3OTIxN2VhNmNjNTEyNGJjZTJiMzY5MGVjZGY3NTIxY2RjOGFlNjU1OWJhNjNlOWI5ZjM5ZTY1ZjYyZSIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbdHJ1ZSxudWxsLDFlLTcsMWUrMjEsMy4yNSwidGV4dCIseyJiIjoxLCJhIjoyfSxbMiwxXV19.5hxrOs5kpXlsehvg9ubaM82_Wz-Ex3iQNoG2lw1RhdQ\",\"total\":2},\"result\":{\"tookMs\":0.125,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"a\",\"namespace\":null,\"title\":\"A\",\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":1,\"hasMore\":true,\"nextCursor\":\"eyJ2IjoxLCJvcGVyYXRpb24iOiJtdWx0aXNlYXJjaC5vZmZlcnMiLCJmaWx0ZXJzIjp7InF1ZXJ5IjoiaGkiLCJvZmZlclR5cGUiOm51bGwsInRhZ3MiOltdLCJjYXRlZ29yaWVzIjpbXSwiY3VzdG9tQXR0cmlidXRlcyI6W10sInNlbGxlciI6bnVsbCwiZGV2ZWxvcGVyRGlzcGxheU5hbWUiOm51bGwsInB1Ymxpc2hlckRpc3BsYXlOYW1lIjpudWxsLCJyZWZ1bmRUeXBlIjpudWxsLCJpc0NvZGVSZWRlbXB0aW9uT25seSI6bnVsbCwiZXhjbHVkZUJsb2NrY2hhaW4iOm51bGwsInBhc3RHaXZlYXdheXMiOm51bGwsIm9uU2FsZSI6bnVsbCwiaXNMb3dlc3RQcmljZSI6bnVsbCwiaXNMb3dlc3RQcmljZUV2ZXIiOm51bGwsInByaWNlTWluIjpudWxsLCJwcmljZU1heCI6bnVsbCwic29ydEJ5IjpudWxsLCJzb3J0RGlyIjoiZGVzYyJ9LCJmaWx0ZXJIYXNoIjoiMDgxZDY3OTIxN2VhNmNjNTEyNGJjZTJiMzY5MGVjZGY3NTIxY2RjOGFlNjU1OWJhNjNlOWI5ZjM5ZTY1ZjYyZSIsIm9yZGVyaW5nIjoiX3Njb3JlOmRlc2MsaWQ6YXNjIiwiY291bnRyeSI6IlVTIiwibG9jYWxlIjoiZW4tVVMiLCJsaW1pdCI6MSwiaWF0IjoxNzk0ODczNjAwMDAwLCJsYXN0IjpbdHJ1ZSxudWxsLDFlLTcsMWUrMjEsMy4yNSwidGV4dCIseyJiIjoxLCJhIjoyfSxbMiwxXV19.5hxrOs5kpXlsehvg9ubaM82_Wz-Ex3iQNoG2lw1RhdQ\",\"total\":2},\"result\":{\"tookMs\":0.125,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"hi\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=1:locale=\"en-US\":region=\"US\""
@@ -17351,6 +17367,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -19791,7 +19808,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":false,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"de\":ordering=\"lastModifiedDate:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":\"ns\",\"title\":\"Deutsch\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"source\":null,\"fetchedAt\":null}}}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":7,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":\"ns\",\"title\":\"Deutsch\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"source\":null,\"fetchedAt\":null}}}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":7,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":false,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"de\":ordering=\"lastModifiedDate:desc,id:asc\":region=\"US\""
@@ -19807,7 +19824,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"1e3a726c80cf5d073c3b66c89ac1ced81b79a9eb\""
+        "etag": "\"71bde70def707764c4dfd8568cea0dcfc54a9506\""
       },
       "body": {
         "data": [
@@ -19839,6 +19856,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -20092,7 +20110,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"de\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":\"ns\",\"title\":\"Deutsch\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"source\":null,\"fetchedAt\":null}}}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":7,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"offer-a\",\"namespace\":\"ns\",\"title\":\"Deutsch\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"locale\":\"de\",\"localeStatus\":\"localized\",\"canonicalLocale\":\"en-US\",\"localization\":{\"source\":null,\"fetchedAt\":null}}}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":7,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":null,\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"de\":region=\"US\""
@@ -20108,7 +20126,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"e1a52edb7f6686254ddfa8d06c68347a2978e567\""
+        "etag": "\"43834f8205fe0c51e09927bce61cce281ef690f2\""
       },
       "body": {
         "data": [
@@ -20140,6 +20158,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -20337,7 +20356,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"ccf4c2d5f764ea8dc2a709b038a88dab231fc7cd\""
+        "etag": "\"c07b606d5b588040be8d0a19210b7339dbd4f756\""
       },
       "body": {
         "data": [
@@ -20371,6 +20390,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -21396,7 +21416,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"[object Object]\",\"namespace\":null,\"title\":\"Archive\",\"description\":{\"label\":{\"$oid\":\"ordinary field\"},\"edition\":{\"$date\":\"spring\"}},\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":{\"$date\":123},\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{\"label\":{\"type\":\"STRING\",\"value\":{\"$oid\":\"literal attribute\"}}},\"price\":{\"offerId\":\"[object Object]\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"discountPrice\":20,\"price\":{\"discountPrice\":20,\"metadata\":{\"$date\":\"spring\"},\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":{\"$date\":123}},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"[object Object]\",\"namespace\":null,\"title\":\"Archive\",\"description\":{\"label\":{\"$oid\":\"ordinary field\"},\"edition\":{\"$date\":\"spring\"}},\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":{\"$date\":123},\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{\"label\":{\"type\":\"STRING\",\"value\":{\"$oid\":\"literal attribute\"}}},\"price\":{\"offerId\":\"[object Object]\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"discountPrice\":20,\"price\":{\"discountPrice\":20,\"metadata\":{\"$date\":\"spring\"},\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":{\"$date\":123}},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -21412,7 +21432,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c2a0473000e2955e6d9b1955baf30474da01f39f\""
+        "etag": "\"052a3fd9d92f8bdc83e6de302f1f7acdcdbccbec\""
       },
       "body": {
         "data": [
@@ -21453,6 +21473,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -21651,7 +21672,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -21667,7 +21688,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd04d33a7661b669c45eae4626e3f7130993aded\""
+        "etag": "\"122b4fdfdee41f062e4914b583b819f59d5e1ae7\""
       },
       "body": {
         "data": [
@@ -21699,6 +21720,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -21866,7 +21888,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{\"label\":{\"$oid\":\"literal facet\"},\"entry\":{\"id\":\"[object Object]\"}},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -21882,7 +21904,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"fd04d33a7661b669c45eae4626e3f7130993aded\""
+        "etag": "\"122b4fdfdee41f062e4914b583b819f59d5e1ae7\""
       },
       "body": {
         "data": [
@@ -21914,6 +21936,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -22242,7 +22265,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"[object Object]\",\"namespace\":null,\"title\":\"Archive\",\"description\":{\"label\":{\"$oid\":\"ordinary field\"},\"edition\":{\"$date\":\"spring\"}},\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":{\"$date\":123},\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{\"label\":{\"type\":\"STRING\",\"value\":{\"$oid\":\"literal attribute\"}}},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":\"[object Object]\",\"namespace\":null,\"title\":\"Archive\",\"description\":{\"label\":{\"$oid\":\"ordinary field\"},\"edition\":{\"$date\":\"spring\"}},\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":{\"$date\":123},\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{\"label\":{\"type\":\"STRING\",\"value\":{\"$oid\":\"literal attribute\"}}},\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\""
@@ -22258,7 +22281,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"097505b4487a8644350df815a94d5c0e2519cebc\""
+        "etag": "\"31451c148f7ba7a3e68c7b4a07e0a96d1178913a\""
       },
       "body": {
         "data": [
@@ -22299,6 +22322,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -22429,7 +22453,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\""
@@ -22445,7 +22469,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5ee89c0e68ffc86470d5093b80d4e9fdcc9c4622\""
+        "etag": "\"eba269a6bd23915f6fc397feb3905f1e97b98f0e\""
       },
       "body": {
         "data": [
@@ -22477,6 +22501,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -22593,7 +22618,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\"",
-      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"hits\":[{\"_id\":null,\"id\":null,\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":null,\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:multisearch.offers:filters={\"query\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"pastGiveaways\":null,\"onSale\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"priceMin\":null,\"priceMax\":null,\"sortBy\":null,\"sortDir\":\"desc\"}:limit=20:locale=\"en-US\":region=\"US\""
@@ -22609,7 +22634,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"5ee89c0e68ffc86470d5093b80d4e9fdcc9c4622\""
+        "etag": "\"eba269a6bd23915f6fc397feb3905f1e97b98f0e\""
       },
       "body": {
         "data": [
@@ -22641,6 +22666,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -24203,7 +24229,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"archive\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":{\"0\":\"US\",\"offerId\":null,\"region\":null,\"currencyCode\":null,\"precision\":2,\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"archive\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":{\"0\":\"US\",\"offerId\":null,\"region\":null,\"currencyCode\":null,\"precision\":2,\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -24219,7 +24245,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"4fb202cdfd0e54d371457f3d425567162c184608\""
+        "etag": "\"1279049c213076766f647f85acfdec66d8ec5504\""
       },
       "body": {
         "data": [
@@ -24251,6 +24277,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -24578,7 +24605,7 @@
       },
       "opensearchCalled": true,
       "cacheWriteKey": "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\"",
-      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"archive\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":{\"offerId\":\"[object Object]\",\"region\":\"US\",\"currencyCode\":\"JPY\",\"precision\":0,\"discountPrice\":null,\"price\":{\"discountPrice\":null,\"currencyCode\":\"JPY\",\"precision\":0},\"updatedAt\":{\"$date\":123}},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
+      "cacheWriteValue": "{\"offers\":[{\"_id\":null,\"id\":\"archive\",\"namespace\":null,\"title\":null,\"description\":null,\"longDescription\":null,\"offerType\":null,\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":null,\"isCodeRedemptionOnly\":null,\"keyImages\":null,\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":null,\"items\":null,\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":null,\"price\":{\"offerId\":\"[object Object]\",\"region\":\"US\",\"currencyCode\":\"JPY\",\"precision\":0,\"discountPrice\":null,\"price\":{\"discountPrice\":null,\"currencyCode\":\"JPY\",\"precision\":0},\"updatedAt\":{\"$date\":123}},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":null},\"facets\":{},\"result\":{\"tookMs\":0,\"timedOut\":false}}",
       "cacheWriteTtl": 60,
       "cacheReadKeys": [
         "v1:search.offers:facets=\"full\":filters={\"title\":\"fixture\",\"offerType\":null,\"tags\":[],\"categories\":[],\"customAttributes\":[],\"technologies\":[],\"seller\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"refundType\":null,\"isCodeRedemptionOnly\":null,\"excludeBlockchain\":null,\"onSale\":null,\"pastGiveaways\":null,\"isLowestPrice\":null,\"isLowestPriceEver\":null,\"price\":null}:limit=20:locale=\"en-US\":ordering=\"_score:desc,id:asc\":region=\"US\""
@@ -24594,7 +24621,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"6b1b113078437a0d49cf440218527511705cbf0f\""
+        "etag": "\"641db5ffdea1834fc099cfa27c051c1ba10929c2\""
       },
       "body": {
         "data": [
@@ -24626,6 +24653,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -24839,7 +24867,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"494c277acae45ac89ce497acbcdf39f4b10059d7\""
+        "etag": "\"cc6f81b528818a34aee20e2e5e4ea0e173199af9\""
       },
       "body": {
         "data": [
@@ -24873,6 +24901,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,
@@ -24944,7 +24973,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"3fc95b5e3d531e0339fdb47a3bf0a89ce9427ed6\""
+        "etag": "\"eb34efea903ab606c97b1d74d35c84cc02ee2917\""
       },
       "body": {
         "data": [
@@ -24978,6 +25007,7 @@
               "releaseDate": null,
               "pcReleaseDate": null,
               "viewableDate": null,
+              "expiryDate": null,
               "countriesBlacklist": null,
               "countriesWhitelist": null,
               "refundType": null,

@@ -84,7 +84,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
+        "etag": "\"dda33df164bb34cff77bbff1fc9fde45b8e329f0\""
       },
       "body": {
         "data": [
@@ -116,6 +116,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -162,7 +163,7 @@
       "path": "/v1/offers?country=US"
     },
     "input": {
-      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"oracle-game\",\"namespace\":\"ns-oracle\",\"title\":\"Oracle Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-01-02T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":[],\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":[],\"items\":[],\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":{\"offerId\":\"oracle-game\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"originalPrice\":1999,\"discountPrice\":999,\"price\":{\"originalPrice\":1999,\"discountPrice\":999,\"discount\":50,\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":1},\"localization\":{\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},\"cacheTtl\":60}"
+      "cachePayload": "{\"offers\":[{\"_id\":null,\"id\":\"oracle-game\",\"namespace\":\"ns-oracle\",\"title\":\"Oracle Game\",\"description\":null,\"longDescription\":null,\"offerType\":\"BASE_GAME\",\"effectiveDate\":null,\"creationDate\":null,\"lastModifiedDate\":\"2026-01-02T00:00:00.000Z\",\"isCodeRedemptionOnly\":null,\"keyImages\":[],\"currentPrice\":null,\"seller\":null,\"productSlug\":null,\"offerMappings\":null,\"urlSlug\":null,\"url\":null,\"tags\":[],\"items\":[],\"categories\":null,\"developerDisplayName\":null,\"publisherDisplayName\":null,\"prePurchase\":null,\"releaseDate\":null,\"pcReleaseDate\":null,\"viewableDate\":null,\"expiryDate\":null,\"countriesBlacklist\":null,\"countriesWhitelist\":null,\"refundType\":null,\"customAttributes\":{},\"price\":{\"offerId\":\"oracle-game\",\"region\":\"US\",\"currencyCode\":\"USD\",\"precision\":2,\"originalPrice\":1999,\"discountPrice\":999,\"price\":{\"originalPrice\":1999,\"discountPrice\":999,\"discount\":50,\"currencyCode\":\"USD\",\"precision\":2},\"updatedAt\":null},\"locale\":\"en-US\",\"localeStatus\":\"canonical\"}],\"pagination\":{\"limit\":20,\"hasMore\":false,\"nextCursor\":null,\"total\":1},\"localization\":{\"locale\":\"en-US\",\"localeStatus\":\"canonical\"},\"cacheTtl\":60}"
     },
     "response": {
       "status": 200,
@@ -173,7 +174,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
+        "etag": "\"dda33df164bb34cff77bbff1fc9fde45b8e329f0\""
       },
       "body": {
         "data": [
@@ -205,6 +206,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -287,7 +289,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"387e2f2614092e6540bc675ef7a06d470a35af4e\""
+        "etag": "\"dda33df164bb34cff77bbff1fc9fde45b8e329f0\""
       },
       "body": {
         "data": [
@@ -319,6 +321,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -416,7 +419,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c2ab01a8b7c603ad453efaff8e34fb9a80d07ee2\""
+        "etag": "\"bbadce76e3cc31ae0e168b57dbb032aaf5c63ae0\""
       },
       "body": {
         "data": {
@@ -447,6 +450,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": null,
           "countriesWhitelist": [
             "US"
@@ -542,7 +546,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"9eedee257e9ad7205d07f1c99e1b70ad6137597b\""
+        "etag": "\"361fa077b5a1bb8baa8672816c0c053930383e49\""
       },
       "body": {
         "data": {
@@ -573,6 +577,7 @@
           "releaseDate": null,
           "pcReleaseDate": null,
           "viewableDate": null,
+          "expiryDate": null,
           "countriesBlacklist": null,
           "countriesWhitelist": [
             "US"
@@ -703,7 +708,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"7e3e5b266a4083df71afe4528cfdf83421a54ab5\""
+        "etag": "\"0fb8cd9a8e99d972bf850b12588982bd171d1ec2\""
       },
       "body": {
         "data": [
@@ -735,6 +740,7 @@
             "releaseDate": "2098-01-02T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -811,7 +817,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"65e4f144e4df88939811ba4c0a01cd65d8d21641\""
+        "etag": "\"29f0903d50f5c81a4f23cc8de15149abff2a22c0\""
       },
       "body": {
         "data": [
@@ -843,6 +849,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -880,6 +887,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1039,7 +1047,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"178158331ee99303ba027b2d201e109131f91d46\""
+        "etag": "\"66e429a8a036bd58ffa9da8610b2d7c8bdc6806a\""
       },
       "body": {
         "data": [
@@ -1071,6 +1079,7 @@
             "releaseDate": "2020-01-02T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1140,7 +1149,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"61ecd3f49639526e250c3b015b3d6cf007514144\""
+        "etag": "\"f610f538005cd251b1a5c3cb3bf6e4477092a5af\""
       },
       "body": {
         "data": [
@@ -1172,6 +1181,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1259,7 +1269,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"850efee340d4395e7dc56ed972fd7bca30151e04\""
+        "etag": "\"1e2d37fe1a8c37a62754e11698b8302e0104744b\""
       },
       "body": {
         "data": [
@@ -1291,6 +1301,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1368,7 +1379,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"8aa9908936048cf78753e3ff55237fd4155e3cbe\""
+        "etag": "\"8902555fa8975dbe390b69e15711bd232a6dadb0\""
       },
       "body": {
         "data": [
@@ -1404,6 +1415,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1535,7 +1547,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"c0fc6084c400f2a6bc6b41ed6a2ce81d0b2a8320\""
+        "etag": "\"4fa192a95458e298191056ecd9251889a14dea64\""
       },
       "body": {
         "data": [
@@ -1567,6 +1579,7 @@
             "releaseDate": null,
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1633,7 +1646,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"f5da97b7144591f0f9aa24f8fa700460f935faad\""
+        "etag": "\"b7bf2ef14fdf0f85c3823599f17ca3f92976b5fa\""
       },
       "body": {
         "data": [
@@ -1665,6 +1678,7 @@
             "releaseDate": "2098-01-01T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,
@@ -1721,7 +1735,7 @@
         "cloudflare-cdn-cache-control": "no-store",
         "x-content-type-options": "nosniff",
         "x-request-id": "req_node_oracle",
-        "etag": "\"d88d85fccc94ff7c311b0ca66e05aee3c5c3e5cd\""
+        "etag": "\"a56504a7d59d5af4101d5f20a79137803d74ea9e\""
       },
       "body": {
         "data": [
@@ -1753,6 +1767,7 @@
             "releaseDate": "2098-01-02T00:00:00.000Z",
             "pcReleaseDate": null,
             "viewableDate": null,
+            "expiryDate": null,
             "countriesBlacklist": null,
             "countriesWhitelist": null,
             "refundType": null,

@@ -2,6 +2,201 @@
 
 Generated from validated change records. Recorded dates are not deployment dates.
 
+## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
+
+Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).
+
+- **v1 GET /v1/profiles/&#123;id&#125;/games** (listProfileGames; changed; compatible)
+  - Before: Supported `sort` and boolean `platinum` filtering on `GET /v1/profiles/&#123;id&#125;/games`.
+  - After: Adds optional `filter` query parameter (`all`, `completed`, `near-platinum`, `in-progress`, `platinum`; default `all`) with cursor bindings, cache keys, and total counts scoped by the effective filter while preserving `platinum=true` backward compatibility.
+  - Client action: None
+- **v1 GET /v1/autocomplete** (autocomplete; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/base-game/&#123;namespace&#125;** (getBaseGame; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;** (getCollection; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/collections/&#123;slug&#125;/&#123;week&#125;** (getCollectionWeek; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/featured** (getFeaturedGames; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/franchises/&#123;slug&#125;** (getFranchise; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/game-awards** (getGameAwards; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/items/&#123;id&#125;/offer** (getItemOffer; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/latest-games** (getLatestGames; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;** (getOffer; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/bundle** (getOfferBundle; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/collection** (getOfferCollection; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/events/&#123;id&#125;** (getOfferEvent; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-prepurchase** (getOfferHasPrepurchase; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/has-regular** (getOfferHasRegular; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/overview** (getOfferOverview; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 POST /v1/items/bulk/offers** (getOffersForItemsBulk; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/suggestions** (getOfferSuggestions; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;/cover** (getPromotionCover; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/related** (getRelatedOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/base-game** (getSandboxBaseGame; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/search/&#123;id&#125;** (getSearchQuery; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;/cover** (getSellerCoverOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/active-sales** (listActiveSales; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/&#123;id&#125;/in-bundle** (listBundlesContainingOffer; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/featured-discounts** (listFeaturedDiscounts; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/free-games** (listFreeGames; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/free-games/history** (listFreeGamesHistory; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/latest-achievements** (listLatestAchievements; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/latest-released** (listLatestReleased; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/genres** (listOfferGenres; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers** (listOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/promotions/&#123;id&#125;** (listPromotionOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/sales** (listSales; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/sandboxes/&#123;sandboxId&#125;/offers** (listSandboxOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/sellers/&#123;id&#125;** (listSellerOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/top-sellers** (listTopSellers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/top-wishlisted** (listTopWishlisted; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/offers/upcoming** (listUpcomingOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/multisearch/offers** (multisearchOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 POST /v1/search/natural-language** (naturalLanguageSearch; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/free-games/search** (searchFreeGames; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/search** (searchOffers; changed; compatible)
+  - Before: Serialized `/v1` Offer objects omitted `expiryDate`.
+  - After: Serialized `/v1` Offer objects include `expiryDate` formatted as a UTC ISO 8601 timestamp or `null`.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/random-game** (getProfileRandomGame; changed; compatible)
+  - Before: Offer documents serialized via generic value normalization left `expiryDate` unnormalized.
+  - After: `expiryDate` is included in `DATE_FIELDS` and normalized to a UTC ISO 8601 timestamp when present on returned offer payloads.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/achievements** (listProfileAchievements; changed; compatible)
+  - Before: Offer documents serialized via generic value normalization left `expiryDate` unnormalized.
+  - After: `expiryDate` is included in `DATE_FIELDS` and normalized to a UTC ISO 8601 timestamp when present on returned offer payloads.
+  - Client action: None
+- **v1 GET /v1/profiles/&#123;id&#125;/rare-achievements** (listProfileRareAchievements; changed; compatible)
+  - Before: Offer documents serialized via generic value normalization left `expiryDate` unnormalized.
+  - After: `expiryDate` is included in `DATE_FIELDS` and normalized to a UTC ISO 8601 timestamp when present on returned offer payloads.
+  - Client action: None
+
+Verification: pnpm openapi:check; pnpm test; cargo test -p egdata-core -p egdata-infra -p egdata-graphql -p egdata-diff --locked; cargo clippy --locked --workspace --all-targets -- -D warnings.
+
 ## 2026-11-18 — Persist owner review changes and include newly saved reviews in public counts
 
 Record: [persist-owner-review-edits](https://github.com/egdata-app/egdata-api/blob/main/changes/records/persist-owner-review-edits.json).
