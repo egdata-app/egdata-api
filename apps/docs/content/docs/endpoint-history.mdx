@@ -35,6 +35,10 @@ Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata
   - Before: Returned `410 Gone` with code `DEPRECATED` and directed clients to `/search/v2/search`.
   - After: Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default; this deprecated handler still returns the same `410 Gone` response.
   - Client action: None
+- **legacy GET /** (legacyGet__c767025d; changed; compatible)
+  - Before: The root endpoint inventory listed `GET /v1/search` and the other mounted v1 routes but not `/v1/search/facets`.
+  - After: The root endpoint inventory includes `GET /v1/search/facets`, matching the mounted route in both origins.
+  - Client action: None
 
 Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
 

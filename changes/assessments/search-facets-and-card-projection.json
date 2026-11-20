@@ -1,6 +1,6 @@
 {
   "baseCommit": "da2244f2819d3fae04ea881c0ad845fbc450b061",
-  "diffHash": "5e590734ca6487e7fa0cc56cabd4ce37361789275a9dc0d0a8f48efd2f4feef8",
+  "diffHash": "cb5ebbc9434739b93509df2e422674629c7551f1c09618821c76e247091c067d",
   "operations": [
     {
       "endpoint": "legacy:autocompleteOffers",
@@ -378,9 +378,11 @@
     },
     {
       "endpoint": "legacy:legacyGet__c767025d",
-      "impact": "none",
-      "reason": "Not part of the search facets or card projection change. Shared Rust query/OpenAPI helpers were edited, but this operation's path, method, parameters, response shape, status codes, serialization, and authentication are unchanged; `cargo test --workspace` and `pnpm openapi:check` pass.",
-      "records": []
+      "impact": "public",
+      "reason": "The root endpoint inventory now lists the mounted `GET /v1/search/facets` route.",
+      "records": [
+        "search-facets-and-card-projection"
+      ]
     },
     {
       "endpoint": "legacy:legacyGet_assets_id__fe67ede6",

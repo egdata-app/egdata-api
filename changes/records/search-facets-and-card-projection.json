@@ -79,6 +79,17 @@
       "before": "Returned `410 Gone` with code `DEPRECATED` and directed clients to `/search/v2/search`.",
       "after": "Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default; this deprecated handler still returns the same `410 Gone` response.",
       "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet__c767025d",
+      "method": "GET",
+      "path": "/",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "The root endpoint inventory listed `GET /v1/search` and the other mounted v1 routes but not `/v1/search/facets`.",
+      "after": "The root endpoint inventory includes `GET /v1/search/facets`, matching the mounted route in both origins.",
+      "clientAction": "None"
     }
   ],
   "verification": [
