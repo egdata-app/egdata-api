@@ -12,6 +12,9 @@ const ACCOUNT_POLICY: &str = "Account closure rejects all account keys, includin
 
 fn data_schema(operation: &V1OperationMetadata) -> Value {
     let id = operation.operation_id.to_lowercase();
+    if operation.operation_id == "searchOfferFacets" {
+        return json!({"type": "object", "additionalProperties": true});
+    }
     let resource = if id.contains("offer") || (id.contains("search") && !id.contains("changelog")) {
         Some("Offer")
     } else if id.contains("item") {
@@ -58,6 +61,12 @@ fn success_response(operation: &V1OperationMetadata) -> Value {
             if operation.operation_id == "searchOffers" {
                 meta["properties"]["facets"] =
                     json!({"type": "object", "additionalProperties": true});
+                meta["properties"]["result"] =
+                    json!({"type": "object", "additionalProperties": true});
+            }
+            if operation.operation_id == "searchOfferFacets" {
+                meta["properties"]["sections"] =
+                    json!({"type": "array", "items": {"type": "string"}});
                 meta["properties"]["result"] =
                     json!({"type": "object", "additionalProperties": true});
             }
@@ -273,7 +282,7 @@ mod tests {
         let expected = serde_json::from_str(CANONICAL_V1).unwrap();
         let differences = contract_differences(&expected, &build_v1_document());
         assert!(differences.is_empty(), "{}", differences.join("\n"));
-        assert_eq!(v1_operations().len(), 154);
+        assert_eq!(v1_operations().len(), 155);
         let expected_bytes = serde_json::to_vec(&expected).unwrap();
         let actual_bytes = serde_json::to_vec(&build_v1_document()).unwrap();
         assert!(

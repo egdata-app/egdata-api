@@ -9,7 +9,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+          "key": "search:v2:f5130baf368708e4652cab212435c0dcd7a4b3040307ee87ab27d5fa361df2c5:locale:en-US"
         },
         "result": null
       },
@@ -33,50 +33,7 @@
                   "order": "desc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -125,7 +82,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US",
+          "key": "search:v2:f5130baf368708e4652cab212435c0dcd7a4b3040307ee87ab27d5fa361df2c5:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -150,16 +107,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -177,7 +125,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -203,16 +151,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -626,7 +565,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:f0f04c5fb2e6229470e257dffb1f90b573ae3d1f8b648384ab3aa913122721a2:locale:en-US"
+          "key": "search:v2:a973633e68fa9d5850c95eb0c51d97a01a8ea47bee7dbeb696e49d9ec035dc2e:locale:en-US"
         },
         "result": null
       },
@@ -702,50 +641,7 @@
                   "order": "asc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -794,7 +690,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:f0f04c5fb2e6229470e257dffb1f90b573ae3d1f8b648384ab3aa913122721a2:locale:en-US",
+          "key": "search:v2:a973633e68fa9d5850c95eb0c51d97a01a8ea47bee7dbeb696e49d9ec035dc2e:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -819,16 +715,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -846,7 +733,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -872,16 +759,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -900,7 +778,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:3eac256a42ef598cfe4ccbc47d1e213f40fa238e211b30772a57ffa415366a2d:locale:en-US"
+          "key": "search:v2:4c3f160b049987920cf046809ea94d58e44bad79dbbff1c66a9bb00cdc04bae0:locale:en-US"
         },
         "result": null
       },
@@ -932,50 +810,7 @@
                   "order": "asc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -1024,7 +859,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:3eac256a42ef598cfe4ccbc47d1e213f40fa238e211b30772a57ffa415366a2d:locale:en-US",
+          "key": "search:v2:4c3f160b049987920cf046809ea94d58e44bad79dbbff1c66a9bb00cdc04bae0:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -1049,16 +884,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -1076,7 +902,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -1102,16 +928,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -1130,7 +947,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:96b0d75d2ae9b3beb80231ad7a4167742594cf25c225254627a7a70343f0dbf6:locale:en-US"
+          "key": "search:v2:dfc529a93df23e88b62f182007365a8c59eee87a320f9b644e2016181db59267:locale:en-US"
         },
         "result": null
       },
@@ -1165,50 +982,7 @@
                   "order": "desc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -1257,7 +1031,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:96b0d75d2ae9b3beb80231ad7a4167742594cf25c225254627a7a70343f0dbf6:locale:en-US",
+          "key": "search:v2:dfc529a93df23e88b62f182007365a8c59eee87a320f9b644e2016181db59267:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -1282,16 +1056,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -1309,7 +1074,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -1335,16 +1100,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -1363,7 +1119,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:de7c913e27b04e163bf909ec0ad40d1c608b7557c3bc7510f7045125b79f5c31:locale:en-US"
+          "key": "search:v2:c26d9860da4391c4ce33426399fa7a6b1029082d27cddd57de400022ae6c62b0:locale:en-US"
         },
         "result": null
       },
@@ -1421,50 +1177,7 @@
                   "order": "desc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -1513,7 +1226,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:de7c913e27b04e163bf909ec0ad40d1c608b7557c3bc7510f7045125b79f5c31:locale:en-US",
+          "key": "search:v2:c26d9860da4391c4ce33426399fa7a6b1029082d27cddd57de400022ae6c62b0:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -1538,16 +1251,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -1565,7 +1269,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -1591,16 +1295,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -1619,7 +1314,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:37f8df9987c84bc937e76161499e1806cd46c88736876efa5578f373a1330dfe:locale:en-US"
+          "key": "search:v2:6dd9f99dbfc525455b357ef5f507c3a7c78380f7e83bb20dc133f13851485276:locale:en-US"
         },
         "result": null
       },
@@ -1652,50 +1347,7 @@
                   "order": "desc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "result": {
@@ -1744,7 +1396,7 @@
       {
         "call": {
           "method": "set",
-          "key": "search:v2:37f8df9987c84bc937e76161499e1806cd46c88736876efa5578f373a1330dfe:locale:en-US",
+          "key": "search:v2:6dd9f99dbfc525455b357ef5f507c3a7c78380f7e83bb20dc133f13851485276:locale:en-US",
           "payload": {
             "total": 1,
             "offers": [
@@ -1769,16 +1421,7 @@
             ],
             "page": 1,
             "limit": 10,
-            "aggregations": {
-              "offerType": {
-                "buckets": []
-              },
-              "tags": {
-                "buckets": [
-                  "t"
-                ]
-              }
-            },
+            "aggregations": {},
             "meta": {
               "ms": 3,
               "timed_out": false,
@@ -1796,7 +1439,7 @@
         "content-type": "application/json",
         "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
         "cdn-cache-control": "public, max-age=300, stale-while-revalidate=3600",
-        "etag": "\"9361c6327d03d5401edfbfc8235b5dc99365c006\""
+        "etag": "\"308ad1c08de022f9cd53205cc01bdff318cf9ae4\""
       },
       "body": {
         "total": 1,
@@ -1822,16 +1465,7 @@
         ],
         "page": 1,
         "limit": 10,
-        "aggregations": {
-          "offerType": {
-            "buckets": []
-          },
-          "tags": {
-            "buckets": [
-              "t"
-            ]
-          }
-        },
+        "aggregations": {},
         "meta": {
           "ms": 3,
           "timed_out": false,
@@ -1850,7 +1484,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+          "key": "search:v2:f5130baf368708e4652cab212435c0dcd7a4b3040307ee87ab27d5fa361df2c5:locale:en-US"
         },
         "result": {
           "total": 2,
@@ -2059,7 +1693,7 @@
       {
         "call": {
           "method": "get",
-          "key": "search:v2:590ef44979864ec7dbdf2960755691d03639148bbdaf1b04b2f0db7718ff7c96:locale:en-US"
+          "key": "search:v2:f5130baf368708e4652cab212435c0dcd7a4b3040307ee87ab27d5fa361df2c5:locale:en-US"
         },
         "result": null
       },
@@ -2083,50 +1717,7 @@
                   "order": "desc"
                 }
               }
-            ],
-            "aggregations": {
-              "offerType": {
-                "terms": {
-                  "field": "offerType.keyword",
-                  "size": 100
-                }
-              },
-              "technologies": {
-                "terms": {
-                  "field": "lastBuilds.technologies.technology.keyword",
-                  "size": 10000
-                }
-              },
-              "price_stats": {
-                "stats": {
-                  "field": "prices.US.price.discountPrice"
-                }
-              },
-              "tags": {
-                "terms": {
-                  "field": "tags.name.keyword",
-                  "size": 10000
-                }
-              },
-              "developer": {
-                "terms": {
-                  "field": "developerDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "publisher": {
-                "terms": {
-                  "field": "publisherDisplayName.keyword",
-                  "size": 1000
-                }
-              },
-              "seller": {
-                "terms": {
-                  "field": "seller.name.keyword",
-                  "size": 1000
-                }
-              }
-            }
+            ]
           }
         },
         "error": true

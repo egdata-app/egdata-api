@@ -5,6 +5,17 @@ description: History for POST /v1/search
 
 `POST /v1/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **v1 POST /v1/search** (searchOffersRedirect; changed; compatible)
+  - Before: Validated the JSON filter object and redirected to the equivalent `GET /v1/search` URL without a fields projection option.
+  - After: Accepts an optional `fields` value (`full` or `card`), rejects other values with `400 INVALID_BODY`, and forwards the value in the `Location` query string.
+  - Client action: None
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

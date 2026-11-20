@@ -566,6 +566,15 @@ export const generatedV1Routes: GeneratedV1Route[] = [
     "expensive": "search"
   },
   {
+    "operationId": "searchOfferFacets",
+    "path": "/v1/search/facets",
+    "methods": [
+      "GET"
+    ],
+    "scope": "search:read",
+    "expensive": "search"
+  },
+  {
     "operationId": "searchOffersRedirect",
     "path": "/v1/search",
     "methods": [

@@ -472,6 +472,7 @@ const NODE_ENDPOINTS: &[(&str, &str)] = &[
     ("GET", "/v1/search/:id/count"),
     ("GET", "/v1/search/changelog"),
     ("GET", "/v1/search/developers"),
+    ("GET", "/v1/search/facets"),
     ("POST", "/v1/search/natural-language"),
     ("GET", "/v1/search/offer-types"),
     ("GET", "/v1/search/publishers"),

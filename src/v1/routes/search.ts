@@ -35,7 +35,7 @@ import {
 } from "../query.js";
 import type { V1Variables } from "../request-context.js";
 import { jsonSuccess } from "../response.js";
-import { serializeOffer, serializeValue } from "../serialization.js";
+import { serializeOffer, serializeValue, toOfferCard } from "../serialization.js";
 
 const app = new Hono<{ Variables: V1Variables }>();
 
@@ -72,6 +72,7 @@ type SearchInput = {
   sortBy?: string;
   sortDir?: "asc" | "desc";
   facets: FacetMode;
+  fields?: "full" | "card";
   limit: number;
   country: string;
   region: string;
@@ -119,6 +120,7 @@ const searchShape = {
   sortBy: z.string().optional(),
   sortDir: z.enum(["asc", "desc"]).optional(),
   facets: z.enum(["full", "minimal", "none"]).optional(),
+  fields: z.enum(["full", "card"]).optional(),
   country: z.string().optional(),
   locale: z.string().optional(),
   limit: z.string().optional(),
@@ -173,7 +175,8 @@ function parseSearchInput(
     ),
     sortBy: query.sortBy,
     sortDir: query.sortDir,
-    facets: query.facets ?? "full",
+    facets: query.facets ?? "none",
+    fields: query.fields ?? "full",
     limit,
     country,
     region,
@@ -506,6 +509,7 @@ async function runSearch(input: SearchInput) {
     filters: normalizedFilters(input),
     ordering: binding.ordering,
     facets: input.facets,
+    fields: input.fields,
   });
 
   return cached(cacheKey, 60, async () => {
@@ -558,9 +562,10 @@ async function runSearch(input: SearchInput) {
     const lastHit = items.at(-1);
     const lastSort = lastHit?.sort;
     return {
-      offers: localized.map((offer) =>
-        serializeOffer(offer, { price: offer.price }),
-      ),
+      offers: localized.map((offer) => {
+        const serialized = serializeOffer(offer, { price: offer.price });
+        return input.fields === "card" ? toOfferCard(serialized) : serialized;
+      }),
       pagination: pageMeta(
         input.limit,
         hasMore,
@@ -591,6 +596,231 @@ app.get("/search", async (c) => {
   });
 });
 
+const FACET_SECTION_CHOICES = new Set([
+  "offerType",
+  "tags",
+  "technologies",
+  "developer",
+  "publisher",
+  "seller",
+  "price",
+  "all",
+]);
+
+const ALL_FACET_SECTIONS = [
+  "offerType",
+  "tags",
+  "technologies",
+  "developer",
+  "publisher",
+  "seller",
+  "price",
+] as const;
+
+const searchFacetsShape = {
+  title: z.string().max(500).optional(),
+  offerType: z.string().max(80).optional(),
+  tags: z.string().optional(),
+  categories: z.string().optional(),
+  customAttributes: z.string().optional(),
+  technologies: z.string().optional(),
+  seller: z.string().max(200).optional(),
+  developerDisplayName: z.string().max(300).optional(),
+  publisherDisplayName: z.string().max(300).optional(),
+  refundType: z.string().max(80).optional(),
+  isCodeRedemptionOnly: z.string().optional(),
+  excludeBlockchain: z.string().optional(),
+  onSale: z.string().optional(),
+  pastGiveaways: z.string().optional(),
+  isLowestPrice: z.string().optional(),
+  isLowestPriceEver: z.string().optional(),
+  priceMin: z.string().optional(),
+  priceMax: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortDir: z.enum(["asc", "desc"]).optional(),
+  facets: z.string().optional(),
+  country: z.string().optional(),
+  locale: z.string().optional(),
+};
+
+function parseFacetSections(raw: string | undefined): string[] {
+  const entries = parseCsv(raw);
+  if (!entries || entries.length === 0) {
+    return [...ALL_FACET_SECTIONS];
+  }
+  if (entries.some((entry) => !FACET_SECTION_CHOICES.has(entry))) {
+    const options = Array.from(FACET_SECTION_CHOICES)
+      .map((v) => `\`${v}\``)
+      .join(", ");
+    throw badRequest(
+      "INVALID_QUERY",
+      `Unsupported \`facets\` section. Expected one or more of ${options}.`,
+    );
+  }
+  if (entries.includes("all")) {
+    return [...ALL_FACET_SECTIONS];
+  }
+  return entries;
+}
+
+function buildFacetSectionAggregations(
+  sections: string[],
+  region: string,
+): Record<string, unknown> {
+  const aggregations: Record<string, unknown> = {};
+  for (const section of sections) {
+    switch (section) {
+      case "offerType":
+        aggregations.offerType = {
+          terms: { field: "offerType.keyword", size: 100 },
+        };
+        break;
+      case "technologies":
+        aggregations.technologies = {
+          terms: { field: TECHNOLOGY_FIELD, size: 10_000 },
+        };
+        break;
+      case "price":
+        aggregations.priceStats = {
+          stats: { field: `prices.${region}.price.discountPrice` },
+        };
+        break;
+      case "tags":
+        aggregations.tags = {
+          terms: { field: "tags.name.keyword", size: 10_000 },
+        };
+        break;
+      case "developer":
+        aggregations.developer = {
+          terms: { field: "developerDisplayName.keyword", size: 1_000 },
+        };
+        break;
+      case "publisher":
+        aggregations.publisher = {
+          terms: { field: "publisherDisplayName.keyword", size: 1_000 },
+        };
+        break;
+      case "seller":
+        aggregations.seller = {
+          terms: { field: "seller.name.keyword", size: 1_000 },
+        };
+        break;
+    }
+  }
+  return aggregations;
+}
+
+app.get("/search/facets", async (c) => {
+  const query = parseStrictQuery(c, searchFacetsShape);
+  const { country, region, locale } = regionalParams(query);
+  const priceMin = parseInteger(query.priceMin, "priceMin", { min: 0 });
+  const priceMax = parseInteger(query.priceMax, "priceMax", { min: 0 });
+  if (priceMin !== undefined && priceMax !== undefined && priceMin > priceMax) {
+    throw badRequest(
+      "INVALID_QUERY",
+      "`priceMin` cannot be greater than `priceMax`.",
+    );
+  }
+  if (query.sortBy && !SEARCH_SORT_FIELDS.has(query.sortBy)) {
+    throw badRequest(
+      "INVALID_QUERY",
+      `Unsupported \`sortBy\` value '${query.sortBy}'.`,
+    );
+  }
+  const sections = parseFacetSections(query.facets);
+  const input: SearchInput = {
+    title: query.title?.trim() || undefined,
+    offerType: query.offerType?.trim() || undefined,
+    tags: parseCsv(query.tags),
+    categories: parseCsv(query.categories),
+    customAttributes: parseCsv(query.customAttributes),
+    technologies: parseCsv(query.technologies),
+    seller: query.seller?.trim() || undefined,
+    developerDisplayName: query.developerDisplayName?.trim() || undefined,
+    publisherDisplayName: query.publisherDisplayName?.trim() || undefined,
+    refundType: query.refundType?.trim() || undefined,
+    isCodeRedemptionOnly: parseBoolean(
+      query.isCodeRedemptionOnly,
+      "isCodeRedemptionOnly",
+    ),
+    excludeBlockchain: parseBoolean(
+      query.excludeBlockchain,
+      "excludeBlockchain",
+    ),
+    onSale: parseBoolean(query.onSale, "onSale"),
+    pastGiveaways: parseBoolean(query.pastGiveaways, "pastGiveaways"),
+    isLowestPrice: parseBoolean(query.isLowestPrice, "isLowestPrice"),
+    isLowestPriceEver: parseBoolean(
+      query.isLowestPriceEver,
+      "isLowestPriceEver",
+    ),
+    sortBy: query.sortBy,
+    sortDir: query.sortDir,
+    facets: "none",
+    limit: 20,
+    country,
+    region,
+    locale,
+    cursor: null,
+    ...(priceMin !== undefined || priceMax !== undefined
+      ? {
+          price: {
+            ...(priceMin !== undefined ? { min: priceMin } : {}),
+            ...(priceMax !== undefined ? { max: priceMax } : {}),
+          },
+        }
+      : {}),
+  };
+  const { must, filter } = buildQuery(input);
+  const ordering = orderingFor(input);
+  const aggregations = buildFacetSectionAggregations(sections, region);
+  const cacheKey = v1CacheKey("search.facets", {
+    region,
+    locale,
+    filters: normalizedFilters(input),
+    ordering,
+    sections,
+  });
+
+  const result = await cached(cacheKey, 60, async () => {
+    let response: any;
+    try {
+      response = await searchOpenSearch({
+        index: "egdata.offers",
+        body: {
+          size: 0,
+          track_total_hits: false,
+          query: { bool: { must, filter } },
+          aggregations,
+        },
+      });
+    } catch {
+      throw new ProblemError({
+        status: 503,
+        code: "SEARCH_UNAVAILABLE",
+        detail:
+          "Offer search is temporarily unavailable. Please retry shortly.",
+        headers: { "Retry-After": "1" },
+      });
+    }
+    return {
+      facets: serializeValue(response.body.aggregations ?? {}),
+      result: {
+        tookMs: response.body.took ?? 0,
+        timedOut: Boolean(response.body.timed_out),
+      },
+    };
+  });
+
+  return jsonSuccess(c, result.facets, {
+    country,
+    region,
+    locale,
+    sections,
+    result: result.result,
+  });
+});
+
 const searchRedirectSchema = z
   .object({
     title: z.string().max(500).optional(),
@@ -612,6 +842,7 @@ const searchRedirectSchema = z
     sortBy: z.string().max(80).optional(),
     sortDir: z.enum(["asc", "desc"]).optional(),
     facets: z.enum(["full", "minimal", "none"]).optional(),
+    fields: z.enum(["full", "card"]).optional(),
     price: z
       .object({
         min: z.number().int().min(0).optional(),
@@ -694,6 +925,7 @@ app.post("/search", async (c) => {
   if (input.sortBy) params.set("sortBy", input.sortBy);
   if (input.sortDir) params.set("sortDir", input.sortDir);
   if (input.facets) params.set("facets", input.facets);
+  if (input.fields) params.set("fields", input.fields);
   if (input.limit !== undefined) params.set("limit", String(input.limit));
   params.set("country", canonicalCountry(input.country));
   params.set("locale", canonicalLocale(input.locale));

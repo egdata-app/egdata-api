@@ -3678,6 +3678,18 @@
     },
     {
       "apiVersion": "v1",
+      "operationId": "searchOfferFacets",
+      "method": "GET",
+      "path": "/v1/search/facets",
+      "sources": [
+        "src/v1/operations/search.ts",
+        "src/v1/routes/search.ts",
+        "rust/crates/egdata-routes-v1/src/search.rs"
+      ],
+      "status": "active"
+    },
+    {
+      "apiVersion": "v1",
       "operationId": "searchOffers",
       "method": "GET",
       "path": "/v1/search",
@@ -3702,6 +3714,114 @@
     }
   ],
   "records": [
+    {
+      "record": {
+        "id": "search-facets-and-card-projection",
+        "recordedDate": "2026-11-20",
+        "title": "Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection",
+        "endpoints": [
+          {
+            "apiVersion": "v1",
+            "operationId": "searchOffers",
+            "method": "GET",
+            "path": "/v1/search",
+            "type": "changed",
+            "compatibility": "breaking",
+            "before": "`facets` defaulted to `full`, so every response embedded offer type, technology, tag, developer, publisher, and seller aggregations plus price statistics in `meta.facets`, even when the client did not render filters. Offers always returned the complete documented offer document.",
+            "after": "`facets` defaults to `none`, so `meta.facets` is `{}` unless the client passes `facets=full` or `facets=minimal`. Adds optional `fields=card`, which returns only the audited fields rendered by egdata.app offer cards (`id`, `namespace`, `title`, `offerType`, `keyImages`, `seller`, `tags`, `developerDisplayName`, `publisherDisplayName`, `prePurchase`, `releaseDate`, `price`, and locale metadata); `fields=full` remains the default and keeps the complete offer document.",
+            "clientAction": "Clients that read `meta.facets` must pass `facets=full` (or `minimal`) or load sections from `GET /v1/search/facets`. Clients that only render offers need no change."
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "searchOfferFacets",
+            "method": "GET",
+            "path": "/v1/search/facets",
+            "type": "added",
+            "compatibility": "compatible",
+            "before": "No dedicated facet endpoint existed; aggregations were only available alongside a page of offer hits from `GET /v1/search`.",
+            "after": "New `GET /v1/search/facets` accepts the same filters as `GET /v1/search` without pagination plus a comma-separated `facets` section list (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`; default `all`). It executes an OpenSearch aggregation query with `size: 0` and `track_total_hits: false`, returns the requested aggregation body as `data`, and returns `meta.sections` plus `meta.result`. The `price` section returns `priceStats` with `count`, `min`, `max`, `avg`, and `sum`. Invalid sections, pagination parameters, inverted price ranges, and unsupported sorts return `400`.",
+            "clientAction": "Call once per filter section (for example `facets=tags`) when the section is opened instead of requesting all facets with the result list."
+          },
+          {
+            "apiVersion": "v1",
+            "operationId": "searchOffersRedirect",
+            "method": "POST",
+            "path": "/v1/search",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Validated the JSON filter object and redirected to the equivalent `GET /v1/search` URL without a fields projection option.",
+            "after": "Accepts an optional `fields` value (`full` or `card`), rejects other values with `400 INVALID_BODY`, and forwards the value in the `Location` query string.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersV2Get",
+            "method": "GET",
+            "path": "/search/v2/search",
+            "type": "changed",
+            "compatibility": "breaking",
+            "before": "`facets` defaulted to `full`; responses embedded `offerType`, `technologies`, `price_stats`, and full-mode tag, developer, publisher, and seller aggregations.",
+            "after": "`facets` defaults to `none`; the `aggregations` request is omitted and the response `aggregations` object is empty unless the client passes `facets=full` or `facets=minimal`. All other legacy v2 behavior is unchanged.",
+            "clientAction": "Pass `facets=full` or `facets=minimal` to restore aggregations."
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersV2",
+            "method": "POST",
+            "path": "/search/v2/search",
+            "type": "changed",
+            "compatibility": "breaking",
+            "before": "Omitted `facets` defaulted to `full`; the redirected GET and its response included all full-mode aggregations.",
+            "after": "Omitted `facets` defaults to `none`; the redirected GET omits the `aggregations` request and the response `aggregations` object is empty unless `facets=full` or `facets=minimal` is supplied. All other legacy v2 behavior is unchanged.",
+            "clientAction": "Send `facets=full` or `facets=minimal` to restore aggregations."
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "getSavedSearchQuery",
+            "method": "GET",
+            "path": "/search/{id}",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Returned a stored search response from the `search:v2:*` cache payload.",
+            "after": "Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default, but this handler, its cache key format, and its serialization are untouched.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersLegacy",
+            "method": "POST",
+            "path": "/search",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Returned `410 Gone` with code `DEPRECATED` and directed clients to `/search/v2/search`.",
+            "after": "Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default; this deprecated handler still returns the same `410 Gone` response.",
+            "clientAction": "None"
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "legacyGet__c767025d",
+            "method": "GET",
+            "path": "/",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "The root endpoint inventory listed `GET /v1/search` and the other mounted v1 routes but not `/v1/search/facets`.",
+            "after": "The root endpoint inventory includes `GET /v1/search/facets`, matching the mounted route in both origins.",
+            "clientAction": "None"
+          }
+        ],
+        "verification": [
+          "tests/search-route.test.ts",
+          "tests/rust-search-oracle.test.ts",
+          "cargo test -p egdata-routes-v1 search::",
+          "cargo test -p egdata-routes-legacy",
+          "cargo test -p egdata-openapi",
+          "pnpm openapi:check",
+          "pnpm docs:check"
+        ]
+      },
+      "contentHash": "9d3562a824c3a046993b34e240876229d9709c2fd08ef6c0126d0a974f0673ce",
+      "source": "changes/records/search-facets-and-card-projection.json"
+    },
     {
       "record": {
         "id": "v1-profile-filters-and-offer-expiry",

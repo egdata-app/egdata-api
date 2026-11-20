@@ -120,7 +120,7 @@ const deprecatedSearchResponse = (c: Context) =>
   c.json(LEGACY_SEARCH_ERROR, 410, { "Cache-Control": "no-store" });
 
 const normalizeFacetMode = (value: unknown): FacetMode =>
-  value === "minimal" || value === "none" ? value : "full";
+  value === "full" || value === "minimal" ? value : "none";
 
 const buildSearchAggregations = (
   facets: FacetMode,

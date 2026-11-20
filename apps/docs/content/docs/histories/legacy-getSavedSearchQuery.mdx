@@ -5,6 +5,17 @@ description: History for GET /search/{id}
 
 `GET /search/{id}` — active. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **legacy GET /search/&#123;id&#125;** (getSavedSearchQuery; changed; compatible)
+  - Before: Returned a stored search response from the `search:v2:*` cache payload.
+  - After: Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default, but this handler, its cache key format, and its serialization are untouched.
+  - Client action: None
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

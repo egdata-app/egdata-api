@@ -103,7 +103,7 @@ const searchBodySchema = (
     facets: {
       type: "string",
       enum: ["minimal", "full", "none"],
-      default: "full",
+      default: "none",
       description:
         "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations.",
     },
@@ -179,7 +179,7 @@ export const commonParameters = {
     schema: {
       type: "string",
       enum: ["minimal", "full", "none"],
-      default: "full",
+      default: "none",
     },
   },
   offerId: {

@@ -23786,7 +23786,7 @@
             "full",
             "none"
           ],
-          "default": "full"
+          "default": "none"
         }
       },
       "offerId": {
@@ -25499,7 +25499,7 @@
               "full",
               "none"
             ],
-            "default": "full",
+            "default": "none",
             "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           }
         }
@@ -25620,7 +25620,7 @@
               "full",
               "none"
             ],
-            "default": "full",
+            "default": "none",
             "description": "Facet detail. `minimal` keeps offer type and technology buckets, `full` adds tag/developer/publisher/seller buckets, `none` omits aggregations."
           },
           "technologies": {

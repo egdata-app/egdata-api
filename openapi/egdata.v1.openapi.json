@@ -7764,6 +7764,20 @@
                 "minimal",
                 "none"
               ],
+              "default": "none"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "description": "Offer projection. `card` returns only the fields rendered by egdata.app search cards; `full` keeps the complete offer document.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full",
+                "card"
+              ],
               "default": "full"
             }
           },
@@ -7999,6 +8013,14 @@
                       "none"
                     ]
                   },
+                  "fields": {
+                    "type": "string",
+                    "enum": [
+                      "full",
+                      "card"
+                    ],
+                    "default": "full"
+                  },
                   "price": {
                     "type": "object",
                     "additionalProperties": false,
@@ -8087,6 +8109,336 @@
         "x-egdata-legacy-paths": [
           "/search/v2/search"
         ]
+      }
+    },
+    "/v1/search/facets": {
+      "get": {
+        "operationId": "searchOfferFacets",
+        "summary": "Get offer search facet aggregations",
+        "description": "Computes OpenSearch facet aggregations for the current offer search filters without fetching offer hits (`size: 0`). Pass `facets` as a comma-separated list of sections (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`) to load individual filter sections asynchronously.\n\nAccount closure rejects all account keys, including warm credential caches, with 401 INVALID_API_KEY before quota or cache access. Failure to verify credential/account status returns uncacheable 503 ACCOUNT_STATUS_UNAVAILABLE with Retry-After: 30. Initial email/terms onboarding gates the dashboard and existing/new console sessions: 403 EMAIL_VERIFICATION_REQUIRED until email is verified, then 403 AGREEMENT_REQUIRED until the current terms edition is accepted. Existing API keys keep working even after a dashboard visit. Privacy notices do not require acceptance.",
+        "tags": [
+          "Search"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "description": "Free-text title, developer, publisher, tag, or description query.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offerType",
+            "in": "query",
+            "required": false,
+            "description": "Exact Epic offer type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated tag IDs (all must match).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated categories (any must match).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customAttributes",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated custom attribute values.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "technologies",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated build technologies.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "seller",
+            "in": "query",
+            "required": false,
+            "description": "Seller ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "developerDisplayName",
+            "in": "query",
+            "required": false,
+            "description": "Exact developer display name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "publisherDisplayName",
+            "in": "query",
+            "required": false,
+            "description": "Exact publisher display name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "refundType",
+            "in": "query",
+            "required": false,
+            "description": "Exact refund type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isCodeRedemptionOnly",
+            "in": "query",
+            "required": false,
+            "description": "Filter code-redemption-only offers.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "excludeBlockchain",
+            "in": "query",
+            "required": false,
+            "description": "Exclude blockchain offers.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onSale",
+            "in": "query",
+            "required": false,
+            "description": "Only discounted offers.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "pastGiveaways",
+            "in": "query",
+            "required": false,
+            "description": "Only offers with giveaway history.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isLowestPrice",
+            "in": "query",
+            "required": false,
+            "description": "Only offers at their lowest observed US price.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isLowestPriceEver",
+            "in": "query",
+            "required": false,
+            "description": "Only offers at their historical lowest US price.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "priceMin",
+            "in": "query",
+            "required": false,
+            "description": "Minimum discount price in minor units.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "priceMax",
+            "in": "query",
+            "required": false,
+            "description": "Maximum discount price in minor units.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "description": "Primary sort field.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "releaseDate",
+                "lastModifiedDate",
+                "effectiveDate",
+                "creationDate",
+                "viewableDate",
+                "pcReleaseDate",
+                "upcoming",
+                "priceAsc",
+                "priceDesc",
+                "price",
+                "discount",
+                "discountPercent",
+                "priceUpdatedAt",
+                "giveawayDate"
+              ]
+            }
+          },
+          {
+            "name": "sortDir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "name": "facets",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated facet sections to compute (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, `all`). Defaults to `all`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "description": "ISO 3166-1 alpha-2 pricing country. Defaults to US; cookies are never used.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$",
+              "default": "US"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "required": false,
+            "description": "BCP 47 locale for localized text. Defaults to en-US; cookies are never used.",
+            "schema": {
+              "type": "string",
+              "default": "en-US"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "properties": {
+                        "sections": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "result": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "405": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "413": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "504": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "x-egdata-visibility": "public",
+        "x-egdata-scope": "search:read",
+        "x-egdata-quota-scope": "project",
+        "x-egdata-quota-policy": "search"
       }
     },
     "/v1/search/tags": {

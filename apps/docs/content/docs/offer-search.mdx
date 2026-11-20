@@ -3,9 +3,9 @@ title: Find games
 description: Search the catalog, combine filters, and order results.
 ---
 
-Use `GET /search/v2/search` to find store offers by title and filter them by offer type, tags, seller, developer, publisher, category, detected technology, or regional price. Send the visitor's two-letter country code as `country` so price filters and returned prices use the right region. GET defaults to `US` and does not read the country cookie, keeping each URL safe to share and cache.
+Use `GET /v1/search` to find store offers by title and filter them by offer type, tags, seller, developer, publisher, category, detected technology, or regional price. Send the visitor's two-letter country code as `country` so price filters and returned prices use the right region. GET defaults to `US` and does not read the country cookie, keeping each URL safe to share and cache.
 
-Filters are flat query parameters: `title`, `offerType`, `tags`, `categories`, `customAttributes`, `seller`, `developerDisplayName`, `publisherDisplayName`, `refundType`, `sortBy`, `sortDir`, `limit`, `page`, `facets`, `technologies`, `priceMin`, `priceMax`, and the boolean filters (`isCodeRedemptionOnly`, `excludeBlockchain`, `onSale`, `pastGiveaways`, `isLowestPrice`, `isLowestPriceEver`). Boolean query values accept `true`/`false` or `1`/`0`. Lists use commas; for values containing literal commas, use repeated bracketed parameters such as `technologies[]=Engine%2C%20Inc.`. Bracketed parameters take precedence over CSV values.
+Filters are flat query parameters: `title`, `offerType`, `tags`, `categories`, `customAttributes`, `seller`, `developerDisplayName`, `publisherDisplayName`, `refundType`, `sortBy`, `sortDir`, `limit`, `cursor`, `facets`, `fields`, `technologies`, `priceMin`, `priceMax`, and the boolean filters (`isCodeRedemptionOnly`, `excludeBlockchain`, `onSale`, `pastGiveaways`, `isLowestPrice`, `isLowestPriceEver`). Boolean query values accept `true`/`false` or `1`/`0`. Lists use commas; for values containing literal commas, use repeated bracketed parameters such as `technologies[]=Engine%2C%20Inc.`. Bracketed parameters take precedence over CSV values.
 
 ```js
 const params = new URLSearchParams({
@@ -16,43 +16,68 @@ const params = new URLSearchParams({
   onSale: "true",
   sortBy: "discountPercent",
   sortDir: "desc",
+  facets: "none",
+  fields: "card",
   limit: "20",
 });
-const response = await fetch(
-  `https://api.egdata.app/search/v2/search?${params}`,
-);
-const result = await response.json();
+const response = await fetch(`https://api.egdata.app/v1/search?${params}`);
+const { data: offers, meta } = await response.json();
 ```
 
-Successful GET responses are cacheable for 60 seconds in browsers and 300 seconds at the CDN, with stale-while-revalidate. The CDN must have a cache rule that enables JSON caching and includes the full query string in its cache key.
+Successful GET responses are cacheable for 60 seconds. The CDN must have a cache rule that enables JSON caching and includes the full query string in its cache key.
 
-`POST /search/v2/search` remains as a compatibility endpoint. It validates the JSON filter object and returns **303 See Other** with an empty body and a relative GET URL in `Location`. Standard `fetch` follows this redirect automatically using GET; clients with redirect following disabled must follow `Location` themselves. Prefer calling GET directly to avoid the extra request. POST redirects use `Cache-Control: no-store` and do not execute a search or access the response cache.
+`POST /v1/search` is read-only and returns **303 See Other** with an empty body and an absolute GET URL in `Location`. Standard `fetch` follows this redirect automatically using GET; clients with redirect following disabled must follow `Location` themselves. Prefer calling GET directly to avoid the extra request. POST redirects use `Cache-Control: no-store` and do not execute a search or access the response cache. The legacy `/search` routes return `410 Gone`.
 
-Sanitization removes unknown fields, trims strings, deduplicates and sorts lists, and normalizes integer pagination (`page` at least 1; `limit` between 1 and 100). Default pagination/facet/sort-direction values are omitted from redirect URLs. POST uses typed JSON booleans/numbers/arrays, with nested `price: { min, max }` converted to `priceMin`/`priceMax`. Invalid JSON, wrong filter types, fractional pagination, invalid sort options, or empty list entries return `400`. Unknown facet modes use `full`. The legacy `spt` field has no effect and is discarded.
+Sanitization trims strings, deduplicates and sorts lists, and validates integer pagination (`limit` between 1 and 100). Invalid filter types, fractional pagination, invalid sort options, or empty list entries return `400`.
 
-POST preserves `country`, `locale`, and `expand` from the query string. When country is absent, it resolves `EGDATA_COUNTRY` (or `US`) into an explicit URL parameter; unknown countries fall back to `US`. Unknown query parameters are discarded. Filter values come from the JSON body.
+The response contains a total count, matching offers, cursor pagination, optional facet aggregations, and timing metadata. Use `nextCursor` from `meta.pagination` as the `cursor` parameter to fetch the next page.
 
-The response contains a total count, matching offers, the requested page and limit, facet aggregations, and metadata. `offers` contains full offer documents, including tags, items, custom attributes, and the complete key image set.
+## Facets
 
-Facets are controlled with `facets`:
+Search is optimized for results, not for filter UIs. Facet aggregations are controlled with `facets`:
 
-- `full` (default) returns offer type, technology, tag, developer, publisher, and seller buckets.
-- `minimal` returns offer type and technology buckets only.
-- `none` omits aggregations entirely.
+- `none` (default) omits aggregations entirely.
+- `minimal` returns offer type and technology buckets.
+- `full` returns offer type, technology, tag, developer, publisher, and seller buckets plus price statistics.
+
+Prefer `GET /v1/search/facets` to load filter panels asynchronously. It accepts the same filters as `/v1/search` (without pagination) plus a comma-separated `facets` section list: `offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`. It returns only the requested aggregations with `size: 0` hits:
+
+```js
+const facets = await fetch(
+  "https://api.egdata.app/v1/search/facets?country=US&title=co-op&facets=tags,price",
+).then((response) => response.json());
+```
+
+Loading one section per accordion keeps the initial search response small and only pays for the filters the visitor opens. `price` returns `priceStats` with `count`, `min`, `max`, `avg`, and `sum` for the price slider.
+
+## Offer payload size
+
+`fields=full` (default) returns complete offer documents, including `description`, `longDescription`, `offerMappings`, `items`, `categories`, country lists, and the complete key image set.
+
+`fields=card` returns only the fields needed to render offer cards: `id`, `namespace`, `title`, `offerType`, `keyImages`, `seller`, `tags`, `developerDisplayName`, `publisherDisplayName`, `prePurchase`, `releaseDate`, and the regional `price`, plus locale metadata. It is opt-in and reduces the payload substantially for list UIs. Choose `full` when you need offer mappings, descriptions, items, or country lists.
 
 ```json
 {
-  "total": 1,
-  "offers": [{ "id": "offer-id", "title": "Example Game", "price": null }],
-  "page": 1,
-  "limit": 20
+  "data": [
+    {
+      "id": "offer-id",
+      "title": "Example Game",
+      "offerType": "BASE_GAME",
+      "price": null
+    }
+  ],
+  "meta": {
+    "pagination": { "limit": 20, "hasMore": false, "nextCursor": null, "total": 1 }
+  }
 }
 ```
 
 `title` searches titles and related text with fuzzy and synonym matching. Filters can be combined. `tags` requires all supplied tag IDs; `technologies` requires every named detected technology.
 
-`page` starts at 1. `limit` defaults to 10 and is capped at 100. Without `sortBy`, text searches rank by relevance and other searches sort by most recently modified. Common `sortBy` values include `releaseDate`, `lastModifiedDate`, `price`, `discount`, `discountPercent`, `priceUpdatedAt`, `upcoming`, and `giveawayDate`; `sortDir` is `asc` or `desc` and defaults to `desc`. Set `sortBy=price` and `sortDir=asc` for the lowest price first. Price sorting uses the selected country's region. Some release date sorts also restrict results to future or released offers.
+`limit` defaults to 20 and is capped at 100. Without `sortBy`, text searches rank by relevance and other searches sort by most recently modified. Common `sortBy` values include `releaseDate`, `lastModifiedDate`, `price`, `discount`, `discountPercent`, `priceUpdatedAt`, `upcoming`, and `giveawayDate`; `sortDir` is `asc` or `desc` and defaults to `desc`. Set `sortBy=price` and `sortDir=asc` for the lowest price first. Price sorting uses the selected country's region. Some release date sorts also restrict results to future or released offers.
 
-The legacy `GET`/`POST /search` routes now return `410 Gone` with code `DEPRECATED`; use search v2 instead. Existing saved-query hashes can still be read through `GET /search/{id}`.
+## Legacy v2 compatibility
+
+`GET /search/v2/search` remains available and uses the same filters with `page`-based pagination. Its `facets` default is also `none`; request `facets=full` or `minimal` to restore aggregations. `POST /search/v2/search` validates the JSON filter object and redirects to the equivalent GET URL.
 
 For meaning-based queries, see [natural-language search](/docs/natural-language-search).

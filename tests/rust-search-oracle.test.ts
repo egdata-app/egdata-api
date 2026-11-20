@@ -573,6 +573,14 @@ describe("Rust search HTTP Node oracle", () => {
       country: "de",
       locale: "de-de",
     });
+    await record("search_redirect_card_fields", "POST", "/v1/search", {
+      title: "card game",
+      facets: "none",
+      fields: "card",
+    });
+    await record("search_redirect_rejects_fields", "POST", "/v1/search", {
+      fields: "compact",
+    });
     await record(
       "search_redirect_rejects_unknown_field",
       "POST",
@@ -1159,6 +1167,86 @@ describe("Rust search HTTP Node oracle", () => {
       "/v1/search?title=game&limit=1&country=DE&locale=de-DE",
       undefined,
       { opensearchResponse: offersResponse },
+    );
+    const cardOffer = {
+      id: "offer-card",
+      namespace: "ns",
+      title: "Card Game",
+      description: "A long store description",
+      longDescription: "An even longer store description",
+      offerType: "BASE_GAME",
+      effectiveDate: "2026-01-01T00:00:00.000Z",
+      creationDate: "2026-01-01T00:00:00.000Z",
+      lastModifiedDate: "2026-01-02T00:00:00.000Z",
+      isCodeRedemptionOnly: false,
+      keyImages: [{ type: "OfferImageTall", url: "https://cdn.example/tall.png" }],
+      currentPrice: 100,
+      seller: { id: "seller-1", name: "Seller One" },
+      productSlug: "card-game",
+      offerMappings: [{ pageSlug: "card-game", pageType: "productHome" }],
+      urlSlug: "card-game",
+      url: "https://store.example/card-game",
+      tags: [{ id: "123", name: "Action" }],
+      items: [{ id: "item-1" }],
+      categories: ["games"],
+      developerDisplayName: "Card Dev",
+      publisherDisplayName: "Card Pub",
+      prePurchase: false,
+      releaseDate: "2026-02-02T00:00:00.000Z",
+      pcReleaseDate: "2026-02-02T00:00:00.000Z",
+      viewableDate: "2026-01-01T00:00:00.000Z",
+      expiryDate: null,
+      countriesBlacklist: ["CN"],
+      countriesWhitelist: null,
+      refundType: "self",
+      customAttributes: [{ key: "developerName", value: "Card Dev" }],
+      prices: {
+        US: {
+          country: "US",
+          region: "US",
+          namespace: "ns",
+          offerId: "offer-card",
+          updatedAt: "2026-01-01T00:00:00.000Z",
+          price: {
+            currencyCode: "USD",
+            discount: 0,
+            originalPrice: 999,
+            discountPrice: 999,
+            basePayoutCurrencyCode: "USD",
+            basePayoutPrice: 999,
+            payoutCurrencyExchangeRate: 1,
+          },
+          appliedRules: [],
+        },
+      },
+    };
+    const cardResponse = {
+      took: 2,
+      timed_out: false,
+      hits: {
+        total: { value: 1 },
+        hits: [
+          {
+            _id: "offer-card",
+            _source: cardOffer,
+            sort: ["2026-01-02T00:00:00Z", "offer-card"],
+          },
+        ],
+      },
+      aggregations: {},
+    };
+    mocks.search.mockResolvedValueOnce({ body: cardResponse });
+    await record(
+      "search_offers_card_fields",
+      "GET",
+      "/v1/search?title=card&limit=1&facets=none&fields=card",
+      undefined,
+      { opensearchResponse: cardResponse },
+    );
+    await record(
+      "search_offers_rejects_invalid_fields",
+      "GET",
+      "/v1/search?fields=compact",
     );
     mocks.search.mockResolvedValue({
       body: { took: 0, timed_out: false, hits: { hits: [] }, aggregations: {} },
@@ -2292,6 +2380,101 @@ describe("Rust search HTTP Node oracle", () => {
       "/v1/search/changelog?limit=2",
       undefined,
       { countUnavailable: true, mongoRows: [] },
+    );
+
+    const facetResponse = {
+      took: 4,
+      timed_out: false,
+      hits: { hits: [] },
+      aggregations: {
+        offerType: { buckets: [{ key: "BASE_GAME", doc_count: 5 }] },
+        priceStats: { count: 5, min: 0, max: 1999, avg: 999, sum: 4995 },
+      },
+    };
+    mocks.cacheGet.mockResolvedValue(null);
+    mocks.search.mockResolvedValueOnce({ body: facetResponse });
+    await record(
+      "search_offer_facets_selected_sections",
+      "GET",
+      "/v1/search/facets?title=game&facets=offerType,price&country=DE&locale=de-DE",
+      undefined,
+      { opensearchResponse: facetResponse },
+    );
+    const facetCachePayload = (cases.at(-1)?.input as Record<string, unknown>)
+      .cacheWriteValue as string;
+    mocks.cacheGet.mockResolvedValueOnce(facetCachePayload);
+    await record(
+      "search_offer_facets_cache_hit",
+      "GET",
+      "/v1/search/facets?title=game&facets=offerType,price&country=DE&locale=de-DE",
+      undefined,
+      { cachePayload: facetCachePayload },
+    );
+    mocks.cacheGet.mockResolvedValue(null);
+    mocks.search.mockResolvedValueOnce({ body: facetResponse });
+    await record(
+      "search_offer_facets_all_default",
+      "GET",
+      "/v1/search/facets?tags=a,b&technologies=Unreal&onSale=true&priceMin=100&priceMax=2000&sortBy=upcoming",
+      undefined,
+      { opensearchResponse: facetResponse },
+    );
+    mocks.search.mockResolvedValueOnce({ body: facetResponse });
+    await record(
+      "search_offer_facets_explicit_all",
+      "GET",
+      "/v1/search/facets?facets=all&sortBy=releaseDate&sortDir=asc",
+      undefined,
+      { opensearchResponse: facetResponse },
+    );
+    mocks.search.mockResolvedValueOnce({ body: facetResponse });
+    await record(
+      "search_offer_facets_giveaway_sort",
+      "GET",
+      "/v1/search/facets?facets=tags,developer,publisher,seller,technologies&sortBy=giveawayDate",
+      undefined,
+      { opensearchResponse: facetResponse },
+    );
+    await record(
+      "search_offer_facets_invalid_section",
+      "GET",
+      "/v1/search/facets?facets=unknownSection",
+    );
+    mocks.search.mockResolvedValueOnce({ body: facetResponse });
+    await record(
+      "search_offer_facets_empty_csv_section",
+      "GET",
+      "/v1/search/facets?facets=%20,%20",
+      undefined,
+      { opensearchResponse: facetResponse },
+    );
+    await record(
+      "search_offer_facets_rejects_pagination_params",
+      "GET",
+      "/v1/search/facets?limit=10",
+    );
+    await record(
+      "search_offer_facets_rejects_inverted_price",
+      "GET",
+      "/v1/search/facets?priceMin=500&priceMax=100",
+    );
+    await record(
+      "search_offer_facets_rejects_invalid_sort",
+      "GET",
+      "/v1/search/facets?sortBy=invalidSort",
+    );
+    await record(
+      "search_offer_facets_rejects_too_big_and_bad_dir",
+      "GET",
+      `/v1/search/facets?title=${"x".repeat(501)}&sortDir=sideways`,
+    );
+    mocks.search.mockRejectedValueOnce(new Error("OpenSearch unavailable"));
+    await record(
+      "search_offer_facets_service_unavailable",
+      "GET",
+      "/v1/search/facets?facets=price",
+      undefined,
+      { opensearchError: "unavailable" },
     );
     assertOracle("search-http-node", cases);
     vi.useRealTimers();

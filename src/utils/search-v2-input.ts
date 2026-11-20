@@ -59,10 +59,10 @@ export const searchV2InputSchema = z.object({
     .optional(),
   facets: z
     .preprocess(
-      (value) => (value === "minimal" || value === "none" ? value : "full"),
+      (value) => (value === "full" || value === "minimal" ? value : "none"),
       z.enum(["full", "minimal", "none"]),
     )
-    .default("full"),
+    .default("none"),
 });
 
 export function searchV2QueryParams(
@@ -87,7 +87,7 @@ export function searchV2QueryParams(
       !(
         (key === "page" && value === 1) ||
         (key === "limit" && value === 10) ||
-        (key === "facets" && value === "full") ||
+        (key === "facets" && value === "none") ||
         (key === "sortDir" && value === "desc")
       )
     ) {

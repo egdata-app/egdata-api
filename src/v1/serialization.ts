@@ -152,6 +152,40 @@ export type SerializedOffer = AnyRecord & {
   };
 };
 
+/**
+ * Fields the egdata.app search cards render, as audited against `OfferCard`,
+ * `OfferListItem`, `effective-price`, `getImage` and extension ownership.
+ * `fields=card` is opt-in; the default `full` payload keeps every documented
+ * offer field for other clients.
+ */
+export const OFFER_CARD_FIELDS = [
+  "id",
+  "namespace",
+  "title",
+  "offerType",
+  "keyImages",
+  "seller",
+  "tags",
+  "developerDisplayName",
+  "publisherDisplayName",
+  "prePurchase",
+  "releaseDate",
+  "price",
+  "locale",
+  "localeStatus",
+  "canonicalLocale",
+] as const;
+
+export function toOfferCard(offer: SerializedOffer): SerializedOffer {
+  const card: AnyRecord = {};
+  for (const field of OFFER_CARD_FIELDS) {
+    if (field in offer) {
+      card[field] = offer[field];
+    }
+  }
+  return card as SerializedOffer;
+}
+
 export function serializeOffer(
   rawValue: unknown,
   options: {

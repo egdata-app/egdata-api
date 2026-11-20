@@ -5,6 +5,17 @@ description: History for GET /v1/search
 
 `GET /v1/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **v1 GET /v1/search** (searchOffers; changed; breaking)
+  - Before: `facets` defaulted to `full`, so every response embedded offer type, technology, tag, developer, publisher, and seller aggregations plus price statistics in `meta.facets`, even when the client did not render filters. Offers always returned the complete documented offer document.
+  - After: `facets` defaults to `none`, so `meta.facets` is `&#123;&#125;` unless the client passes `facets=full` or `facets=minimal`. Adds optional `fields=card`, which returns only the audited fields rendered by egdata.app offer cards (`id`, `namespace`, `title`, `offerType`, `keyImages`, `seller`, `tags`, `developerDisplayName`, `publisherDisplayName`, `prePurchase`, `releaseDate`, `price`, and locale metadata); `fields=full` remains the default and keeps the complete offer document.
+  - Client action: Clients that read `meta.facets` must pass `facets=full` (or `minimal`) or load sections from `GET /v1/search/facets`. Clients that only render offers need no change.
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
 
 Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).
