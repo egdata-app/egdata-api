@@ -2,6 +2,41 @@
 
 Generated from validated change records. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **v1 GET /v1/search** (searchOffers; changed; breaking)
+  - Before: `facets` defaulted to `full`, so every response embedded offer type, technology, tag, developer, publisher, and seller aggregations plus price statistics in `meta.facets`, even when the client did not render filters. Offers always returned the complete documented offer document.
+  - After: `facets` defaults to `none`, so `meta.facets` is `&#123;&#125;` unless the client passes `facets=full` or `facets=minimal`. Adds optional `fields=card`, which returns only the audited fields rendered by egdata.app offer cards (`id`, `namespace`, `title`, `offerType`, `keyImages`, `seller`, `tags`, `developerDisplayName`, `publisherDisplayName`, `prePurchase`, `releaseDate`, `price`, and locale metadata); `fields=full` remains the default and keeps the complete offer document.
+  - Client action: Clients that read `meta.facets` must pass `facets=full` (or `minimal`) or load sections from `GET /v1/search/facets`. Clients that only render offers need no change.
+- **v1 GET /v1/search/facets** (searchOfferFacets; added; compatible)
+  - Before: No dedicated facet endpoint existed; aggregations were only available alongside a page of offer hits from `GET /v1/search`.
+  - After: New `GET /v1/search/facets` accepts the same filters as `GET /v1/search` without pagination plus a comma-separated `facets` section list (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`; default `all`). It executes an OpenSearch aggregation query with `size: 0` and `track_total_hits: false`, returns the requested aggregation body as `data`, and returns `meta.sections` plus `meta.result`. The `price` section returns `priceStats` with `count`, `min`, `max`, `avg`, and `sum`. Invalid sections, pagination parameters, inverted price ranges, and unsupported sorts return `400`.
+  - Client action: Call once per filter section (for example `facets=tags`) when the section is opened instead of requesting all facets with the result list.
+- **v1 POST /v1/search** (searchOffersRedirect; changed; compatible)
+  - Before: Validated the JSON filter object and redirected to the equivalent `GET /v1/search` URL without a fields projection option.
+  - After: Accepts an optional `fields` value (`full` or `card`), rejects other values with `400 INVALID_BODY`, and forwards the value in the `Location` query string.
+  - Client action: None
+- **legacy GET /search/v2/search** (searchOffersV2Get; changed; breaking)
+  - Before: `facets` defaulted to `full`; responses embedded `offerType`, `technologies`, `price_stats`, and full-mode tag, developer, publisher, and seller aggregations.
+  - After: `facets` defaults to `none`; the `aggregations` request is omitted and the response `aggregations` object is empty unless the client passes `facets=full` or `facets=minimal`. All other legacy v2 behavior is unchanged.
+  - Client action: Pass `facets=full` or `facets=minimal` to restore aggregations.
+- **legacy POST /search/v2/search** (searchOffersV2; changed; breaking)
+  - Before: Omitted `facets` defaulted to `full`; the redirected GET and its response included all full-mode aggregations.
+  - After: Omitted `facets` defaults to `none`; the redirected GET omits the `aggregations` request and the response `aggregations` object is empty unless `facets=full` or `facets=minimal` is supplied. All other legacy v2 behavior is unchanged.
+  - Client action: Send `facets=full` or `facets=minimal` to restore aggregations.
+- **legacy GET /search/&#123;id&#125;** (getSavedSearchQuery; changed; compatible)
+  - Before: Returned a stored search response from the `search:v2:*` cache payload.
+  - After: Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default, but this handler, its cache key format, and its serialization are untouched.
+  - Client action: None
+- **legacy POST /search** (searchOffersLegacy; changed; compatible)
+  - Before: Returned `410 Gone` with code `DEPRECATED` and directed clients to `/search/v2/search`.
+  - After: Unchanged. The shared `src/routes/search.ts` module gained the v1 facets handler and the v2 facet default; this deprecated handler still returns the same `410 Gone` response.
+  - Client action: None
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-19 — Add profile games completion filter and offer expiryDate to v1 responses
 
 Record: [v1-profile-filters-and-offer-expiry](https://github.com/egdata-app/egdata-api/blob/main/changes/records/v1-profile-filters-and-offer-expiry.json).

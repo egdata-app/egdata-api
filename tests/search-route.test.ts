@@ -210,7 +210,7 @@ describe("search route with SeaQA fixtures", () => {
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(await response.text()).toBe("");
     expect(response.headers.get("location")).toBe(
-      "/search/v2/search?country=FR&expand=true&facets=none&limit=100&onSale=false&priceMax=2000&priceMin=0&tags=Action%2CRPG&technologies=Unreal&title=A+%26+B%3F%23",
+      "/search/v2/search?country=FR&expand=true&limit=100&onSale=false&priceMax=2000&priceMin=0&tags=Action%2CRPG&technologies=Unreal&title=A+%26+B%3F%23",
     );
     expect(mocks.opensearchSearch).not.toHaveBeenCalled();
     expect(mocks.redisGet).not.toHaveBeenCalled();
@@ -232,7 +232,7 @@ describe("search route with SeaQA fixtures", () => {
         tags: ["a", "b"],
         page: 1,
         limit: 10,
-        facets: "full",
+        facets: "none",
         sortDir: "desc",
         ignored: true,
       },
@@ -288,7 +288,7 @@ describe("search route with SeaQA fixtures", () => {
   });
 
   it("makes GET pricing independent of cookies when country is absent", async () => {
-    await app.request("/search/v2/search", {
+    await app.request("/search/v2/search?facets=full", {
       headers: { cookie: "EGDATA_COUNTRY=FR" },
     });
     expect(
@@ -697,6 +697,7 @@ describe("search route with SeaQA fixtures", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           technologies: [" Unreal ", "NVIDIA_DLSS", "Unreal"],
+          facets: "full",
           limit: 10,
         }),
       },
@@ -863,7 +864,7 @@ describe("search route with SeaQA fixtures", () => {
     await requestFollowingRedirect(app, "/search/v2/search?country=ZZ", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ limit: 1 }),
+      body: JSON.stringify({ limit: 1, facets: "full" }),
     });
 
     expect(mocks.opensearchSearch).toHaveBeenCalledWith(
@@ -879,14 +880,14 @@ describe("search route with SeaQA fixtures", () => {
     );
   });
 
-  it("defaults to full facets, including developer, publisher and seller aggregations", async () => {
+  it("returns full facets when explicitly requested, including developer, publisher and seller aggregations", async () => {
     const res = await requestFollowingRedirect(
       app,
       "/search/v2/search?country=US",
       {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ limit: 2 }),
+        body: JSON.stringify({ limit: 2, facets: "full" }),
       },
     );
 

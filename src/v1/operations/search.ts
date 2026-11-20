@@ -87,12 +87,105 @@ const searchParameters = [
   queryParameter("facets", "Facet detail level.", {
     type: "string",
     enum: ["full", "minimal", "none"],
-    default: "full",
+    default: "none",
   }),
+  queryParameter(
+    "fields",
+    "Offer projection. `card` returns only the fields rendered by egdata.app search cards; `full` keeps the complete offer document.",
+    {
+      type: "string",
+      enum: ["full", "card"],
+      default: "full",
+    },
+  ),
   countryParameter(),
   localeParameter(),
   limitParameter(100),
   cursorParameter(),
+];
+
+const facetParameters = [
+  queryParameter(
+    "title",
+    "Free-text title, developer, publisher, tag, or description query.",
+  ),
+  queryParameter("offerType", "Exact Epic offer type."),
+  queryParameter("tags", "Comma-separated tag IDs (all must match)."),
+  queryParameter("categories", "Comma-separated categories (any must match)."),
+  queryParameter(
+    "customAttributes",
+    "Comma-separated custom attribute values.",
+  ),
+  queryParameter("technologies", "Comma-separated build technologies."),
+  queryParameter("seller", "Seller ID."),
+  queryParameter("developerDisplayName", "Exact developer display name."),
+  queryParameter("publisherDisplayName", "Exact publisher display name."),
+  queryParameter("refundType", "Exact refund type."),
+  queryParameter(
+    "isCodeRedemptionOnly",
+    "Filter code-redemption-only offers.",
+    {
+      type: "boolean",
+    },
+  ),
+  queryParameter("excludeBlockchain", "Exclude blockchain offers.", {
+    type: "boolean",
+  }),
+  queryParameter("onSale", "Only discounted offers.", { type: "boolean" }),
+  queryParameter("pastGiveaways", "Only offers with giveaway history.", {
+    type: "boolean",
+  }),
+  queryParameter(
+    "isLowestPrice",
+    "Only offers at their lowest observed US price.",
+    {
+      type: "boolean",
+    },
+  ),
+  queryParameter(
+    "isLowestPriceEver",
+    "Only offers at their historical lowest US price.",
+    {
+      type: "boolean",
+    },
+  ),
+  queryParameter("priceMin", "Minimum discount price in minor units.", {
+    type: "integer",
+    minimum: 0,
+  }),
+  queryParameter("priceMax", "Maximum discount price in minor units.", {
+    type: "integer",
+    minimum: 0,
+  }),
+  queryParameter("sortBy", "Primary sort field.", {
+    type: "string",
+    enum: [
+      "releaseDate",
+      "lastModifiedDate",
+      "effectiveDate",
+      "creationDate",
+      "viewableDate",
+      "pcReleaseDate",
+      "upcoming",
+      "priceAsc",
+      "priceDesc",
+      "price",
+      "discount",
+      "discountPercent",
+      "priceUpdatedAt",
+      "giveawayDate",
+    ],
+  }),
+  queryParameter("sortDir", "Sort direction.", {
+    type: "string",
+    enum: ["asc", "desc"],
+  }),
+  queryParameter(
+    "facets",
+    "Comma-separated facet sections to compute (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, `all`). Defaults to `all`.",
+  ),
+  countryParameter(),
+  localeParameter(),
 ];
 
 export const searchOperations = defineOperations([
@@ -110,6 +203,19 @@ export const searchOperations = defineOperations([
     expensivePolicy: "search",
     legacy: ["/search/v2/search"],
     parameters: searchParameters,
+  },
+  {
+    operationId: "searchOfferFacets",
+    method: "GET",
+    path: "/v1/search/facets",
+    summary: "Get offer search facet aggregations",
+    description:
+      "Computes OpenSearch facet aggregations for the current offer search filters without fetching offer hits (`size: 0`). Pass `facets` as a comma-separated list of sections (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`) to load individual filter sections asynchronously.",
+    tags: ["Search"],
+    scope: "search:read",
+    auth: "key",
+    expensivePolicy: "search",
+    parameters: facetParameters,
   },
   {
     operationId: "searchOffersRedirect",
@@ -150,6 +256,7 @@ export const searchOperations = defineOperations([
           sortBy: { type: "string" },
           sortDir: { type: "string", enum: ["asc", "desc"] },
           facets: { type: "string", enum: ["full", "minimal", "none"] },
+          fields: { type: "string", enum: ["full", "card"], default: "full" },
           price: {
             type: "object",
             additionalProperties: false,

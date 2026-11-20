@@ -725,18 +725,18 @@ impl SearchV2SortDir {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum SearchV2Facets {
-    #[default]
     Full,
     Minimal,
+    #[default]
     None,
 }
 
 impl SearchV2Facets {
     pub fn from_raw(raw: Option<&str>) -> Self {
         match raw {
+            Some("full") => Self::Full,
             Some("minimal") => Self::Minimal,
-            Some("none") => Self::None,
-            _ => Self::Full,
+            _ => Self::None,
         }
     }
 
@@ -819,7 +819,7 @@ impl Default for SearchV2Input {
             limit: 10,
             page: 1,
             price: None,
-            facets: SearchV2Facets::Full,
+            facets: SearchV2Facets::None,
         }
     }
 }
@@ -952,7 +952,7 @@ impl SearchV2Input {
                 params.push(("priceMax".to_string(), format_js_number(max)));
             }
         }
-        if self.facets != SearchV2Facets::Full {
+        if self.facets != SearchV2Facets::None {
             params.push(("facets".to_string(), self.facets.as_str().to_string()));
         }
 
@@ -1201,6 +1201,7 @@ mod tests {
         assert!(defaults.to_query_params().is_empty());
 
         assert_eq!(SearchV2Facets::from_raw(Some("none")), SearchV2Facets::None);
+        assert_eq!(SearchV2Facets::from_raw(Some("full")), SearchV2Facets::Full);
         assert_eq!(SearchV2Facets::None.as_str(), "none");
         assert_eq!(SearchV2Facets::Full.as_str(), "full");
         assert_eq!(SearchV2SortDir::Desc.as_str(), "desc");

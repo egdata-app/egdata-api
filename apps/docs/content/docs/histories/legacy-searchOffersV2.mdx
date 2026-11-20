@@ -5,6 +5,17 @@ description: History for POST /search/v2/search
 
 `POST /search/v2/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **legacy POST /search/v2/search** (searchOffersV2; changed; breaking)
+  - Before: Omitted `facets` defaulted to `full`; the redirected GET and its response included all full-mode aggregations.
+  - After: Omitted `facets` defaults to `none`; the redirected GET omits the `aggregations` request and the response `aggregations` object is empty unless `facets=full` or `facets=minimal` is supplied. All other legacy v2 behavior is unchanged.
+  - Client action: Send `facets=full` or `facets=minimal` to restore aggregations.
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

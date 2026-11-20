@@ -125,6 +125,9 @@ function schemaFor(
   operation: V1OperationMetadata,
 ): OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject {
   const id = operation.operationId.toLowerCase();
+  if (operation.operationId === "searchOfferFacets") {
+    return { type: "object", additionalProperties: true };
+  }
   let item: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined;
   if (
     id.includes("offer") ||
@@ -197,6 +200,12 @@ function successResponse(
       ...(operation.operationId === "searchOffers"
         ? {
             facets: { type: "object", additionalProperties: true },
+            result: { type: "object", additionalProperties: true },
+          }
+        : {}),
+      ...(operation.operationId === "searchOfferFacets"
+        ? {
+            sections: { type: "array", items: { type: "string" } },
             result: { type: "object", additionalProperties: true },
           }
         : {}),

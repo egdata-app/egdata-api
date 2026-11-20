@@ -18,7 +18,7 @@ fn contract_binary_checks_the_documents_and_reports_invalid_invocations() {
     assert!(
         String::from_utf8(result.stdout)
             .unwrap()
-            .contains("154/154")
+            .contains("155/155")
     );
     let invalid = Command::new(binary).arg("--unknown-flag").output().unwrap();
     assert!(!invalid.status.success());

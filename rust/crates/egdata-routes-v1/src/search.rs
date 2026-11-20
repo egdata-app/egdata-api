@@ -36,6 +36,7 @@ use crate::{
 const SEARCH_V2_KEYS: &[&str] = &[
     "title",
     "facets",
+    "fields",
     "technologies",
     "offerType",
     "tags",
@@ -86,12 +87,39 @@ const MULTI_SEARCH_KEYS: &[&str] = &[
     "cursor",
 ];
 
+const SEARCH_FACETS_KEYS: &[&str] = &[
+    "title",
+    "facets",
+    "technologies",
+    "offerType",
+    "tags",
+    "categories",
+    "customAttributes",
+    "seller",
+    "developerDisplayName",
+    "publisherDisplayName",
+    "refundType",
+    "isCodeRedemptionOnly",
+    "excludeBlockchain",
+    "pastGiveaways",
+    "onSale",
+    "isLowestPrice",
+    "isLowestPriceEver",
+    "priceMin",
+    "priceMax",
+    "sortBy",
+    "sortDir",
+    "country",
+    "locale",
+];
+
 pub fn route_group(prefix: &str) -> RouteGroup {
     RouteGroup::new(prefix)
         .get("/search/tags", search_tags)
         .get("/search/offer-types", search_offer_types)
         .get("/search/developers", search_developers)
         .get("/search/publishers", search_publishers)
+        .get("/search/facets", search_offer_facets)
         .get("/search", search_offers)
         .post("/search", search_redirect_post)
         .get("/search/{id}", get_cached_search)
@@ -270,11 +298,194 @@ fn offer_search_params(uri: &Uri, multi: bool) -> Result<BTreeMap<String, String
                 );
             }
         }
+        if !multi
+            && params
+                .get("fields")
+                .is_some_and(|v| !matches!(v.as_str(), "full" | "card"))
+        {
+            issue(
+                "fields",
+                "INVALID_VALUE",
+                "Invalid option: expected one of \"full\"|\"card\"".into(),
+            );
+        }
         issues
     })
 }
 
 
+
+const FACET_SECTION_CHOICES: &[&str] = &[
+    "offerType",
+    "tags",
+    "technologies",
+    "developer",
+    "publisher",
+    "seller",
+    "price",
+    "all",
+];
+
+fn offer_facet_params(uri: &Uri) -> Result<BTreeMap<String, String>, ProblemError> {
+    parse_validated_query(uri, SEARCH_FACETS_KEYS, |params| {
+        let mut issues = Vec::new();
+        let mut issue = |field: &str, code: &str, message: String| {
+            issues.push(egdata_core::v1::ProblemIssue {
+                parameter: Some(field.into()),
+                pointer: Some(format!("/{field}")),
+                code: code.into(),
+                message,
+            });
+        };
+        for (field, max) in [
+            ("title", 500),
+            ("offerType", 80),
+            ("seller", 200),
+            ("developerDisplayName", 300),
+            ("publisherDisplayName", 300),
+            ("refundType", 80),
+        ] {
+            if params
+                .get(field)
+                .is_some_and(|v| v.encode_utf16().count() > max)
+            {
+                issue(
+                    field,
+                    "TOO_BIG",
+                    format!("Too big: expected string to have <={max} characters"),
+                );
+            }
+        }
+        if params
+            .get("sortDir")
+            .is_some_and(|v| !matches!(v.as_str(), "asc" | "desc"))
+        {
+            issue(
+                "sortDir",
+                "INVALID_VALUE",
+                "Invalid option: expected one of \"asc\"|\"desc\"".into(),
+            );
+        }
+        issues
+    })
+}
+
+fn parse_facet_sections(raw: Option<&str>) -> Result<Vec<String>, ProblemError> {
+    const ALL_SECTIONS: &[&str] = &[
+        "offerType",
+        "tags",
+        "technologies",
+        "developer",
+        "publisher",
+        "seller",
+        "price",
+    ];
+    let Some(entries) = egdata_core::v1::parse_csv(raw) else {
+        return Ok(ALL_SECTIONS.iter().map(|s| (*s).to_owned()).collect());
+    };
+    if entries.iter().any(|e| !FACET_SECTION_CHOICES.contains(&e.as_str())) {
+        let options = FACET_SECTION_CHOICES
+            .iter()
+            .map(|v| format!("`{v}`"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        return Err(ProblemError::new(
+            400,
+            "INVALID_QUERY",
+            format!("Unsupported `facets` section. Expected one or more of {options}."),
+        ));
+    }
+    if entries.iter().any(|e| e == "all") {
+        return Ok(ALL_SECTIONS.iter().map(|s| (*s).to_owned()).collect());
+    }
+    Ok(entries)
+}
+
+fn build_facet_section_aggregations(sections: &[String], region: &str) -> Value {
+    let mut aggs = serde_json::Map::new();
+    for section in sections {
+        match section.as_str() {
+            "offerType" => {
+                aggs.insert(
+                    "offerType".into(),
+                    json!({"terms":{"field":"offerType.keyword","size":100}}),
+                );
+            }
+            "technologies" => {
+                aggs.insert(
+                    "technologies".into(),
+                    json!({"terms":{"field":"lastBuilds.technologies.technology.keyword","size":10000}}),
+                );
+            }
+            "price" => {
+                aggs.insert(
+                    "priceStats".into(),
+                    json!({"stats":{"field":format!("prices.{region}.price.discountPrice")}}),
+                );
+            }
+            "tags" => {
+                aggs.insert(
+                    "tags".into(),
+                    json!({"terms":{"field":"tags.name.keyword","size":10000}}),
+                );
+            }
+            "developer" => {
+                aggs.insert(
+                    "developer".into(),
+                    json!({"terms":{"field":"developerDisplayName.keyword","size":1000}}),
+                );
+            }
+            "publisher" => {
+                aggs.insert(
+                    "publisher".into(),
+                    json!({"terms":{"field":"publisherDisplayName.keyword","size":1000}}),
+                );
+            }
+            _ => {
+                aggs.insert(
+                    "seller".into(),
+                    json!({"terms":{"field":"seller.name.keyword","size":1000}}),
+                );
+            }
+        }
+    }
+    Value::Object(aggs)
+}
+
+/// Fields the egdata.app search cards render, as audited against `OfferCard`,
+/// `OfferListItem`, `effective-price`, `getImage` and extension ownership.
+/// `fields=card` is opt-in; the default `full` payload keeps every documented
+/// offer field for other clients.
+const OFFER_CARD_FIELDS: &[&str] = &[
+    "id",
+    "namespace",
+    "title",
+    "offerType",
+    "keyImages",
+    "seller",
+    "tags",
+    "developerDisplayName",
+    "publisherDisplayName",
+    "prePurchase",
+    "releaseDate",
+    "price",
+    "locale",
+    "localeStatus",
+    "canonicalLocale",
+];
+
+fn offer_card(offer: Value) -> Value {
+    let Value::Object(source) = offer else {
+        return offer;
+    };
+    let mut card = serde_json::Map::new();
+    for field in OFFER_CARD_FIELDS {
+        if let Some(value) = source.get(*field) {
+            card.insert((*field).to_owned(), value.clone());
+        }
+    }
+    Value::Object(card)
+}
 
 fn apply_cursor(
     state: &AppState,
@@ -771,7 +982,8 @@ async fn search_v2_offers(
         sorts.push(json!({"_score":{"order":"desc"}}));
     }
     sorts.push(json!({"id.keyword":{"order":"asc","missing":"_last"}}));
-    let facets = q.get("facets").map(String::as_str).unwrap_or("full");
+    let facets = q.get("facets").map(String::as_str).unwrap_or("none");
+    let fields = q.get("fields").map(String::as_str).unwrap_or("full");
     let mut aggs = json!({"offerType":{"terms":{"field":"offerType.keyword","size":100}},"technologies":{"terms":{"field":"lastBuilds.technologies.technology.keyword","size":if facets=="full"{10000}else{1000}}},"priceStats":{"stats":{"field":format!("prices.{region}.price.discountPrice")}}});
     if facets == "full" {
         aggs["tags"] = json!({"terms":{"field":"tags.name.keyword","size":10000}});
@@ -794,6 +1006,7 @@ async fn search_v2_offers(
         ("filters", json!(normalized)),
         ("ordering", json!(binding.ordering)),
         ("facets", json!(facets)),
+        ("fields", json!(fields)),
     ]);
     let cache_key = v1_cache_key("search.offers", &cache_parts);
     if let Some(cached) = v1_cache_get(state.cache.as_ref(), &cache_key).await {
@@ -843,6 +1056,9 @@ async fn search_v2_offers(
             let price = &hit["_source"]["prices"][region];
             let mut card = serialize_json_offer(offer, None, true);
             card["price"] = serialize_indexed_price(price).ok_or_else(internal_error)?;
+            if fields == "card" {
+                card = offer_card(card);
+            }
             Ok(card)
         })
         .collect::<Result<_, _>>()
@@ -873,6 +1089,239 @@ async fn search_v2_offers(
         uri.path(),
         &id,
         offers,
+        Some(meta),
+    ))
+}
+
+async fn search_offer_facets(
+    State(state): State<AppState>,
+    headers: axum::http::HeaderMap,
+    uri: Uri,
+    ctx: Option<Extension<V1RequestContext>>,
+) -> Result<Response, V1ErrorResponse> {
+    let id = request_id(ctx.as_ref(), &headers);
+    let q = offer_facet_params(&uri).map_err(|e| fail(e, &uri, id.clone()))?;
+    let country = q.get("country").map(String::as_str).unwrap_or("US");
+    let rp = regional_params(Some(country), q.get("locale").map(String::as_str))
+        .map_err(|e| fail(e, &uri, id.clone()))?;
+    let min = parse_integer(
+        q.get("priceMin").map(String::as_str),
+        "priceMin",
+        Some(0),
+        None,
+    )
+    .map_err(|e| fail(e, &uri, id.clone()))?;
+    let max = parse_integer(
+        q.get("priceMax").map(String::as_str),
+        "priceMax",
+        Some(0),
+        None,
+    )
+    .map_err(|e| fail(e, &uri, id.clone()))?;
+    if min.zip(max).is_some_and(|(a, b)| a > b) {
+        return Err(fail(
+            ProblemError::new(
+                400,
+                "INVALID_QUERY",
+                "`priceMin` cannot be greater than `priceMax`.",
+            ),
+            &uri,
+            id,
+        ));
+    }
+    let sort_by = q
+        .get("sortBy")
+        .map(String::as_str)
+        .filter(|v| !v.is_empty());
+    let dir = if sort_by.is_some() {
+        q.get("sortDir").map(String::as_str).unwrap_or("desc")
+    } else {
+        "desc"
+    };
+    const SORTS: &[&str] = &[
+        "releaseDate",
+        "lastModifiedDate",
+        "effectiveDate",
+        "creationDate",
+        "viewableDate",
+        "pcReleaseDate",
+        "upcoming",
+        "priceAsc",
+        "priceDesc",
+        "price",
+        "discount",
+        "discountPercent",
+        "priceUpdatedAt",
+        "giveawayDate",
+    ];
+    if let Some(sort) = sort_by.filter(|v| !SORTS.contains(v)) {
+        return Err(fail(
+            ProblemError::new(
+                400,
+                "INVALID_QUERY",
+                format!("Unsupported `sortBy` value '{sort}'."),
+            ),
+            &uri,
+            id,
+        ));
+    }
+    let sections = parse_facet_sections(q.get("facets").map(String::as_str))
+        .map_err(|e| fail(e, &uri, id.clone()))?;
+    let title = q
+        .get("title")
+        .map(|s| trim_js_whitespace(s))
+        .filter(|s| !s.is_empty());
+    let mut normalized = serde_json::Map::new();
+    for key in ["title", "offerType"] {
+        normalized.insert(
+            key.to_string(),
+            q.get(key)
+                .map(|v| trim_js_whitespace(v).to_owned())
+                .filter(|v| !v.is_empty())
+                .map_or(Value::Null, |v| json!(v)),
+        );
+    }
+    for key in ["tags", "categories", "customAttributes", "technologies"] {
+        let values = egdata_core::v1::parse_csv(q.get(key).map(String::as_str)).unwrap_or_default();
+        normalized.insert(key.to_string(), json!(values));
+    }
+    for key in [
+        "seller",
+        "developerDisplayName",
+        "publisherDisplayName",
+        "refundType",
+    ] {
+        normalized.insert(
+            key.to_string(),
+            q.get(key)
+                .map(|v| trim_js_whitespace(v).to_owned())
+                .filter(|v| !v.is_empty())
+                .map_or(Value::Null, |v| json!(v)),
+        );
+    }
+    for key in [
+        "isCodeRedemptionOnly",
+        "excludeBlockchain",
+        "onSale",
+        "pastGiveaways",
+        "isLowestPrice",
+        "isLowestPriceEver",
+    ] {
+        let value = json!(
+            parse_boolean(q.get(key).map(String::as_str), key).map_err(|e| fail(
+                e,
+                &uri,
+                id.clone()
+            ))?
+        );
+        normalized.insert(key.to_owned(), value);
+    }
+    normalized.insert(
+        "price".into(),
+        if min.is_some() || max.is_some() {
+            let mut range = serde_json::Map::new();
+            if let Some(value) = min {
+                range.insert("min".into(), json!(value));
+            }
+            if let Some(value) = max {
+                range.insert("max".into(), json!(value));
+            }
+            Value::Object(range)
+        } else {
+            Value::Null
+        },
+    );
+    let ordering = format!(
+        "{}:{dir},id:asc",
+        sort_by.unwrap_or(if title.is_some() {
+            "_score"
+        } else {
+            "lastModifiedDate"
+        })
+    );
+    let now = (state.now)().timestamp_millis();
+    let now_iso = chrono::DateTime::from_timestamp_millis(now)
+        .map(|date| date.to_rfc3339_opts(chrono::SecondsFormat::Millis, true))
+        .unwrap_or_default();
+    let must = text_matches(title);
+    let region = &rp.region;
+    let mut filter = offer_filters(&Value::Object(normalized.clone()), region, false, false);
+    if sort_by == Some("upcoming") {
+        filter.push(json!({"range":{"releaseDate":{"gte":now_iso}}}));
+    }
+    if sort_by == Some("releaseDate") {
+        filter.push(json!({"range":{"releaseDate":if dir=="desc"{json!({"lte":now_iso})}else{json!({"gte":now_iso})}}}));
+    }
+    if sort_by == Some("giveawayDate") {
+        filter.push(json!({"exists":{"field":"freeEntries"}}));
+    }
+    let aggs = build_facet_section_aggregations(&sections, region);
+    let request = json!({
+        "size": 0,
+        "track_total_hits": false,
+        "query": {"bool": {"must": must, "filter": filter}},
+        "aggregations": aggs
+    });
+    let cache_parts = BTreeMap::from([
+        ("region", json!(rp.region)),
+        ("locale", json!(rp.locale)),
+        ("filters", json!(normalized)),
+        ("ordering", json!(ordering)),
+        ("sections", json!(sections)),
+    ]);
+    let cache_key = v1_cache_key("search.facets", &cache_parts);
+    if let Some(cached) = v1_cache_get(state.cache.as_ref(), &cache_key).await {
+        let meta = cached_meta(
+            json!({"country": rp.country, "region": rp.region, "locale": rp.locale, "sections": sections}),
+            &cached,
+            &["result"],
+        );
+        return Ok(cached_page(&uri, &id, &cached, "facets", meta));
+    }
+    let response = state
+        .opensearch
+        .search("egdata.offers", &request)
+        .await
+        .map_err(|_| {
+            fail(
+                ProblemError::new(
+                    503,
+                    "SEARCH_UNAVAILABLE",
+                    "Offer search is temporarily unavailable. Please retry shortly.",
+                )
+                .with_headers(BTreeMap::from([("Retry-After".into(), "1".into())])),
+                &uri,
+                id.clone(),
+            )
+        })?;
+    let facets = response
+        .get("aggregations")
+        .filter(|v| !v.is_null())
+        .map(serialize_json_value)
+        .unwrap_or(json!({}));
+    let result_meta = search_result_meta(&response);
+    let meta = json!({
+        "country": rp.country,
+        "region": rp.region,
+        "locale": rp.locale,
+        "sections": sections,
+        "result": result_meta
+    });
+    v1_cache_set(
+        state.cache.as_ref(),
+        &cache_key,
+        &json!({
+            "facets": facets,
+            "result": meta["result"]
+        }),
+        60,
+    )
+    .await;
+    Ok(json_success(
+        &axum::http::Method::GET,
+        uri.path(),
+        &id,
+        facets,
         Some(meta),
     ))
 }
@@ -920,6 +1369,7 @@ async fn search_redirect_post(
         "sortBy",
         "sortDir",
         "facets",
+        "fields",
         "price",
         "limit",
         "country",
@@ -997,6 +1447,9 @@ async fn search_redirect_post(
         || input
             .get("facets")
             .is_some_and(|value| !matches!(value.as_str(), Some("full" | "minimal" | "none")))
+        || input
+            .get("fields")
+            .is_some_and(|value| !matches!(value.as_str(), Some("full" | "card")))
     {
         return Err(fail(invalid.clone(), &uri, id.clone()));
     }
@@ -1129,6 +1582,9 @@ async fn search_redirect_post(
     }
     if let Some(facets) = input.get("facets").and_then(Value::as_str) {
         params.insert("facets".into(), vec![facets.into()]);
+    }
+    if let Some(fields) = input.get("fields").and_then(Value::as_str) {
+        params.insert("fields".into(), vec![fields.into()]);
     }
     if let Some(limit) = input.get("limit").and_then(Value::as_f64) {
         params.insert(
@@ -3499,7 +3955,8 @@ mod tests {
             ("cursor", Value::Null),
             ("filters", filters),
             ("ordering", json!("lastModifiedDate:desc,id:asc")),
-            ("facets", json!("full")),
+            ("facets", json!("none")),
+            ("fields", json!("full")),
         ]);
         let key = v1_cache_key("search.offers", &parts);
         let node_payload = r#"{"offers":[{"id":"cached-offer","price":null}],"pagination":{"limit":20,"hasMore":false,"nextCursor":null},"facets":{"offerType":{"buckets":[]}},"result":{"tookMs":17,"timedOut":false}}"#;

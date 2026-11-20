@@ -1,0 +1,17 @@
+---
+title: v1 searchOfferFacets
+description: History for GET /v1/search/facets
+---
+
+`GET /v1/search/facets` — active. Recorded dates are not deployment dates.
+
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **v1 GET /v1/search/facets** (searchOfferFacets; added; compatible)
+  - Before: No dedicated facet endpoint existed; aggregations were only available alongside a page of offer hits from `GET /v1/search`.
+  - After: New `GET /v1/search/facets` accepts the same filters as `GET /v1/search` without pagination plus a comma-separated `facets` section list (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`; default `all`). It executes an OpenSearch aggregation query with `size: 0` and `track_total_hits: false`, returns the requested aggregation body as `data`, and returns `meta.sections` plus `meta.result`. The `price` section returns `priceStats` with `count`, `min`, `max`, `avg`, and `sum`. Invalid sections, pagination parameters, inverted price ranges, and unsupported sorts return `400`.
+  - Client action: Call once per filter section (for example `facets=tags`) when the section is opened instead of requesting all facets with the result list.
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.

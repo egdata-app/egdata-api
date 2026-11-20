@@ -342,8 +342,8 @@ pub(super) fn parsed(input: SearchParams) -> Result<SearchV2Input> {
             json!({"message":"Invalid search filters","issues":issues}),
         ));
     }
-    if !matches!(raw["facets"].as_str(), Some("none" | "minimal")) {
-        raw["facets"] = json!("full");
+    if !matches!(raw["facets"].as_str(), Some("full" | "minimal")) {
+        raw["facets"] = json!("none");
     }
     serde_json::from_value(raw).map_err(Into::into)
 }

@@ -1784,6 +1784,11 @@
     },
     {
       "method": "GET",
+      "path": "/v1/search/facets",
+      "file": "rust/crates/egdata-routes-v1/src/search.rs"
+    },
+    {
+      "method": "GET",
       "path": "/v1/search/offer-types",
       "file": "rust/crates/egdata-routes-v1/src/search.rs"
     },

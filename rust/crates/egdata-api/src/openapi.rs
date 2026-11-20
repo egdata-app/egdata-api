@@ -130,16 +130,16 @@ mod tests {
         assert!(
             run(&["generate-openapi", "--check"])
                 .unwrap()
-                .contains("154 operations match")
+                .contains("155 operations match")
         );
         assert!(
             run(&["generate-openapi", "--check", "--require-handlers"])
                 .unwrap()
-                .contains("154 operations match")
+                .contains("155 operations match")
         );
         let inventory: Value =
             serde_json::from_str(&run(&["generate-openapi", "--inventory"]).unwrap()).unwrap();
-        assert_eq!(inventory["documented"], 154);
+        assert_eq!(inventory["documented"], 155);
         let legacy: Value =
             serde_json::from_str(&run(&["generate-openapi", "--legacy-inventory"]).unwrap())
                 .unwrap();
@@ -150,7 +150,7 @@ mod tests {
         assert_eq!(manifest["v1Coverage"], inventory);
         assert_eq!(manifest["v1Document"], build_v1_document());
         assert_eq!(manifest["legacyDocument"], build_legacy_document());
-        assert_eq!(manifest["v1Routes"].as_array().unwrap().len(), 154);
+        assert_eq!(manifest["v1Routes"].as_array().unwrap().len(), 155);
         assert_eq!(
             serde_json::from_str::<Value>(&run(&["generate-openapi"]).unwrap()).unwrap(),
             build_v1_document()

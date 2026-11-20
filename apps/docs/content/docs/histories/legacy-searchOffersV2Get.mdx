@@ -5,6 +5,17 @@ description: History for GET /search/v2/search
 
 `GET /search/v2/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
+
+Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).
+
+- **legacy GET /search/v2/search** (searchOffersV2Get; changed; breaking)
+  - Before: `facets` defaulted to `full`; responses embedded `offerType`, `technologies`, `price_stats`, and full-mode tag, developer, publisher, and seller aggregations.
+  - After: `facets` defaults to `none`; the `aggregations` request is omitted and the response `aggregations` object is empty unless the client passes `facets=full` or `facets=minimal`. All other legacy v2 behavior is unchanged.
+  - Client action: Pass `facets=full` or `facets=minimal` to restore aggregations.
+
+Verification: tests/search-route.test.ts; tests/rust-search-oracle.test.ts; cargo test -p egdata-routes-v1 search::; cargo test -p egdata-routes-legacy; cargo test -p egdata-openapi; pnpm openapi:check; pnpm docs:check.
+
 ## 2026-11-13 — Expand anonymous edge caching and normalize discovery response freshness
 
 Record: [expanded-anonymous-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expanded-anonymous-edge-cache.json).

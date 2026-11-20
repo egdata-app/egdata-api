@@ -13,7 +13,7 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "etag": "\"8b3bac5ef9473672272b6e80bae72f2dc40e18cf\""
+        "etag": "\"fdcf15a12bb8c33d604f5890918f1121aed5a096\""
       },
       "body": {
         "app": "egdata",
@@ -382,6 +382,7 @@
           "GET /v1/search/:id/count",
           "GET /v1/search/changelog",
           "GET /v1/search/developers",
+          "GET /v1/search/facets",
           "POST /v1/search/natural-language",
           "GET /v1/search/offer-types",
           "GET /v1/search/publishers",

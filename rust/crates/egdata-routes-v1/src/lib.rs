@@ -315,7 +315,7 @@ mod tests {
             "{:?}",
             coverage.undocumented_handlers
         );
-        assert_eq!(coverage.documented, 154);
+        assert_eq!(coverage.documented, 155);
         assert_eq!(coverage.implemented, coverage.documented);
         assert!(coverage.missing_handlers.is_empty());
     }

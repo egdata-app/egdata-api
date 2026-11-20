@@ -1,4 +1,4 @@
-//! Static metadata registry for all 154 `/v1` API operations.
+//! Static metadata registry for all 155 `/v1` API operations.
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -742,13 +742,111 @@ fn search_operations() -> Vec<V1OperationMetadata> {
         query_parameter(
             "facets",
             "Facet detail level.",
-            json!({ "type": "string", "enum": ["full", "minimal", "none"], "default": "full" }),
+            json!({ "type": "string", "enum": ["full", "minimal", "none"], "default": "none" }),
+            Some(false),
+        ),
+        query_parameter(
+            "fields",
+            "Offer projection. `card` returns only the fields rendered by egdata.app search cards; `full` keeps the complete offer document.",
+            json!({ "type": "string", "enum": ["full", "card"], "default": "full" }),
             Some(false),
         ),
         country_parameter(),
         locale_parameter(),
         limit_parameter(100),
         cursor_parameter(),
+    ];
+
+    let facet_params = vec![
+        query_str(
+            "title",
+            "Free-text title, developer, publisher, tag, or description query.",
+        ),
+        query_str("offerType", "Exact Epic offer type."),
+        query_str("tags", "Comma-separated tag IDs (all must match)."),
+        query_str("categories", "Comma-separated categories (any must match)."),
+        query_str(
+            "customAttributes",
+            "Comma-separated custom attribute values.",
+        ),
+        query_str("technologies", "Comma-separated build technologies."),
+        query_str("seller", "Seller ID."),
+        query_str("developerDisplayName", "Exact developer display name."),
+        query_str("publisherDisplayName", "Exact publisher display name."),
+        query_str("refundType", "Exact refund type."),
+        query_parameter(
+            "isCodeRedemptionOnly",
+            "Filter code-redemption-only offers.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "excludeBlockchain",
+            "Exclude blockchain offers.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "onSale",
+            "Only discounted offers.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "pastGiveaways",
+            "Only offers with giveaway history.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "isLowestPrice",
+            "Only offers at their lowest observed US price.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "isLowestPriceEver",
+            "Only offers at their historical lowest US price.",
+            json!({ "type": "boolean" }),
+            Some(false),
+        ),
+        query_parameter(
+            "priceMin",
+            "Minimum discount price in minor units.",
+            json!({ "type": "integer", "minimum": 0 }),
+            Some(false),
+        ),
+        query_parameter(
+            "priceMax",
+            "Maximum discount price in minor units.",
+            json!({ "type": "integer", "minimum": 0 }),
+            Some(false),
+        ),
+        query_parameter(
+            "sortBy",
+            "Primary sort field.",
+            json!({
+                "type": "string",
+                "enum": [
+                    "releaseDate", "lastModifiedDate", "effectiveDate", "creationDate",
+                    "viewableDate", "pcReleaseDate", "upcoming", "priceAsc", "priceDesc",
+                    "price", "discount", "discountPercent", "priceUpdatedAt", "giveawayDate"
+                ]
+            }),
+            Some(false),
+        ),
+        query_parameter(
+            "sortDir",
+            "Sort direction.",
+            json!({ "type": "string", "enum": ["asc", "desc"] }),
+            Some(false),
+        ),
+        query_str(
+            "facets",
+            "Comma-separated facet sections to compute (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, `all`). Defaults to `all`.",
+        ),
+        country_parameter(),
+        locale_parameter(),
     ];
 
     vec![
@@ -758,6 +856,10 @@ fn search_operations() -> Vec<V1OperationMetadata> {
             .policy(V1ExpensivePolicy::Search)
             .params(search_params)
             .leg(&["/search/v2/search"]),
+        op("searchOfferFacets", V1HttpMethod::Get, "/v1/search/facets", "Get offer search facet aggregations", &["Search"], V1Scope::SearchRead, V1AuthMode::Key)
+            .desc("Computes OpenSearch facet aggregations for the current offer search filters without fetching offer hits (`size: 0`). Pass `facets` as a comma-separated list of sections (`offerType`, `tags`, `technologies`, `developer`, `publisher`, `seller`, `price`, or `all`) to load individual filter sections asynchronously.")
+            .policy(V1ExpensivePolicy::Search)
+            .params(facet_params),
         op("searchOffersRedirect", V1HttpMethod::Post, "/v1/search", "Normalize search filters to a cacheable GET request", &["Search"], V1Scope::SearchRead, V1AuthMode::Key)
             .desc("Validates a JSON filter document and returns a bodyless 303 redirect to the equivalent GET URL. No search is executed and no result body is returned.")
             .policy(V1ExpensivePolicy::Search)
@@ -788,6 +890,7 @@ fn search_operations() -> Vec<V1OperationMetadata> {
                         "sortBy": { "type": "string" },
                         "sortDir": { "type": "string", "enum": ["asc", "desc"] },
                         "facets": { "type": "string", "enum": ["full", "minimal", "none"] },
+                        "fields": { "type": "string", "enum": ["full", "card"], "default": "full" },
                         "price": {
                             "type": "object",
                             "additionalProperties": false,
@@ -1635,11 +1738,11 @@ fn assets_operations() -> Vec<V1OperationMetadata> {
     ]
 }
 
-/// Returns the complete static slice of all 154 `/v1` operations.
+/// Returns the complete static slice of all 155 `/v1` operations.
 pub fn v1_operations() -> &'static [V1OperationMetadata] {
     static OPERATIONS: OnceLock<Vec<V1OperationMetadata>> = OnceLock::new();
     OPERATIONS.get_or_init(|| {
-        let mut ops = Vec::with_capacity(154);
+        let mut ops = Vec::with_capacity(155);
         ops.extend(system_operations());
         ops.extend(catalog_operations());
         ops.extend(offers_operations());
@@ -1714,13 +1817,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_all_154_operations_registered_and_unique() {
+    fn test_all_155_operations_registered_and_unique() {
         let all = v1_operations();
-        assert_eq!(all.len(), 154);
+        assert_eq!(all.len(), 155);
 
         let public = v1_public_operations();
-        // 6 XML + 4 Image = 10 excluded -> 144 public operations
-        assert_eq!(public.len(), 144);
+        // 6 XML + 4 Image = 10 excluded -> 145 public operations
+        assert_eq!(public.len(), 145);
 
         let legacy_map = v1_operations_by_legacy_path();
         assert_eq!(
