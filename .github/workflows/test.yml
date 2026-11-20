@@ -89,12 +89,15 @@ jobs:
       CARGO_PROFILE_DEV_DEBUG: 1
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: rust -> target
+      - run: pnpm install --frozen-lockfile
       - name: Check Rust lints
         working-directory: rust
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
