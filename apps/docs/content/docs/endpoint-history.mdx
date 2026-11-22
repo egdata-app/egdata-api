@@ -3,6 +3,21 @@ title: Endpoint histories
 description: Dated API behavior changes, independent of deployment.
 ---
 
+## 2026-11-22 — Lower default search rate limit for /search/v2/search from 300 to 60 requests per minute
+
+Record: [lower-search-v2-rate-limit](https://github.com/egdata-app/egdata-api/blob/main/changes/records/lower-search-v2-rate-limit.json).
+
+- **legacy POST /search/v2/search** (searchOffersV2; changed; compatible)
+  - Before: Anonymous requests to POST /search/v2/search used the default RateLimitTier::Search limit of 300 requests per minute.
+  - After: Anonymous requests to POST /search/v2/search use the lowered default RateLimitTier::Search limit of 60 requests per minute (configurable via RATE_LIMIT_SEARCH_PER_MINUTE).
+  - Client action: None for normal usage; high-frequency callers exceeding 60 requests per minute will receive 429 RATE_LIMITED.
+- **legacy GET /search/v2/search** (searchOffersV2Get; changed; compatible)
+  - Before: Anonymous requests to GET /search/v2/search used the default RateLimitTier::Search limit of 300 requests per minute.
+  - After: Anonymous requests to GET /search/v2/search use the lowered default RateLimitTier::Search limit of 60 requests per minute (configurable via RATE_LIMIT_SEARCH_PER_MINUTE).
+  - Client action: None for normal usage; high-frequency callers exceeding 60 requests per minute will receive 429 RATE_LIMITED.
+
+Verification: cargo test -p egdata-api-state -p egdata-http-core; cargo clippy -p egdata-api-state -p egdata-http-core --all-targets -- -D warnings.
+
 ## 2026-11-20 — Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection
 
 Record: [search-facets-and-card-projection](https://github.com/egdata-app/egdata-api/blob/main/changes/records/search-facets-and-card-projection.json).

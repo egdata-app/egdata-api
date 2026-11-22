@@ -365,7 +365,7 @@ mod tests {
         assert_eq!(RateLimitTier::GraphqlGet.limit(&cfg), 1200);
         assert_eq!(RateLimitTier::GraphqlPost.limit(&cfg), 30);
         assert_eq!(RateLimitTier::Heavy.limit(&cfg), 60);
-        assert_eq!(RateLimitTier::Search.limit(&cfg), 300);
+        assert_eq!(RateLimitTier::Search.limit(&cfg), 60);
         assert_eq!(RateLimitTier::Bulk.limit(&cfg), 10);
         assert_eq!(RateLimitTier::OffersList.limit(&cfg), 5);
 
@@ -706,7 +706,7 @@ mod tests {
                     enabled_state.clone(),
                     search_rate_limit,
                 )),
-                "300;w=60",
+                "60;w=60",
             ),
             (
                 base.clone().layer(middleware::from_fn_with_state(
