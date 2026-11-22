@@ -3716,6 +3716,43 @@
   "records": [
     {
       "record": {
+        "id": "lower-search-v2-rate-limit",
+        "recordedDate": "2026-11-22",
+        "title": "Lower default search rate limit for /search/v2/search from 300 to 60 requests per minute",
+        "endpoints": [
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersV2",
+            "method": "POST",
+            "path": "/search/v2/search",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous requests to POST /search/v2/search used the default RateLimitTier::Search limit of 300 requests per minute.",
+            "after": "Anonymous requests to POST /search/v2/search use the lowered default RateLimitTier::Search limit of 60 requests per minute (configurable via RATE_LIMIT_SEARCH_PER_MINUTE).",
+            "clientAction": "None for normal usage; high-frequency callers exceeding 60 requests per minute will receive 429 RATE_LIMITED."
+          },
+          {
+            "apiVersion": "legacy",
+            "operationId": "searchOffersV2Get",
+            "method": "GET",
+            "path": "/search/v2/search",
+            "type": "changed",
+            "compatibility": "compatible",
+            "before": "Anonymous requests to GET /search/v2/search used the default RateLimitTier::Search limit of 300 requests per minute.",
+            "after": "Anonymous requests to GET /search/v2/search use the lowered default RateLimitTier::Search limit of 60 requests per minute (configurable via RATE_LIMIT_SEARCH_PER_MINUTE).",
+            "clientAction": "None for normal usage; high-frequency callers exceeding 60 requests per minute will receive 429 RATE_LIMITED."
+          }
+        ],
+        "verification": [
+          "cargo test -p egdata-api-state -p egdata-http-core",
+          "cargo clippy -p egdata-api-state -p egdata-http-core --all-targets -- -D warnings"
+        ]
+      },
+      "contentHash": "7edcdcb4b283c17562ff0900adf98b4105067ddf8be32036a36b8406dcb7cc7b",
+      "source": "changes/records/lower-search-v2-rate-limit.json"
+    },
+    {
+      "record": {
         "id": "search-facets-and-card-projection",
         "recordedDate": "2026-11-20",
         "title": "Split search facets into a dedicated endpoint, default search facets to none, and add an opt-in card offer projection",
