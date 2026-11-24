@@ -76,8 +76,10 @@ Loading one section per accordion keeps the initial search response small and on
 
 `limit` defaults to 20 and is capped at 100. Without `sortBy`, text searches rank by relevance and other searches sort by most recently modified. Common `sortBy` values include `releaseDate`, `lastModifiedDate`, `price`, `discount`, `discountPercent`, `priceUpdatedAt`, `upcoming`, and `giveawayDate`; `sortDir` is `asc` or `desc` and defaults to `desc`. Set `sortBy=price` and `sortDir=asc` for the lowest price first. Price sorting uses the selected country's region. Some release date sorts also restrict results to future or released offers.
 
-## Legacy v2 compatibility
+## Legacy v2 compatibility (deprecated)
 
-`GET /search/v2/search` remains available and uses the same filters with `page`-based pagination. Its `facets` default is also `none`; request `facets=full` or `minimal` to restore aggregations. `POST /search/v2/search` validates the JSON filter object and redirects to the equivalent GET URL.
+`GET /search/v2/search` is deprecated and emits `Deprecation: true` and `Link: <https://devs.egdata.app>; rel="successor-version"` headers. Its `facets` default is `none`; request `facets=full` or `minimal` to restore aggregations.
+
+Unauthenticated requests to `/search/v2/search` through the public gateway are restricted to `limit <= 28`, `page <= 10`, `20` requests per minute, and a 30-minute (`1800s`) CDN cache window. `POST /search/v2/search` still redirects (`303`) to the equivalent `GET` URL, where anonymous queries exceeding `limit=28` or `page=10` return `403 MIGRATE_TO_V1` pointing to [devs.egdata.app](https://devs.egdata.app) and `/v1/search`. Authenticated API key callers continue to work during migration.
 
 For meaning-based queries, see [natural-language search](/docs/natural-language-search).

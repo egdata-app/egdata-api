@@ -48,7 +48,7 @@ impl Default for RateLimitConfig {
             graphql_get_per_minute: 1200,
             graphql_post_per_minute: 30,
             heavy_per_minute: 60,
-            search_per_minute: 60,
+            search_per_minute: 20,
             bulk_per_minute: 10,
             offers_list_per_minute: 5,
         }
@@ -199,7 +199,7 @@ impl ApiConfig {
             graphql_get_per_minute: parse_limit_env("RATE_LIMIT_GRAPHQL_GET_PER_MINUTE", 1200),
             graphql_post_per_minute: parse_limit_env("RATE_LIMIT_GRAPHQL_POST_PER_MINUTE", 30),
             heavy_per_minute: parse_limit_env("RATE_LIMIT_HEAVY_PER_MINUTE", 60),
-            search_per_minute: parse_limit_env("RATE_LIMIT_SEARCH_PER_MINUTE", 60),
+            search_per_minute: parse_limit_env("RATE_LIMIT_SEARCH_PER_MINUTE", 20),
             bulk_per_minute: parse_limit_env("RATE_LIMIT_BULK_PER_MINUTE", 10),
             offers_list_per_minute: parse_limit_env("RATE_LIMIT_OFFERS_LIST_PER_MINUTE", 5),
         };

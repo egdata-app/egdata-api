@@ -3,6 +3,21 @@ title: Endpoint histories
 description: Dated API behavior changes, independent of deployment.
 ---
 
+## 2026-11-24 — Harden anonymous /search/v2/search with migration errors, 20/min rate limit, 30-minute edge TTL, and deprecation headers
+
+Record: [harden-legacy-search-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/harden-legacy-search-v2.json).
+
+- **legacy POST /search/v2/search** (searchOffersV2; deprecated; compatible)
+  - Before: Anonymous POST /search/v2/search requests redirected (303) to GET /search/v2/search under an origin-only 60 requests/minute search rate limit without deprecation headers.
+  - After: Marked deprecated with Deprecation: true and Link: &lt;https://devs.egdata.app&gt;; rel="successor-version" headers. POST /search/v2/search continues to return a 303 redirect to GET /search/v2/search, while anonymous traffic is rate-limited to 20 requests/minute at both the Worker edge and origin with a migration prompt pointing to https://devs.egdata.app and /v1/search (and the followed GET enforces anonymous limit&lt;=28 and page&lt;=10 caps).
+  - Client action: Create a free API key at https://devs.egdata.app and migrate to GET /v1/search.
+- **legacy GET /search/v2/search** (searchOffersV2Get; deprecated; breaking)
+  - Before: Anonymous GET /search/v2/search accepted limit up to 100 and unbounded page numbers with a 5-minute (300s) CDN cache TTL and an origin-only 60 requests/minute search rate limit without deprecation headers.
+  - After: Marked deprecated with Deprecation: true and Link: &lt;https://devs.egdata.app&gt;; rel="successor-version" headers. At the Cloudflare Worker gateway, anonymous GET/HEAD /search/v2/search requests exceeding limit=28 or page=10 return 403 MIGRATE_TO_V1 pointing to https://devs.egdata.app and /v1/search; anonymous requests are edge-rate-limited to 20 requests/minute per IP before cache lookup (429 RATE_LIMITED with migration prompt); and anonymous edge cache TTL is raised from 300s to 1800s (30 minutes). Origin RateLimitTier::Search default is lowered from 60 to 20 requests/minute with the same migration prompt. Authenticated API key and trusted first-party callers retain full pagination and limit up to 100.
+  - Client action: Create a free API key at https://devs.egdata.app and migrate to GET /v1/search (which supports limit up to 100, cursor pagination, fields=card, and GET /v1/search/facets).
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --workspace; cargo clippy --workspace --all-targets -- -D warnings; pnpm openapi:check; pnpm release:check --base origin/main.
+
 ## 2026-11-22 — Lower default search rate limit for /search/v2/search from 300 to 60 requests per minute
 
 Record: [lower-search-v2-rate-limit](https://github.com/egdata-app/egdata-api/blob/main/changes/records/lower-search-v2-rate-limit.json).

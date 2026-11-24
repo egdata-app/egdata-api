@@ -164,6 +164,17 @@ pub async fn edge_cache_headers(req: Request<Body>, next: Next) -> Response {
 
     let mut resp = next.run(req).await;
 
+    if path == "/search/v2/search" {
+        resp.headers_mut().insert(
+            HeaderName::from_static("deprecation"),
+            HeaderValue::from_static("true"),
+        );
+        resp.headers_mut().insert(
+            header::LINK,
+            HeaderValue::from_static("<https://devs.egdata.app>; rel=\"successor-version\""),
+        );
+    }
+
     if method == Method::GET {
         append_vary_token(resp.headers_mut(), "Accept-Encoding");
         if path == "/stats/homepage" && !has_country {
@@ -324,6 +335,15 @@ mod tests {
             assert_eq!(resp.headers().get(header::CACHE_CONTROL).unwrap(), browser);
             assert_eq!(resp.headers().get("cdn-cache-control").unwrap(), cdn);
             assert_eq!(resp.headers().get(header::VARY).unwrap(), "Accept-Encoding");
+            if uri == "/search/v2/search" {
+                assert_eq!(resp.headers().get("deprecation").unwrap(), "true");
+                assert_eq!(
+                    resp.headers().get(header::LINK).unwrap(),
+                    "<https://devs.egdata.app>; rel=\"successor-version\""
+                );
+            } else {
+                assert!(resp.headers().get("deprecation").is_none());
+            }
         }
 
         // /stats/homepage without country adds Cookie to Vary

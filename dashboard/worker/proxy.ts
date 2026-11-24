@@ -46,6 +46,40 @@ const ANONYMOUS_EDGE_CACHE_PATHS = new Set([
   "/autocomplete",
 ]);
 
+const LEGACY_SEARCH_PATH = "/search/v2/search";
+const LEGACY_SEARCH_ANON_MAX_LIMIT = 28;
+const LEGACY_SEARCH_ANON_MAX_PAGE = 10;
+const LEGACY_SEARCH_ANON_RPM = 20;
+const LEGACY_SEARCH_ANON_CDN_TTL_SECONDS = 1800;
+const DEVELOPER_PORTAL_URL = "https://devs.egdata.app";
+const LEGACY_SEARCH_DEPRECATION_HEADERS = {
+  Deprecation: "true",
+  Link: `<${DEVELOPER_PORTAL_URL}>; rel="successor-version"`,
+} as const;
+
+function parseLegacySearchNumber(raw: string | null): number | null {
+  if (raw === null) return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function withLegacySearchDeprecationHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  if (!headers.has("deprecation")) {
+    headers.set("Deprecation", LEGACY_SEARCH_DEPRECATION_HEADERS.Deprecation);
+  }
+  if (!headers.has("link")) {
+    headers.set("Link", LEGACY_SEARCH_DEPRECATION_HEADERS.Link);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 function isAnonymousEdgeCachePath(pathname: string): boolean {
   return (
     ANONYMOUS_EDGE_CACHE_PATHS.has(pathname) ||
@@ -68,6 +102,7 @@ function edgeErrorJson(
   message: string,
   originHeader: string | null,
   extraHeaders?: Record<string, string>,
+  extraErrorFields?: Record<string, unknown>,
 ): Response {
   const headers: Record<string, string> = {
     "Content-Type": "application/json; charset=utf-8",
@@ -79,7 +114,7 @@ function edgeErrorJson(
     headers["Access-Control-Allow-Origin"] = originHeader;
     headers["Access-Control-Allow-Credentials"] = "true";
     headers["Access-Control-Expose-Headers"] =
-      "Retry-After, RateLimit, RateLimit-Policy, X-RateLimit-Policy, X-Egdata-Key-Tier";
+      "Retry-After, RateLimit, RateLimit-Policy, X-RateLimit-Policy, X-Egdata-Key-Tier, Deprecation, Link";
     headers.Vary = "Origin";
   }
   return new Response(
@@ -87,6 +122,7 @@ function edgeErrorJson(
       error: {
         code,
         message,
+        ...extraErrorFields,
       },
     }),
     { status, headers },
@@ -238,6 +274,104 @@ export async function handleEdgeApiProxy(
   if (!rawApiKey) {
     const trustedFirstParty = await isTrustedFirstPartyRequest(request, env);
     if (!requireKey || trustedFirstParty) {
+      const isLegacySearch = upstreamPath === LEGACY_SEARCH_PATH;
+      const upperMethod = request.method.toUpperCase();
+
+      if (isLegacySearch && !trustedFirstParty) {
+        if (upperMethod === "GET" || upperMethod === "HEAD") {
+          const requestedLimit = parseLegacySearchNumber(
+            reqUrl.searchParams.get("limit"),
+          );
+          if (
+            requestedLimit !== null &&
+            requestedLimit > LEGACY_SEARCH_ANON_MAX_LIMIT
+          ) {
+            const response = edgeErrorJson(
+              403,
+              "MIGRATE_TO_V1",
+              `Anonymous /search/v2/search is limited to limit<=${LEGACY_SEARCH_ANON_MAX_LIMIT} and page<=${LEGACY_SEARCH_ANON_MAX_PAGE}. For larger pages (up to 100), deep pagination, and slim payloads (fields=card), create a free API key at ${DEVELOPER_PORTAL_URL} and use /v1/search.`,
+              originHeader,
+              LEGACY_SEARCH_DEPRECATION_HEADERS,
+              {
+                developerPortal: DEVELOPER_PORTAL_URL,
+                successor: "/v1/search",
+                maxLimit: LEGACY_SEARCH_ANON_MAX_LIMIT,
+                maxPage: LEGACY_SEARCH_ANON_MAX_PAGE,
+              },
+            );
+            return recordUnattributed(
+              upperMethod === "HEAD" ? new Response(null, response) : response,
+              "legacy_search_limit_exceeded",
+            );
+          }
+
+          const requestedPage = parseLegacySearchNumber(
+            reqUrl.searchParams.get("page"),
+          );
+          if (
+            requestedPage !== null &&
+            requestedPage > LEGACY_SEARCH_ANON_MAX_PAGE
+          ) {
+            const response = edgeErrorJson(
+              403,
+              "MIGRATE_TO_V1",
+              `Anonymous /search/v2/search is limited to limit<=${LEGACY_SEARCH_ANON_MAX_LIMIT} and page<=${LEGACY_SEARCH_ANON_MAX_PAGE}. For larger pages (up to 100), deep pagination, and slim payloads (fields=card), create a free API key at ${DEVELOPER_PORTAL_URL} and use /v1/search.`,
+              originHeader,
+              LEGACY_SEARCH_DEPRECATION_HEADERS,
+              {
+                developerPortal: DEVELOPER_PORTAL_URL,
+                successor: "/v1/search",
+                maxLimit: LEGACY_SEARCH_ANON_MAX_LIMIT,
+                maxPage: LEGACY_SEARCH_ANON_MAX_PAGE,
+              },
+            );
+            return recordUnattributed(
+              upperMethod === "HEAD" ? new Response(null, response) : response,
+              "legacy_search_page_exceeded",
+            );
+          }
+        }
+
+        if (
+          (upperMethod === "GET" ||
+            upperMethod === "HEAD" ||
+            upperMethod === "POST") &&
+          env.RATE_LIMITER_LEGACY_SEARCH
+        ) {
+          let allowed = true;
+          try {
+            const outcome = await env.RATE_LIMITER_LEGACY_SEARCH.limit({
+              key: `legacy-search:${clientIp ?? "unknown"}`,
+            });
+            allowed = outcome.success;
+          } catch {
+            // Fail open if the edge rate limiter binding is transiently unavailable.
+          }
+          if (!allowed) {
+            const response = edgeErrorJson(
+              429,
+              "RATE_LIMITED",
+              `Anonymous /search/v2/search is limited to ${LEGACY_SEARCH_ANON_RPM} requests per minute. Create a free API key at ${DEVELOPER_PORTAL_URL} and migrate to /v1/search for higher quotas.`,
+              originHeader,
+              {
+                ...LEGACY_SEARCH_DEPRECATION_HEADERS,
+                "Retry-After": "60",
+                RateLimit: `limit=${LEGACY_SEARCH_ANON_RPM}, remaining=0, reset=60`,
+                "RateLimit-Policy": `${LEGACY_SEARCH_ANON_RPM};w=60`,
+              },
+              {
+                developerPortal: DEVELOPER_PORTAL_URL,
+                successor: "/v1/search",
+              },
+            );
+            return recordUnattributed(
+              upperMethod === "HEAD" ? new Response(null, response) : response,
+              "legacy_search_rate_limited",
+            );
+          }
+        }
+      }
+
       if (isAnonymousEdgeCachePath(upstreamPath)) {
         const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
           request,
@@ -245,6 +379,9 @@ export async function handleEdgeApiProxy(
           pathname: upstreamPath,
           search: reqUrl.search,
           anonymousPublic: true,
+          ...(isLegacySearch && !trustedFirstParty
+            ? { minTtlSeconds: LEGACY_SEARCH_ANON_CDN_TTL_SECONDS }
+            : {}),
           fetchUpstream: (upstreamRequest) =>
             forwardToUpstream(
               upstreamRequest,
@@ -254,7 +391,13 @@ export async function handleEdgeApiProxy(
               cfProps,
             ),
         });
-        return recordUnattributed(response, "ok", cacheStatus);
+        return recordUnattributed(
+          isLegacySearch
+            ? withLegacySearchDeprecationHeaders(response)
+            : response,
+          "ok",
+          cacheStatus,
+        );
       }
       return forwardUnattributed();
     }
@@ -638,12 +781,23 @@ export async function handleEdgeApiProxy(
     outHeaders.set(name, value);
   }
   outHeaders.set("X-Egdata-Key-Tier", entitlement.tier);
+  if (upstreamPath === LEGACY_SEARCH_PATH) {
+    if (!outHeaders.has("deprecation")) {
+      outHeaders.set(
+        "Deprecation",
+        LEGACY_SEARCH_DEPRECATION_HEADERS.Deprecation,
+      );
+    }
+    if (!outHeaders.has("link")) {
+      outHeaders.set("Link", LEGACY_SEARCH_DEPRECATION_HEADERS.Link);
+    }
+  }
   if (originHeader) {
     outHeaders.set("Access-Control-Allow-Origin", originHeader);
     outHeaders.set("Access-Control-Allow-Credentials", "true");
     outHeaders.set(
       "Access-Control-Expose-Headers",
-      "Cache-Control, CDN-Cache-Control, ETag, X-Total-Count, X-Cache, X-Route-Template, X-Egdata-Mitigation, Retry-After, Server-Timing, RateLimit, RateLimit-Policy, X-Egdata-Key-Tier",
+      "Cache-Control, CDN-Cache-Control, ETag, X-Total-Count, X-Cache, X-Route-Template, X-Egdata-Mitigation, Retry-After, Server-Timing, RateLimit, RateLimit-Policy, X-Egdata-Key-Tier, Deprecation, Link",
     );
     const existingVary = outHeaders.get("Vary");
     if (!existingVary) {

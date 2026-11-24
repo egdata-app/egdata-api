@@ -303,6 +303,8 @@ const PUBLIC_RESPONSE_HEADERS = [
   "access-control-allow-origin",
   "access-control-allow-credentials",
   "access-control-expose-headers",
+  "deprecation",
+  "link",
 ] as const;
 
 function restorePublicResponse(cached: Response): Response {
@@ -508,6 +510,7 @@ export async function fetchLegacyWithEdgeCache(options: {
   search: string;
   fetchUpstream: (upstreamRequest: Request) => Promise<Response>;
   anonymousPublic?: boolean;
+  minTtlSeconds?: number;
 }): Promise<EdgeCacheFetchResult> {
   const {
     request,
@@ -516,6 +519,7 @@ export async function fetchLegacyWithEdgeCache(options: {
     search,
     fetchUpstream,
     anonymousPublic = false,
+    minTtlSeconds,
   } = options;
   const method = request.method.toUpperCase();
 
@@ -596,7 +600,12 @@ export async function fetchLegacyWithEdgeCache(options: {
     return { response: upstream, cacheStatus: "REVALIDATED" };
   }
 
-  const ttl = legacyResponseEdgeTtlSeconds(upstream);
+  const rawTtl = legacyResponseEdgeTtlSeconds(upstream);
+  const ttl =
+    rawTtl !== null && minTtlSeconds !== undefined
+      ? Math.max(rawTtl, minTtlSeconds)
+      : rawTtl;
+  const ttlExtended = rawTtl !== null && ttl !== null && ttl > rawTtl;
   const supportedVary =
     !anonymousPublic ||
     (upstream.headers.get("vary") ?? "")
@@ -608,11 +617,21 @@ export async function fetchLegacyWithEdgeCache(options: {
     const toCache = upstream.clone();
     const storedHeaders = stripHopHeadersForStorage(toCache.headers);
     storedHeaders.set("Cache-Control", `public, max-age=${ttl}`);
+    const publicCacheControl = ttlExtended
+      ? `public, max-age=60, s-maxage=${ttl}, stale-while-revalidate=600`
+      : upstream.headers.get("cache-control");
+    const publicCdnCacheControl = ttlExtended
+      ? `public, max-age=${ttl}, stale-while-revalidate=3600`
+      : upstream.headers.get("cdn-cache-control");
     if (anonymousPublic) {
       storedHeaders.set(
         PUBLIC_HEADERS_METADATA,
         JSON.stringify(
-          PUBLIC_RESPONSE_HEADERS.map((name) => upstream.headers.get(name)),
+          PUBLIC_RESPONSE_HEADERS.map((name) => {
+            if (name === "cache-control") return publicCacheControl;
+            if (name === "cdn-cache-control") return publicCdnCacheControl;
+            return upstream.headers.get(name);
+          }),
         ),
       );
     }
@@ -639,6 +658,24 @@ export async function fetchLegacyWithEdgeCache(options: {
           headers: upstream.headers,
         }),
         cacheStatus: "REVALIDATED",
+      };
+    }
+
+    if (ttlExtended) {
+      const responseHeaders = new Headers(upstream.headers);
+      if (publicCacheControl) {
+        responseHeaders.set("Cache-Control", publicCacheControl);
+      }
+      if (publicCdnCacheControl) {
+        responseHeaders.set("CDN-Cache-Control", publicCdnCacheControl);
+      }
+      return {
+        response: new Response(upstream.body, {
+          status: upstream.status,
+          statusText: upstream.statusText,
+          headers: responseHeaders,
+        }),
+        cacheStatus: "MISS",
       };
     }
 
