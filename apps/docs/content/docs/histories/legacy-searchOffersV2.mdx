@@ -5,6 +5,17 @@ description: History for POST /search/v2/search
 
 `POST /search/v2/search` — active. Recorded dates are not deployment dates.
 
+## 2026-11-24 — Harden anonymous /search/v2/search with migration errors, 20/min rate limit, 30-minute edge TTL, and deprecation headers
+
+Record: [harden-legacy-search-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/harden-legacy-search-v2.json).
+
+- **legacy POST /search/v2/search** (searchOffersV2; deprecated; compatible)
+  - Before: Anonymous POST /search/v2/search requests redirected (303) to GET /search/v2/search under an origin-only 60 requests/minute search rate limit without deprecation headers.
+  - After: Marked deprecated with Deprecation: true and Link: &lt;https://devs.egdata.app&gt;; rel="successor-version" headers. POST /search/v2/search continues to return a 303 redirect to GET /search/v2/search, while anonymous traffic is rate-limited to 20 requests/minute at both the Worker edge and origin with a migration prompt pointing to https://devs.egdata.app and /v1/search (and the followed GET enforces anonymous limit&lt;=28 and page&lt;=10 caps).
+  - Client action: Create a free API key at https://devs.egdata.app and migrate to GET /v1/search.
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --workspace; cargo clippy --workspace --all-targets -- -D warnings; pnpm openapi:check; pnpm release:check --base origin/main.
+
 ## 2026-11-22 — Lower default search rate limit for /search/v2/search from 300 to 60 requests per minute
 
 Record: [lower-search-v2-rate-limit](https://github.com/egdata-app/egdata-api/blob/main/changes/records/lower-search-v2-rate-limit.json).

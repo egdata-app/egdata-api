@@ -137,6 +137,7 @@ export interface DashboardEnv
     | "WEB_SSR_KEY_ID"
   > {
   FLAGS?: Pick<Flagship, "getBooleanValue">;
+  RATE_LIMITER_LEGACY_SEARCH?: RateLimit;
   EPIC_CLIENT_ID?: string;
   EPIC_CLIENT_SECRET?: string;
   DASHBOARD_SESSION_SECRET?: string;

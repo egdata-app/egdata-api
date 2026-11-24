@@ -263,7 +263,7 @@ describe("Worker-level post-auth edge caching", () => {
     ["/offers/top-sellers?locale=es-ES&page=1&limit=10", 3600, 300],
     ["/free-games?country=ES&locale=es-ES&expand=true", 300, 60],
     ["/free-games/stats?country=ES", 86400, 3600],
-    ["/search/v2/search?country=US&query=game&page=1", 300, 60],
+    ["/search/v2/search?country=US&query=game&page=1", 1800, 60],
     ["/stats/homepage?country=US", 300, 60],
     ["/autocomplete?query=game&locale=en-US&limit=5", 60, 60],
   ])("caches anonymous %s using origin TTLs and preserves public headers", async (path, ttl, browserTtl) => {
@@ -563,6 +563,198 @@ describe("Worker-level post-auth edge caching", () => {
     expect(upstream).toHaveBeenCalledTimes(cases.length + 1);
     expect(defaultCache.match).not.toHaveBeenCalled();
     expect(defaultCache.put).not.toHaveBeenCalled();
+  });
+
+  it("hardens anonymous /search/v2/search with migration errors, edge rate limits, 30m TTL, and deprecation headers", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async () =>
+      Response.json(
+        { total: 1, offers: [] },
+        {
+          headers: {
+            "Cache-Control":
+              "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+            "CDN-Cache-Control":
+              "public, max-age=300, stale-while-revalidate=3600",
+          },
+        },
+      ),
+    );
+    vi.stubGlobal("fetch", upstream);
+    const { env, keyA } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    env.FIRST_PARTY_SERVICE_TOKEN = "fp-secret-token";
+    let allowLegacySearch = true;
+    const legacyRateLimit = vi.fn(async () => ({ success: allowLegacySearch }));
+    env.RATE_LIMITER_LEGACY_SEARCH = { limit: legacyRateLimit };
+    const ctx = createExecutionContext();
+
+    // 1. Anonymous limit > 28 (including hex) and page > 10 are rejected with 403 MIGRATE_TO_V1
+    for (const blockedPath of [
+      "/search/v2/search?limit=100",
+      "/search/v2/search?limit=29",
+      "/search/v2/search?limit=0x64",
+      "/search/v2/search?page=11",
+      "/search/v2/search?limit=28&page=95",
+    ]) {
+      const blocked = await handleEdgeApiProxy(
+        new Request(`https://api.egdata.app${blockedPath}`),
+        env,
+        ctx,
+      );
+      expect(blocked.status).toBe(403);
+      expect(blocked.headers.get("deprecation")).toBe("true");
+      expect(blocked.headers.get("link")).toBe(
+        '<https://devs.egdata.app>; rel="successor-version"',
+      );
+      const body = (await blocked.json()) as {
+        error: { code: string; message: string; developerPortal: string };
+      };
+      expect(body.error.code).toBe("MIGRATE_TO_V1");
+      expect(body.error.message).toContain("https://devs.egdata.app");
+      expect(body.error.developerPortal).toBe("https://devs.egdata.app");
+    }
+
+    // HEAD rejects with empty body
+    const headBlocked = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=100", {
+        method: "HEAD",
+      }),
+      env,
+      ctx,
+    );
+    expect(headBlocked.status).toBe(403);
+    expect(await headBlocked.text()).toBe("");
+    expect(upstream).not.toHaveBeenCalled();
+
+    // 2. Anonymous POST still forwards for 303 redirect and carries Deprecation/Link headers
+    const postAllowed = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "CF-Connecting-IP": "198.51.100.42",
+        },
+        body: JSON.stringify({ limit: 10 }),
+      }),
+      env,
+      ctx,
+    );
+    expect(postAllowed.status).toBe(200);
+    expect(postAllowed.headers.get("deprecation")).toBe("true");
+    expect(postAllowed.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // 3. Anonymous GET within bounds (limit=28, page=10) succeeds, caches for 1800s, and advertises Deprecation/Link on MISS and HIT
+    const miss = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=28&page=10", {
+        headers: { "CF-Connecting-IP": "198.51.100.42" },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(miss.status).toBe(200);
+    expect(miss.headers.get("deprecation")).toBe("true");
+    expect(miss.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+    expect(miss.headers.get("cache-control")).toBe(
+      "public, max-age=60, s-maxage=1800, stale-while-revalidate=600",
+    );
+    expect(miss.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=1800, stale-while-revalidate=3600",
+    );
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+    const storedResp = defaultCache.put.mock.calls[0]?.[1] as Response;
+    expect(storedResp.headers.get("cache-control")).toBe(
+      "public, max-age=1800",
+    );
+
+    const hit = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=28&page=10", {
+        headers: { "CF-Connecting-IP": "198.51.100.42" },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(hit.status).toBe(200);
+    expect(hit.headers.get("deprecation")).toBe("true");
+    expect(hit.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+    expect(hit.headers.get("cdn-cache-control")).toBe(
+      "public, max-age=1800, stale-while-revalidate=3600",
+    );
+    expect(upstream).toHaveBeenCalledTimes(2);
+
+    // 4. Edge rate limit blocks even warm cached GET and anonymous POST with 429 pointing to devs.egdata.app
+    allowLegacySearch = false;
+    const throttled = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=28&page=10", {
+        headers: { "CF-Connecting-IP": "198.51.100.42" },
+      }),
+      env,
+      ctx,
+    );
+    expect(throttled.status).toBe(429);
+    expect(throttled.headers.get("retry-after")).toBe("60");
+    expect(throttled.headers.get("deprecation")).toBe("true");
+    expect(throttled.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+    const throttledBody = (await throttled.json()) as {
+      error: { code: string; message: string; developerPortal: string };
+    };
+    expect(throttledBody.error.code).toBe("RATE_LIMITED");
+    expect(throttledBody.error.message).toContain("https://devs.egdata.app");
+    expect(throttledBody.error.developerPortal).toBe("https://devs.egdata.app");
+    expect(legacyRateLimit).toHaveBeenCalledWith({
+      key: "legacy-search:198.51.100.42",
+    });
+
+    const throttledPost = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search", {
+        method: "POST",
+        headers: { "CF-Connecting-IP": "198.51.100.42" },
+      }),
+      env,
+      ctx,
+    );
+    expect(throttledPost.status).toBe(429);
+
+    // 5. Authenticated API key and trusted first-party callers bypass anonymous limits
+    allowLegacySearch = true;
+    const authed = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=100&page=50", {
+        headers: { "X-API-Key": keyA.rawKey },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(authed.status).toBe(200);
+    expect(authed.headers.get("deprecation")).toBe("true");
+    expect(authed.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+
+    const firstParty = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/search/v2/search?limit=100&page=50", {
+        headers: { "X-Egdata-First-Party-Token": "fp-secret-token" },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(firstParty.status).toBe(200);
+    expect(firstParty.headers.get("deprecation")).toBe("true");
+    expect(upstream).toHaveBeenCalledTimes(4);
   });
 
   it("isolates anonymous entries from key-authenticated responses and falls back on cache errors", async () => {

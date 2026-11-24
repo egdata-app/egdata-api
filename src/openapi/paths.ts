@@ -1724,10 +1724,11 @@ export const paths: EgdataPaths = {
   "/search/v2/search": {
     post: operation({
       operationId: "searchOffersV2",
+      deprecated: true,
       tags: ["Search"],
-      summary: "Redirect sanitized search filters to GET",
+      summary: "Redirect sanitized search filters to GET (deprecated)",
       description:
-        "Compatibility endpoint. Validates filter types and sort options, strips unknown fields, trims strings, sorts and deduplicates lists, clamps integer pagination, and returns a bodyless 303 redirect to GET /search/v2/search. The Location URL contains the effective country (query, EGDATA_COUNTRY cookie, or US), locale and expand option. Redirects are no-store; only the following GET executes the search. Invalid JSON or filters return 400.",
+        'Deprecated compatibility endpoint (migrate to GET /v1/search at https://devs.egdata.app). Validates filter types and sort options, strips unknown fields, trims strings, sorts and deduplicates lists, clamps integer pagination, and returns a bodyless 303 redirect to GET /search/v2/search. Responses include Deprecation: true and Link: <https://devs.egdata.app>; rel="successor-version". Anonymous requests are limited to 20 requests per minute, and the followed GET enforces anonymous limit <= 28 and page <= 10 caps (403 MIGRATE_TO_V1). Redirects are no-store; only the following GET executes the search. Invalid JSON or filters return 400.',
       parameters: [
         parameterRef("country"),
         parameterRef("locale"),
@@ -1758,10 +1759,11 @@ export const paths: EgdataPaths = {
     }),
     get: operation({
       operationId: "searchOffersV2Get",
+      deprecated: true,
       tags: ["Search"],
-      summary: "Search offers with query parameters (edge-cacheable)",
+      summary: "Search offers with query parameters (deprecated)",
       description:
-        "Primary catalog search endpoint. Returns full offer documents with public cache headers (browser 60 seconds, CDN 300 seconds). Country defaults to US and does not use cookies. Unknown parameters are ignored; strings are trimmed, list values deduplicated and sorted, and integer page/limit values clamped to at least 1 (limit at most 100). Invalid filter types or sort options return 400. POST redirects here after sanitization.",
+        'Deprecated legacy search endpoint (migrate to GET /v1/search at https://devs.egdata.app). Responses include Deprecation: true and Link: <https://devs.egdata.app>; rel="successor-version". Anonymous gateway requests are restricted to limit <= 28, page <= 10, and 20 requests per minute (exceeding limit/page returns 403 MIGRATE_TO_V1; exceeding rate limit returns 429 RATE_LIMITED) with a 30-minute CDN edge cache (1800 seconds). Authenticated API key callers retain full pagination up to limit=100. Country defaults to US and does not use cookies. Invalid filter types or sort options return 400.',
       parameters: [
         parameterRef("country"),
         parameterRef("locale"),

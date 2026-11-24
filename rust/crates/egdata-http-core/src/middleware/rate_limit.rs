@@ -82,7 +82,9 @@ impl RateLimitTier {
             Self::Heavy => {
                 "This endpoint is temporarily rate limited. Please retry shortly.".to_string()
             }
-            Self::Search => "Search is temporarily rate limited. Please retry shortly.".to_string(),
+            Self::Search => format!(
+                "Anonymous /search/v2/search is limited to {limit} requests per minute. Create a free API key at https://devs.egdata.app and migrate to /v1/search for higher quotas."
+            ),
             Self::Bulk => "Bulk requests are rate limited. Please retry shortly.".to_string(),
             Self::OffersList => format!(
                 "The offers list is limited to {limit} requests per minute. Use /search/v2/search for catalogue queries."
@@ -365,7 +367,7 @@ mod tests {
         assert_eq!(RateLimitTier::GraphqlGet.limit(&cfg), 1200);
         assert_eq!(RateLimitTier::GraphqlPost.limit(&cfg), 30);
         assert_eq!(RateLimitTier::Heavy.limit(&cfg), 60);
-        assert_eq!(RateLimitTier::Search.limit(&cfg), 60);
+        assert_eq!(RateLimitTier::Search.limit(&cfg), 20);
         assert_eq!(RateLimitTier::Bulk.limit(&cfg), 10);
         assert_eq!(RateLimitTier::OffersList.limit(&cfg), 5);
 
@@ -378,7 +380,10 @@ mod tests {
         assert!(!RateLimitTier::GraphqlGet.message(1200).is_empty());
         assert!(!RateLimitTier::GraphqlPost.message(30).is_empty());
         assert!(!RateLimitTier::Heavy.message(60).is_empty());
-        assert!(!RateLimitTier::Search.message(300).is_empty());
+        let search_msg = RateLimitTier::Search.message(20);
+        assert!(search_msg.contains("20 requests per minute"));
+        assert!(search_msg.contains("https://devs.egdata.app"));
+        assert!(search_msg.contains("/v1/search"));
         assert!(!RateLimitTier::Bulk.message(10).is_empty());
 
         let r_cf = Request::builder()
@@ -706,7 +711,7 @@ mod tests {
                     enabled_state.clone(),
                     search_rate_limit,
                 )),
-                "60;w=60",
+                "20;w=60",
             ),
             (
                 base.clone().layer(middleware::from_fn_with_state(

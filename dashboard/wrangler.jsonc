@@ -96,6 +96,14 @@
         "limit": 120,
         "period": 60
       }
+    },
+    {
+      "name": "RATE_LIMITER_LEGACY_SEARCH",
+      "namespace_id": "1005",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
     }
   ],
   "analytics_engine_datasets": [
