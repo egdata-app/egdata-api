@@ -28,7 +28,11 @@ const V1_TTL_RULES: V1TtlRule[] = [
     ttlSeconds: DAY,
   },
   {
-    test: /^\/v1\/(?:robots\.txt|(?:items-|promotions-|sandboxes\/|profiles\/|items\/)?sitemap\.xml)$/,
+    test: /^\/v1\/(?:items-|promotions-|sandboxes\/|profiles\/|items\/)?sitemap\.xml$/,
+    ttlSeconds: DAY,
+  },
+  {
+    test: /^\/v1\/robots\.txt$/,
     ttlSeconds: HOUR,
   },
   {
@@ -234,6 +238,30 @@ export function legacyResponseEdgeTtlSeconds(
     if (value !== null) return parseSharedMaxAgeSeconds(value);
   }
   return parseSharedMaxAgeSeconds(response.headers.get("cache-control"));
+}
+
+function legacyResponseAllowsDefaultTtl(response: Response): boolean {
+  if (response.status !== 200) return false;
+  if (response.headers.has("set-cookie")) return false;
+  if (response.headers.has("x-egdata-mitigation")) return false;
+  const vary = response.headers.get("vary") ?? "";
+  if (vary.trim() === "*" || /\b(?:cookie|authorization)\b/i.test(vary)) {
+    return false;
+  }
+  for (const name of [
+    "cloudflare-cdn-cache-control",
+    "cdn-cache-control",
+    "cache-control",
+  ]) {
+    const value = response.headers.get(name);
+    if (
+      value &&
+      /(?:^|,)\s*(?:private|no-store|no-cache)\s*(?:,|=|$)/i.test(value)
+    ) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function isLegacyRequestCacheable(
@@ -511,6 +539,7 @@ export async function fetchLegacyWithEdgeCache(options: {
   fetchUpstream: (upstreamRequest: Request) => Promise<Response>;
   anonymousPublic?: boolean;
   minTtlSeconds?: number;
+  defaultTtlSeconds?: number;
 }): Promise<EdgeCacheFetchResult> {
   const {
     request,
@@ -520,6 +549,7 @@ export async function fetchLegacyWithEdgeCache(options: {
     fetchUpstream,
     anonymousPublic = false,
     minTtlSeconds,
+    defaultTtlSeconds,
   } = options;
   const method = request.method.toUpperCase();
 
@@ -601,11 +631,17 @@ export async function fetchLegacyWithEdgeCache(options: {
   }
 
   const rawTtl = legacyResponseEdgeTtlSeconds(upstream);
+  const usedDefaultTtl =
+    rawTtl === null &&
+    defaultTtlSeconds !== undefined &&
+    legacyResponseAllowsDefaultTtl(upstream);
+  const baseTtl = rawTtl ?? (usedDefaultTtl ? defaultTtlSeconds : null);
   const ttl =
-    rawTtl !== null && minTtlSeconds !== undefined
-      ? Math.max(rawTtl, minTtlSeconds)
-      : rawTtl;
+    baseTtl !== null && minTtlSeconds !== undefined
+      ? Math.max(baseTtl, minTtlSeconds)
+      : baseTtl;
   const ttlExtended = rawTtl !== null && ttl !== null && ttl > rawTtl;
+  const overrideHeaders = ttlExtended || usedDefaultTtl;
   const supportedVary =
     !anonymousPublic ||
     (upstream.headers.get("vary") ?? "")
@@ -617,12 +653,16 @@ export async function fetchLegacyWithEdgeCache(options: {
     const toCache = upstream.clone();
     const storedHeaders = stripHopHeadersForStorage(toCache.headers);
     storedHeaders.set("Cache-Control", `public, max-age=${ttl}`);
-    const publicCacheControl = ttlExtended
-      ? `public, max-age=60, s-maxage=${ttl}, stale-while-revalidate=600`
-      : upstream.headers.get("cache-control");
-    const publicCdnCacheControl = ttlExtended
-      ? `public, max-age=${ttl}, stale-while-revalidate=3600`
-      : upstream.headers.get("cdn-cache-control");
+    const publicCacheControl = usedDefaultTtl
+      ? `public, max-age=${ttl}, stale-while-revalidate=604800`
+      : ttlExtended
+        ? `public, max-age=60, s-maxage=${ttl}, stale-while-revalidate=600`
+        : upstream.headers.get("cache-control");
+    const publicCdnCacheControl = usedDefaultTtl
+      ? `public, max-age=${ttl}, stale-while-revalidate=604800`
+      : ttlExtended
+        ? `public, max-age=${ttl}, stale-while-revalidate=3600`
+        : upstream.headers.get("cdn-cache-control");
     if (anonymousPublic) {
       storedHeaders.set(
         PUBLIC_HEADERS_METADATA,
@@ -661,7 +701,7 @@ export async function fetchLegacyWithEdgeCache(options: {
       };
     }
 
-    if (ttlExtended) {
+    if (overrideHeaders) {
       const responseHeaders = new Headers(upstream.headers);
       if (publicCacheControl) {
         responseHeaders.set("Cache-Control", publicCacheControl);

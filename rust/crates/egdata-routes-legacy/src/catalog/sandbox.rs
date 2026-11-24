@@ -609,7 +609,7 @@ async fn sitemap(State(s): State<AppState>, uri: Uri) -> Result<Response> {
             .find_many(
                 "sandboxes",
                 doc! {},
-                page_options(&p, Some(doc! {"lastModified":-1}))?,
+                page_options(&p, Some(doc! {"_id":1}))?,
             )
             .await?;
         let mut entries = vec![];

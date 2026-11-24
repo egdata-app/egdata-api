@@ -79,7 +79,7 @@ app.get("/sitemap.xml", async (c) => {
     {
       limit: OFFER_SITEMAP_PAGE_LIMIT,
       skip: (page - 1) * OFFER_SITEMAP_PAGE_LIMIT,
-      sort: { lastModifiedDate: -1 },
+      sort: { _id: 1 },
     },
   ).lean();
 
@@ -136,7 +136,7 @@ async function itemSitemap(
     {
       limit: PAGE_SIZE,
       skip: (page - 1) * PAGE_SIZE,
-      sort: { lastModifiedDate: -1 },
+      sort: { _id: 1 },
     },
   ).lean();
 
@@ -228,7 +228,7 @@ app.get("/sandboxes/sitemap.xml", async (c) => {
       {
         limit: PAGE_SIZE,
         skip: (page - 1) * PAGE_SIZE,
-        sort: { lastModified: -1 },
+        sort: { _id: 1 },
       },
     )
     .toArray();

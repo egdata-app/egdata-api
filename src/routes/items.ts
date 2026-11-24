@@ -79,7 +79,7 @@ app.get("/sitemap.xml", async (c) => {
     {
       limit,
       skip: (Number.parseInt(page, 10) - 1) * limit,
-      sort: { lastModifiedDate: -1 },
+      sort: { _id: 1 },
     },
   );
 

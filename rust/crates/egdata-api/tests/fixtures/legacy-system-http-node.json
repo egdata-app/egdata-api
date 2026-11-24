@@ -1427,7 +1427,7 @@
             "limit": 500,
             "skip": 500,
             "sort": {
-              "lastModifiedDate": -1
+              "_id": 1
             },
             "projection": {
               "id": 1,
@@ -1498,7 +1498,7 @@
             "limit": 1000,
             "skip": 1000,
             "sort": {
-              "lastModifiedDate": -1
+              "_id": 1
             },
             "projection": {
               "id": 1,

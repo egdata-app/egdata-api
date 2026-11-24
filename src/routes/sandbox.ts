@@ -112,7 +112,7 @@ app.get("/sitemap.xml", async (c) => {
         limit,
         skip: (Number.parseInt(page, 10) - 1) * limit,
         sort: {
-          lastModified: -1,
+          _id: 1,
         },
       },
     )

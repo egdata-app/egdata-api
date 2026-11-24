@@ -51,6 +51,7 @@ const LEGACY_SEARCH_ANON_MAX_LIMIT = 28;
 const LEGACY_SEARCH_ANON_MAX_PAGE = 10;
 const LEGACY_SEARCH_ANON_RPM = 20;
 const LEGACY_SEARCH_ANON_CDN_TTL_SECONDS = 1800;
+const SITEMAP_EDGE_TTL_SECONDS = 86_400;
 const DEVELOPER_PORTAL_URL = "https://devs.egdata.app";
 const LEGACY_SEARCH_DEPRECATION_HEADERS = {
   Deprecation: "true",
@@ -259,9 +260,28 @@ export async function handleEdgeApiProxy(
   }
 
   // 2. Allow unauthenticated health/docs/auth/sitemap endpoints
+  if (upstreamPath.endsWith("sitemap.xml")) {
+    const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
+      request,
+      ctx,
+      pathname: upstreamPath,
+      search: reqUrl.search,
+      anonymousPublic: true,
+      defaultTtlSeconds: SITEMAP_EDGE_TTL_SECONDS,
+      fetchUpstream: (upstreamRequest) =>
+        forwardToUpstream(
+          upstreamRequest,
+          env,
+          upstreamPath,
+          reqUrl.search,
+          cfProps,
+        ),
+    });
+    return recordUnattributed(response, "ok", cacheStatus);
+  }
+
   if (
     PUBLIC_UNAUTHENTICATED_PATHS.has(upstreamPath) ||
-    upstreamPath.endsWith("sitemap.xml") ||
     upstreamPath.startsWith("/auth/")
   ) {
     return forwardUnattributed();

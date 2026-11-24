@@ -5,6 +5,17 @@ description: History for GET /v1/profiles/sitemap.xml
 
 `GET /v1/profiles/sitemap.xml` — active. Recorded dates are not deployment dates.
 
+## 2026-11-24 — Sort paginated sitemaps by _id for stable pages and enable 24-hour Worker edge caching for all sitemaps
+
+Record: [stable-sitemap-sort-and-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/stable-sitemap-sort-and-edge-cache.json).
+
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; changed; compatible)
+  - Before: Used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Uses a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --locked -p egdata-routes-legacy -p egdata-routes-v1; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
+
 ## 2026-11-16 — Accept dashboard console session key identities on v1 endpoints
 
 Record: [console-session-v1-key-context](https://github.com/egdata-app/egdata-api/blob/main/changes/records/console-session-v1-key-context.json).

@@ -56,7 +56,7 @@ async fn paged(State(s): State<AppState>, uri: Uri) -> Result<Response> {
                 doc! {},
                 MongoFindOptions {
                     projection: Some(doc! {"id":1,"lastModifiedDate":1}),
-                    sort: Some(doc! {"lastModifiedDate":-1}),
+                    sort: Some(doc! {"_id":1}),
                     limit: Some(limit),
                     skip: Some(skip),
                     ..Default::default()
