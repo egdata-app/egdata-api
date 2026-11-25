@@ -5,13 +5,13 @@ description: History for GET /promotions-sitemap.xml
 
 `GET /promotions-sitemap.xml` — active. Recorded dates are not deployment dates.
 
-## 2026-11-24 — Sort paginated sitemaps by _id for stable pages and enable 24-hour Worker edge caching for all sitemaps
+## 2026-11-24 — Sort paginated sitemaps by _id and enable 24-hour Worker edge caching for all sitemaps
 
 Record: [stable-sitemap-sort-and-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/stable-sitemap-sort-and-edge-cache.json).
 
 - **legacy GET /promotions-sitemap.xml** (legacyGet_promotions_sitemap_xml_3578dc8e; changed; compatible)
   - Before: Bypassed the Cloudflare Worker edge cache on every request.
-  - After: GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s).
+  - After: Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.
   - Client action: None
 
 Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --locked -p egdata-routes-legacy -p egdata-routes-v1; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.

@@ -256,7 +256,9 @@ function legacyResponseAllowsDefaultTtl(response: Response): boolean {
     const value = response.headers.get(name);
     if (
       value &&
-      /(?:^|,)\s*(?:private|no-store|no-cache)\s*(?:,|=|$)/i.test(value)
+      /(?:^|,)\s*(?:private|no-store|no-cache|(?:s-maxage|max-age)=0+)\s*(?:,|=|$)/i.test(
+        value,
+      )
     ) {
       return false;
     }

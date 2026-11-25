@@ -1,7 +1,7 @@
 {
   "id": "stable-sitemap-sort-and-edge-cache",
   "recordedDate": "2026-11-24",
-  "title": "Sort paginated sitemaps by _id for stable pages and enable 24-hour Worker edge caching for all sitemaps",
+  "title": "Sort paginated sitemaps by _id and enable 24-hour Worker edge caching for all sitemaps",
   "endpoints": [
     {
       "apiVersion": "legacy",
@@ -11,7 +11,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated offer sitemap pages sorted by lastModifiedDate descending (shifting all pages whenever an offer updated) and bypassed the Worker edge cache.",
-      "after": "Paginated offer sitemap pages sort by _id ascending for append-only stable page assignments, and GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s).",
+      "after": "Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -22,7 +22,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.",
-      "after": "Paginated item sitemap pages sort by _id ascending for stable page assignments, and GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s).",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -33,7 +33,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.",
-      "after": "Paginated item sitemap pages sort by _id ascending for stable page assignments, and GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s).",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -44,7 +44,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated sandbox sitemap pages sorted by lastModified descending, emitted no Cache-Control header, and bypassed the Worker edge cache.",
-      "after": "Paginated sandbox sitemap pages sort by _id ascending for stable page assignments and are cached at the Cloudflare Worker edge with a 24-hour (86400s) TTL.",
+      "after": "Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -55,7 +55,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Bypassed the Cloudflare Worker edge cache on every request.",
-      "after": "GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s).",
+      "after": "Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -66,7 +66,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Emitted no Cache-Control header and bypassed the Cloudflare Worker edge cache on every request.",
-      "after": "GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) TTL.",
+      "after": "Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.",
       "clientAction": "None"
     },
     {
@@ -77,7 +77,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated offer sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
-      "after": "Paginated offer sitemap pages sort by _id ascending for append-only stable page assignments and use a 24-hour (86400s) Worker edge cache TTL.",
+      "after": "Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
       "clientAction": "None"
     },
     {
@@ -88,7 +88,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
-      "after": "Paginated item sitemap pages sort by _id ascending for stable page assignments and use a 24-hour (86400s) Worker edge cache TTL.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
       "clientAction": "None"
     },
     {
@@ -99,7 +99,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
-      "after": "Paginated item sitemap pages sort by _id ascending for stable page assignments and use a 24-hour (86400s) Worker edge cache TTL.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
       "clientAction": "None"
     },
     {
@@ -110,7 +110,7 @@
       "type": "changed",
       "compatibility": "compatible",
       "before": "Paginated sandbox sitemap pages sorted by lastModified descending and used a 1-hour (3600s) Worker edge cache TTL.",
-      "after": "Paginated sandbox sitemap pages sort by _id ascending for stable page assignments and use a 24-hour (86400s) Worker edge cache TTL.",
+      "after": "Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
       "clientAction": "None"
     },
     {

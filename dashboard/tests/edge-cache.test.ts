@@ -835,13 +835,46 @@ describe("Worker-level post-auth edge caching", () => {
     expect(upstream).toHaveBeenCalledTimes(2);
     expect(defaultCache.put).toHaveBeenCalledTimes(2);
 
-    // 3. Explicit origin Cache-Control: no-store still prevents default-TTL caching
+    // 3. Explicit origin Cache-Control: no-store or zero-age directives prevent default-TTL caching
     await handleEdgeApiProxy(
       new Request("https://api.egdata.app/profiles/sitemap.xml"),
       env,
       ctx,
     );
     await ctx.flush();
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+
+    const zeroAgeCases: Array<[string, Record<string, string>]> = [
+      [
+        "https://api.egdata.app/cf-zero/sitemap.xml",
+        { "Cloudflare-CDN-Cache-Control": "max-age=0" },
+      ],
+      [
+        "https://api.egdata.app/cdn-zero/sitemap.xml",
+        { "CDN-Cache-Control": "max-age=0" },
+      ],
+      [
+        "https://api.egdata.app/cc-smaxage-zero/sitemap.xml",
+        { "Cache-Control": "s-maxage=0" },
+      ],
+      [
+        "https://api.egdata.app/cc-maxage-zero/sitemap.xml",
+        { "Cache-Control": "public, max-age=0" },
+      ],
+    ];
+    for (const [url, headers] of zeroAgeCases) {
+      upstream.mockResolvedValueOnce(
+        new Response("<urlset />", {
+          headers: {
+            "Content-Type": "application/xml",
+            ...headers,
+          },
+        }),
+      );
+      const res = await handleEdgeApiProxy(new Request(url), env, ctx);
+      await ctx.flush();
+      expect(res.status).toBe(200);
+    }
     expect(defaultCache.put).toHaveBeenCalledTimes(2);
   });
 
