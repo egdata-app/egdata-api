@@ -5,6 +5,17 @@ description: History for GET /profiles/sitemap.xml
 
 `GET /profiles/sitemap.xml` — active. Recorded dates are not deployment dates.
 
+## 2026-11-24 — Sort paginated sitemaps by _id and enable 24-hour Worker edge caching for all sitemaps
+
+Record: [stable-sitemap-sort-and-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/stable-sitemap-sort-and-edge-cache.json).
+
+- **legacy GET /profiles/sitemap.xml** (legacyGet_profiles_sitemap_xml_0e16a159; changed; compatible)
+  - Before: Emitted no Cache-Control header and bypassed the Cloudflare Worker edge cache on every request.
+  - After: Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --locked -p egdata-routes-legacy -p egdata-routes-v1; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

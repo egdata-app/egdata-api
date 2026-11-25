@@ -757,6 +757,127 @@ describe("Worker-level post-auth edge caching", () => {
     expect(upstream).toHaveBeenCalledTimes(4);
   });
 
+  it("caches public *sitemap.xml responses at the edge for 24h even when REQUIRE_API_KEY is true or origin omits Cache-Control", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async (url: string) => {
+      const pathname = new URL(url).pathname;
+      if (pathname === "/sandboxes/sitemap.xml") {
+        // Legacy sandbox sitemap omits Cache-Control; edge cache applies 24h default TTL
+        return new Response("<urlset />", {
+          headers: {
+            "Content-Type": "application/xml",
+            ETag: '"sb-v1"',
+          },
+        });
+      }
+      if (pathname === "/profiles/sitemap.xml") {
+        return new Response("<urlset />", {
+          headers: {
+            "Content-Type": "application/xml",
+            "Cache-Control": "no-store",
+          },
+        });
+      }
+      return new Response("<urlset />", {
+        headers: {
+          "Content-Type": "application/xml",
+          "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+          ETag: '"sm-v1"',
+        },
+      });
+    });
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "true";
+    const ctx = createExecutionContext();
+
+    // 1. /sitemap.xml?page=1 caches for 86400s and serves HIT on 2nd request without API key
+    const first = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sitemap.xml?page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(first.status).toBe(200);
+    const second = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sitemap.xml?page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(second.status).toBe(200);
+    expect(await second.text()).toBe("<urlset />");
+    expect(upstream).toHaveBeenCalledTimes(1);
+    const firstStored = defaultCache.put.mock.calls[0]?.[1] as Response;
+    expect(firstStored.headers.get("cache-control")).toBe(
+      "public, max-age=86400",
+    );
+
+    // 2. /sandboxes/sitemap.xml?page=1 (no origin Cache-Control) uses 24h fallback TTL and serves HIT
+    const sbFirst = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sandboxes/sitemap.xml?page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(sbFirst.status).toBe(200);
+    expect(sbFirst.headers.get("cache-control")).toBe(
+      "public, max-age=86400, stale-while-revalidate=604800",
+    );
+    const sbSecond = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sandboxes/sitemap.xml?page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(sbSecond.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+
+    // 3. Explicit origin Cache-Control: no-store or zero-age directives prevent default-TTL caching
+    await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/profiles/sitemap.xml"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+
+    const zeroAgeCases: Array<[string, Record<string, string>]> = [
+      [
+        "https://api.egdata.app/cf-zero/sitemap.xml",
+        { "Cloudflare-CDN-Cache-Control": "max-age=0" },
+      ],
+      [
+        "https://api.egdata.app/cdn-zero/sitemap.xml",
+        { "CDN-Cache-Control": "max-age=0" },
+      ],
+      [
+        "https://api.egdata.app/cc-smaxage-zero/sitemap.xml",
+        { "Cache-Control": "s-maxage=0" },
+      ],
+      [
+        "https://api.egdata.app/cc-maxage-zero/sitemap.xml",
+        { "Cache-Control": "public, max-age=0" },
+      ],
+    ];
+    for (const [url, headers] of zeroAgeCases) {
+      upstream.mockResolvedValueOnce(
+        new Response("<urlset />", {
+          headers: {
+            "Content-Type": "application/xml",
+            ...headers,
+          },
+        }),
+      );
+      const res = await handleEdgeApiProxy(new Request(url), env, ctx);
+      await ctx.flush();
+      expect(res.status).toBe(200);
+    }
+    expect(defaultCache.put).toHaveBeenCalledTimes(2);
+  });
+
   it("isolates anonymous entries from key-authenticated responses and falls back on cache errors", async () => {
     const { caches, defaultCache } = createMockCacheStorage();
     vi.stubGlobal("caches", caches);
@@ -848,7 +969,10 @@ describe("Worker-level post-auth edge caching", () => {
 
   it("assigns tiered edge TTLs to v1 routes", () => {
     expect(v1EdgeCacheTtlSeconds("/v1/countries")).toBe(86_400);
-    expect(v1EdgeCacheTtlSeconds("/v1/sitemap.xml")).toBe(3_600);
+    expect(v1EdgeCacheTtlSeconds("/v1/sitemap.xml")).toBe(86_400);
+    expect(v1EdgeCacheTtlSeconds("/v1/items-sitemap.xml")).toBe(86_400);
+    expect(v1EdgeCacheTtlSeconds("/v1/sandboxes/sitemap.xml")).toBe(86_400);
+    expect(v1EdgeCacheTtlSeconds("/v1/robots.txt")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/og.webp")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/hltb")).toBe(3_600);
     expect(v1EdgeCacheTtlSeconds("/v1/offers/abc/igdb")).toBe(3_600);

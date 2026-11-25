@@ -1,0 +1,146 @@
+{
+  "id": "stable-sitemap-sort-and-edge-cache",
+  "recordedDate": "2026-11-24",
+  "title": "Sort paginated sitemaps by _id and enable 24-hour Worker edge caching for all sitemaps",
+  "endpoints": [
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_sitemap_xml_efe3322f",
+      "method": "GET",
+      "path": "/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated offer sitemap pages sorted by lastModifiedDate descending (shifting all pages whenever an offer updated) and bypassed the Worker edge cache.",
+      "after": "Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_items_sitemap_xml_e6f8185b",
+      "method": "GET",
+      "path": "/items-sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_items_sitemap_xml_57b8dd19",
+      "method": "GET",
+      "path": "/items/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_sandboxes_sitemap_xml_5773ff84",
+      "method": "GET",
+      "path": "/sandboxes/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated sandbox sitemap pages sorted by lastModified descending, emitted no Cache-Control header, and bypassed the Worker edge cache.",
+      "after": "Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_promotions_sitemap_xml_3578dc8e",
+      "method": "GET",
+      "path": "/promotions-sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the Cloudflare Worker edge cache on every request.",
+      "after": "Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_profiles_sitemap_xml_0e16a159",
+      "method": "GET",
+      "path": "/profiles/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Emitted no Cache-Control header and bypassed the Cloudflare Worker edge cache on every request.",
+      "after": "Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getSitemap",
+      "method": "GET",
+      "path": "/v1/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated offer sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getItemsSitemap",
+      "method": "GET",
+      "path": "/v1/items-sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getItemsSitemapAlias",
+      "method": "GET",
+      "path": "/v1/items/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getSandboxesSitemap",
+      "method": "GET",
+      "path": "/v1/sandboxes/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Paginated sandbox sitemap pages sorted by lastModified descending and used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getPromotionsSitemap",
+      "method": "GET",
+      "path": "/v1/promotions-sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Uses a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "v1",
+      "operationId": "getProfilesSitemap",
+      "method": "GET",
+      "path": "/v1/profiles/sitemap.xml",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Used a 1-hour (3600s) Worker edge cache TTL.",
+      "after": "Uses a 24-hour (86400s) Worker edge cache TTL.",
+      "clientAction": "None"
+    }
+  ],
+  "verification": [
+    "pnpm dashboard:test",
+    "pnpm dashboard:build",
+    "cargo test --locked -p egdata-routes-legacy -p egdata-routes-v1",
+    "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "pnpm release:check --base origin/main"
+  ]
+}

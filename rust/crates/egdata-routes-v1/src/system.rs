@@ -341,7 +341,7 @@ async fn get_offers_sitemap(
             doc! {},
             MongoFindOptions {
                 projection: Some(doc! { "id": 1, "lastModifiedDate": 1 }),
-                sort: Some(doc! { "lastModifiedDate": -1 }),
+                sort: Some(doc! { "_id": 1 }),
                 collation: None,
                 skip: Some(skip),
                 limit: Some(OFFER_SITEMAP_PAGE_LIMIT as i64),
@@ -419,7 +419,7 @@ async fn item_sitemap_handler(
             doc! {},
             MongoFindOptions {
                 projection: Some(doc! { "id": 1, "lastModifiedDate": 1 }),
-                sort: Some(doc! { "lastModifiedDate": -1 }),
+                sort: Some(doc! { "_id": 1 }),
                 collation: None,
                 skip: Some(skip),
                 limit: Some(SITEMAP_PAGE_SIZE as i64),
@@ -582,7 +582,7 @@ async fn get_sandboxes_sitemap(
             doc! {},
             MongoFindOptions {
                 projection: None,
-                sort: Some(doc! { "lastModified": -1 }),
+                sort: Some(doc! { "_id": 1 }),
                 collation: None,
                 skip: Some(skip),
                 limit: Some(SITEMAP_PAGE_SIZE as i64),

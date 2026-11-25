@@ -17,6 +17,61 @@ Record: [harden-legacy-search-v2](https://github.com/egdata-app/egdata-api/blob/
 
 Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --workspace; cargo clippy --workspace --all-targets -- -D warnings; pnpm openapi:check; pnpm release:check --base origin/main.
 
+## 2026-11-24 — Sort paginated sitemaps by _id and enable 24-hour Worker edge caching for all sitemaps
+
+Record: [stable-sitemap-sort-and-edge-cache](https://github.com/egdata-app/egdata-api/blob/main/changes/records/stable-sitemap-sort-and-edge-cache.json).
+
+- **legacy GET /sitemap.xml** (legacyGet_sitemap_xml_efe3322f; changed; compatible)
+  - Before: Paginated offer sitemap pages sorted by lastModifiedDate descending (shifting all pages whenever an offer updated) and bypassed the Worker edge cache.
+  - After: Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **legacy GET /items-sitemap.xml** (legacyGet_items_sitemap_xml_e6f8185b; changed; compatible)
+  - Before: Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.
+  - After: Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **legacy GET /items/sitemap.xml** (legacyGet_items_sitemap_xml_57b8dd19; changed; compatible)
+  - Before: Paginated item sitemap pages sorted by lastModifiedDate descending and bypassed the Worker edge cache.
+  - After: Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **legacy GET /sandboxes/sitemap.xml** (legacyGet_sandboxes_sitemap_xml_5773ff84; changed; compatible)
+  - Before: Paginated sandbox sitemap pages sorted by lastModified descending, emitted no Cache-Control header, and bypassed the Worker edge cache.
+  - After: Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates), and unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **legacy GET /promotions-sitemap.xml** (legacyGet_promotions_sitemap_xml_3578dc8e; changed; compatible)
+  - Before: Bypassed the Cloudflare Worker edge cache on every request.
+  - After: Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge for 24 hours (86400s), respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **legacy GET /profiles/sitemap.xml** (legacyGet_profiles_sitemap_xml_0e16a159; changed; compatible)
+  - Before: Emitted no Cache-Control header and bypassed the Cloudflare Worker edge cache on every request.
+  - After: Unauthenticated GET/HEAD responses are cached at the Cloudflare Worker edge with a 24-hour (86400s) default TTL when freshness headers are absent, respecting private, no-store, no-cache, and explicit zero-TTL directives.
+  - Client action: None
+- **v1 GET /v1/sitemap.xml** (getSitemap; changed; compatible)
+  - Before: Paginated offer sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Paginated offer sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+- **v1 GET /v1/items-sitemap.xml** (getItemsSitemap; changed; compatible)
+  - Before: Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+- **v1 GET /v1/items/sitemap.xml** (getItemsSitemapAlias; changed; compatible)
+  - Before: Paginated item sitemap pages sorted by lastModifiedDate descending and used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Paginated item sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+- **v1 GET /v1/sandboxes/sitemap.xml** (getSandboxesSitemap; changed; compatible)
+  - Before: Paginated sandbox sitemap pages sorted by lastModified descending and used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Paginated sandbox sitemap pages sort by _id ascending for deterministic page ordering (avoiding page shifts on document updates) and use a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+- **v1 GET /v1/promotions-sitemap.xml** (getPromotionsSitemap; changed; compatible)
+  - Before: Used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Uses a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+- **v1 GET /v1/profiles/sitemap.xml** (getProfilesSitemap; changed; compatible)
+  - Before: Used a 1-hour (3600s) Worker edge cache TTL.
+  - After: Uses a 24-hour (86400s) Worker edge cache TTL.
+  - Client action: None
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; cargo test --locked -p egdata-routes-legacy -p egdata-routes-v1; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
+
 ## 2026-11-22 — Lower default search rate limit for /search/v2/search from 300 to 60 requests per minute
 
 Record: [lower-search-v2-rate-limit](https://github.com/egdata-app/egdata-api/blob/main/changes/records/lower-search-v2-rate-limit.json).
