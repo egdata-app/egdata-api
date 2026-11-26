@@ -2,6 +2,69 @@
 
 Generated from validated change records. Recorded dates are not deployment dates.
 
+## 2026-11-26 — Expand anonymous Worker edge caching to high-traffic public catalog, sales, suggestions, and builds routes
+
+Record: [expand-anonymous-edge-cache-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expand-anonymous-edge-cache-v2.json).
+
+- **legacy GET /sales** (listSaleOffers; changed; compatible)
+  - Before: Returned Cache-Control: public, max-age=0 with no CDN-Cache-Control and bypassed the anonymous Worker edge cache on every request.
+  - After: Origin edgeCacheHeaders emits Cache-Control: public, max-age=60, s-maxage=900, stale-while-revalidate=600 and CDN-Cache-Control: public, max-age=900, stale-while-revalidate=3600 (varying on Cookie when country is omitted), and eligible anonymous GET/HEAD requests with an explicit country are cached at the Worker edge for 15 minutes.
+  - Client action: None
+- **legacy GET /offers** (listOffers; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/upcoming** (listUpcomingOffers; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/top-wishlisted** (listTopWishlistedOffers; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 1-hour CDN TTL.
+  - Client action: None
+- **legacy GET /offers/featured-discounts** (listFeaturedDiscounts; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 1-hour CDN TTL.
+  - Client action: None
+- **legacy GET /offers/latest-achievements** (listLatestAchievementOffers; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/latest-released** (listLatestReleasedOffers; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;** (getOffer; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests for hex offer IDs use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/suggestions** (listOfferSuggestions; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/builds** (listOfferBuilds; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /offers/&#123;id&#125;/regional-price** (getOfferRegionalPrices; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+- **legacy GET /sandboxes/&#123;sandboxId&#125;/builds** (listSandboxBuilds; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with a 15-minute (900s) CDN TTL.
+  - Client action: None
+- **legacy GET /items/&#123;id&#125;/builds** (getItemBuilds; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with a 15-minute (900s) CDN TTL.
+  - Client action: None
+- **legacy GET /collections/&#123;slug&#125;** (legacyGet_collections_slug__c9e20bbf; changed; compatible)
+  - Before: GET /collections/top-sellers bypassed the anonymous Worker edge cache.
+  - After: Eligible anonymous GET/HEAD requests to /collections/top-sellers use the isolated public Worker edge cache with origin's 5-minute CDN TTL.
+  - Client action: None
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; pnpm build; cargo test --locked -p egdata-http-core -p egdata-routes-legacy; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
+
 ## 2026-11-24 — Harden anonymous /search/v2/search with migration errors, 20/min rate limit, 30-minute edge TTL, and deprecation headers
 
 Record: [harden-legacy-search-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/harden-legacy-search-v2.json).

@@ -83,6 +83,10 @@ const RULE_SEARCH_V2: StaticRule = StaticRule {
     browser: "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
     cdn: "public, max-age=300, stale-while-revalidate=3600",
 };
+const RULE_SALES: StaticRule = StaticRule {
+    browser: "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+    cdn: "public, max-age=900, stale-while-revalidate=3600",
+};
 
 fn private_cc_regex() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
@@ -129,6 +133,7 @@ fn find_rule(path: &str) -> Option<&'static StaticRule> {
         _ if catalog_resources_regex().is_match(path) => Some(&RULE_CATALOG_RESOURCES),
         _ if matches_public_profile_path(path) => Some(&RULE_PROFILES),
         "/search/v2/search" => Some(&RULE_SEARCH_V2),
+        "/sales" => Some(&RULE_SALES),
         _ => None,
     }
 }
@@ -177,7 +182,7 @@ pub async fn edge_cache_headers(req: Request<Body>, next: Next) -> Response {
 
     if method == Method::GET {
         append_vary_token(resp.headers_mut(), "Accept-Encoding");
-        if path == "/stats/homepage" && !has_country {
+        if matches!(path.as_str(), "/stats/homepage" | "/sales") && !has_country {
             append_vary_token(resp.headers_mut(), "Cookie");
         }
     }
@@ -249,6 +254,7 @@ mod tests {
             .route("/profiles/abc/information", get(ok_handler))
             .route("/profiles/abc/refresh-status", get(ok_handler))
             .route("/search/v2/search", get(ok_handler))
+            .route("/sales", get(ok_handler))
             .route("/unmatched", get(ok_handler))
             .route(
                 "/with-cookie",
@@ -323,6 +329,7 @@ mod tests {
                 RULE_SEARCH_V2.browser,
                 RULE_SEARCH_V2.cdn,
             ),
+            ("/sales?country=US", RULE_SALES.browser, RULE_SALES.cdn),
         ];
 
         for (uri, browser, cdn) in cases {
@@ -346,21 +353,19 @@ mod tests {
             }
         }
 
-        // /stats/homepage without country adds Cookie to Vary
-        let hp = app
-            .clone()
-            .oneshot(
-                Request::builder()
-                    .uri("/stats/homepage")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
-            .await
-            .unwrap();
-        assert_eq!(
-            hp.headers().get(header::VARY).unwrap(),
-            "Accept-Encoding, Cookie"
-        );
+        // /stats/homepage and /sales without country add Cookie to Vary
+        for path in ["/stats/homepage", "/sales"] {
+            let resp = app
+                .clone()
+                .oneshot(Request::builder().uri(path).body(Body::empty()).unwrap())
+                .await
+                .unwrap();
+            assert_eq!(
+                resp.headers().get(header::VARY).unwrap(),
+                "Accept-Encoding, Cookie",
+                "uri={path}"
+            );
+        }
     }
 
     #[tokio::test]

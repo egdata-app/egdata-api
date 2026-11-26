@@ -65,18 +65,30 @@ describe("edge cache headers", () => {
     }
   });
 
-  it("varies cookie-selected homepage countries without preventing explicit-country caching", async () => {
+  it("varies cookie-selected homepage and sales countries without preventing explicit-country caching", async () => {
     const app = new Hono();
     app.use("*", edgeCacheHeaders);
     app.get("/stats/homepage", (c) => c.json({ offers: 1 }));
-    for (const cookie of ["", "EGDATA_COUNTRY=ES"]) {
-      const response = await app.request("/stats/homepage", {
-        headers: cookie ? { Cookie: cookie } : {},
-      });
-      expect(response.headers.get("Vary")).toBe("Accept-Encoding, Cookie");
+    app.get("/sales", (c) =>
+      c.json({ elements: [] }, 200, { "Cache-Control": "public, max-age=0" }),
+    );
+    for (const path of ["/stats/homepage", "/sales"]) {
+      for (const cookie of ["", "EGDATA_COUNTRY=ES"]) {
+        const response = await app.request(path, {
+          headers: cookie ? { Cookie: cookie } : {},
+        });
+        expect(response.headers.get("Vary")).toBe("Accept-Encoding, Cookie");
+      }
+      const explicit = await app.request(`${path}?country=US`);
+      expect(explicit.headers.get("Vary")).toBe("Accept-Encoding");
     }
-    const explicit = await app.request("/stats/homepage?country=US");
-    expect(explicit.headers.get("Vary")).toBe("Accept-Encoding");
+    const salesExplicit = await app.request("/sales?country=US");
+    expect(salesExplicit.headers.get("Cache-Control")).toBe(
+      "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+    );
+    expect(salesExplicit.headers.get("CDN-Cache-Control")).toBe(
+      "public, max-age=900, stale-while-revalidate=3600",
+    );
   });
 
   it.each([

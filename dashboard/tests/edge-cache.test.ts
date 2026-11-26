@@ -878,6 +878,126 @@ describe("Worker-level post-auth edge caching", () => {
     expect(defaultCache.put).toHaveBeenCalledTimes(2);
   });
 
+  it("caches newly allowlisted anonymous catalog/builds routes with expected TTLs and skips Vary: Cookie / non-hex offer paths", async () => {
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstream = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url);
+      if (url.pathname === "/sales") {
+        const hasCountry = url.searchParams.has("country");
+        return Response.json(
+          { elements: [] },
+          {
+            headers: {
+              "Cache-Control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+              "CDN-Cache-Control": "public, max-age=900, stale-while-revalidate=3600",
+              Vary: hasCountry ? "Accept-Encoding, Origin" : "Accept-Encoding, Cookie, Origin",
+            },
+          },
+        );
+      }
+      if (
+        url.pathname === "/offers/top-wishlisted" ||
+        url.pathname === "/offers/featured-discounts"
+      ) {
+        return Response.json(
+          { elements: [] },
+          {
+            headers: {
+              "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=3600",
+              "CDN-Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+              Vary: "Accept-Encoding, Origin",
+            },
+          },
+        );
+      }
+      return Response.json(
+        { elements: [] },
+        {
+          headers: {
+            "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+            "CDN-Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
+            Vary: "Accept-Encoding, Origin",
+          },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", upstream);
+    const { env } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    const ctx = createExecutionContext();
+
+    const cacheableCases: Array<[string, string]> = [
+      ["https://api.egdata.app/sales?country=US&limit=30&page=1", "public, max-age=900"],
+      ["https://api.egdata.app/offers?limit=50&page=1&country=FR", "public, max-age=300"],
+      ["https://api.egdata.app/offers/upcoming?country=US", "public, max-age=300"],
+      ["https://api.egdata.app/offers/top-wishlisted", "public, max-age=3600"],
+      ["https://api.egdata.app/offers/featured-discounts", "public, max-age=3600"],
+      ["https://api.egdata.app/offers/latest-achievements", "public, max-age=300"],
+      ["https://api.egdata.app/offers/latest-released", "public, max-age=300"],
+      ["https://api.egdata.app/offers/9064fdd49de04718abe631788ad5a759", "public, max-age=300"],
+      [
+        "https://api.egdata.app/offers/9064fdd49de04718abe631788ad5a759/suggestions?country=US",
+        "public, max-age=300",
+      ],
+      ["https://api.egdata.app/offers/02d44be4c21c4ce094c6151133c91482/builds", "public, max-age=300"],
+      [
+        "https://api.egdata.app/offers/9064fdd49de04718abe631788ad5a759/regional-price",
+        "public, max-age=300",
+      ],
+      ["https://api.egdata.app/sandboxes/fn/builds?limit=200&offset=0", "public, max-age=900"],
+      ["https://api.egdata.app/items/909dd1fd19bf41f99b23edf2ce461927/builds", "public, max-age=900"],
+      ["https://api.egdata.app/collections/top-sellers?country=US", "public, max-age=300"],
+    ];
+
+    for (const [index, [url, expectedStoredCacheControl]] of cacheableCases.entries()) {
+      const miss = await handleEdgeApiProxy(new Request(url), env, ctx);
+      await ctx.flush();
+      expect(miss.status).toBe(200);
+      expect(upstream).toHaveBeenCalledTimes(index + 1);
+      expect(defaultCache.put).toHaveBeenCalledTimes(index + 1);
+
+      const hit = await handleEdgeApiProxy(new Request(url), env, ctx);
+      await ctx.flush();
+      expect(hit.status).toBe(200);
+      expect(upstream).toHaveBeenCalledTimes(index + 1);
+
+      const lastPutResp = defaultCache.put.mock.calls.at(-1)?.[1] as Response;
+      expect(lastPutResp.headers.get("cache-control")).toBe(expectedStoredCacheControl);
+    }
+
+    // /sales without ?country= varies on Cookie and must not be stored in shared anonymous cache
+    const salesNoCountry1 = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sales?limit=30&page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(salesNoCountry1.status).toBe(200);
+    const salesNoCountry2 = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/sales?limit=30&page=1"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(salesNoCountry2.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(cacheableCases.length + 2);
+    expect(defaultCache.put).toHaveBeenCalledTimes(cacheableCases.length);
+
+    // Non-hex /offers/{slug} is not matched by the hex-anchored /offers/{id} allowlist
+    const matchCallsBefore = defaultCache.match.mock.calls.length;
+    const nonHexOffer = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/offers/not-a-hex-id"),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(nonHexOffer.status).toBe(200);
+    expect(defaultCache.match).toHaveBeenCalledTimes(matchCallsBefore);
+    expect(upstream).toHaveBeenCalledTimes(cacheableCases.length + 3);
+    expect(defaultCache.put).toHaveBeenCalledTimes(cacheableCases.length);
+  });
+
   it("isolates anonymous entries from key-authenticated responses and falls back on cache errors", async () => {
     const { caches, defaultCache } = createMockCacheStorage();
     vi.stubGlobal("caches", caches);

@@ -1,0 +1,169 @@
+{
+  "id": "expand-anonymous-edge-cache-v2",
+  "recordedDate": "2026-11-26",
+  "title": "Expand anonymous Worker edge caching to high-traffic public catalog, sales, suggestions, and builds routes",
+  "endpoints": [
+    {
+      "apiVersion": "legacy",
+      "operationId": "listSaleOffers",
+      "method": "GET",
+      "path": "/sales",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Returned Cache-Control: public, max-age=0 with no CDN-Cache-Control and bypassed the anonymous Worker edge cache on every request.",
+      "after": "Origin edgeCacheHeaders emits Cache-Control: public, max-age=60, s-maxage=900, stale-while-revalidate=600 and CDN-Cache-Control: public, max-age=900, stale-while-revalidate=3600 (varying on Cookie when country is omitted), and eligible anonymous GET/HEAD requests with an explicit country are cached at the Worker edge for 15 minutes.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listOffers",
+      "method": "GET",
+      "path": "/offers",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listUpcomingOffers",
+      "method": "GET",
+      "path": "/offers/upcoming",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listTopWishlistedOffers",
+      "method": "GET",
+      "path": "/offers/top-wishlisted",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 1-hour CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listFeaturedDiscounts",
+      "method": "GET",
+      "path": "/offers/featured-discounts",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 1-hour CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listLatestAchievementOffers",
+      "method": "GET",
+      "path": "/offers/latest-achievements",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listLatestReleasedOffers",
+      "method": "GET",
+      "path": "/offers/latest-released",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "getOffer",
+      "method": "GET",
+      "path": "/offers/{id}",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests for hex offer IDs use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listOfferSuggestions",
+      "method": "GET",
+      "path": "/offers/{id}/suggestions",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listOfferBuilds",
+      "method": "GET",
+      "path": "/offers/{id}/builds",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "getOfferRegionalPrices",
+      "method": "GET",
+      "path": "/offers/{id}/regional-price",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "listSandboxBuilds",
+      "method": "GET",
+      "path": "/sandboxes/{sandboxId}/builds",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with a 15-minute (900s) CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "getItemBuilds",
+      "method": "GET",
+      "path": "/items/{id}/builds",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.",
+      "after": "Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with a 15-minute (900s) CDN TTL.",
+      "clientAction": "None"
+    },
+    {
+      "apiVersion": "legacy",
+      "operationId": "legacyGet_collections_slug__c9e20bbf",
+      "method": "GET",
+      "path": "/collections/{slug}",
+      "type": "changed",
+      "compatibility": "compatible",
+      "before": "GET /collections/top-sellers bypassed the anonymous Worker edge cache.",
+      "after": "Eligible anonymous GET/HEAD requests to /collections/top-sellers use the isolated public Worker edge cache with origin's 5-minute CDN TTL.",
+      "clientAction": "None"
+    }
+  ],
+  "verification": [
+    "pnpm dashboard:test",
+    "pnpm dashboard:build",
+    "pnpm build",
+    "cargo test --locked -p egdata-http-core -p egdata-routes-legacy",
+    "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "pnpm release:check --base origin/main"
+  ]
+}
