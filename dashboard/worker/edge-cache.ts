@@ -88,6 +88,80 @@ function getDefaultCache(): Cache | null {
   return storage?.default ?? null;
 }
 
+export type QueryParamAllowlistRule = {
+  allowedParams: ReadonlySet<string>;
+  successorPath: string;
+};
+
+/**
+ * Per-endpoint allowlist of query parameters accepted by legacy public routes.
+ * Unknown parameters (e.g. cache-busters like `&_=<timestamp>`) are stripped
+ * from both Worker edge cache keys and upstream forwarding.
+ */
+const LEGACY_ALLOWED_QUERY_PARAMS: ReadonlyMap<
+  string,
+  QueryParamAllowlistRule
+> = new Map([
+  [
+    "/free-games",
+    {
+      allowedParams: new Set(["country", "locale", "expand"]),
+      successorPath: "/v1/free-games",
+    },
+  ],
+]);
+
+export type LegacyQueryFilterResult = {
+  hasAllowlist: boolean;
+  filteredSearch: string;
+  allowedParams: string[];
+  disallowedParams: string[];
+  successorPath?: string;
+};
+
+export function filterAllowedLegacyQueryParams(
+  pathname: string,
+  search: string,
+): LegacyQueryFilterResult {
+  const rule = LEGACY_ALLOWED_QUERY_PARAMS.get(pathname);
+  if (!rule) {
+    return {
+      hasAllowlist: false,
+      filteredSearch: search,
+      allowedParams: [],
+      disallowedParams: [],
+    };
+  }
+  const allowedParams = [...rule.allowedParams].sort();
+  if (!search || search === "?") {
+    return {
+      hasAllowlist: true,
+      filteredSearch: "",
+      allowedParams,
+      disallowedParams: [],
+      successorPath: rule.successorPath,
+    };
+  }
+  const params = new URLSearchParams(search);
+  const kept = new URLSearchParams();
+  const disallowed = new Set<string>();
+  for (const [key, value] of params.entries()) {
+    if (rule.allowedParams.has(key)) {
+      kept.append(key, value);
+    } else {
+      disallowed.add(key);
+    }
+  }
+  const serialized = kept.toString();
+  return {
+    hasAllowlist: true,
+    filteredSearch: serialized ? `?${serialized}` : "",
+    allowedParams,
+    disallowedParams: [...disallowed].sort(),
+    successorPath: rule.successorPath,
+  };
+}
+
 export function canonicalSearchParams(search: string): string {
   if (!search || search === "?") return "";
   const params = new URLSearchParams(search);
@@ -569,12 +643,16 @@ export async function fetchLegacyWithEdgeCache(options: {
   }
 
   const cache = getDefaultCache();
+  const filteredSearch = filterAllowedLegacyQueryParams(
+    pathname,
+    search,
+  ).filteredSearch;
   const { putRequest, matchRequest } = buildCacheLookupRequest(
     anonymousPublic ? "legacy-public" : "legacy",
     anonymousPublic
       ? `/${encodeURIComponent(request.headers.get("origin") ?? "")}${pathname}`
       : pathname,
-    search,
+    filteredSearch,
     request,
   );
 

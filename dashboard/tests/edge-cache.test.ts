@@ -6,6 +6,7 @@ import { generateApiKeySecret, sha256Hex } from "../worker/crypto";
 import {
   canonicalSearchParams,
   etagMatches,
+  filterAllowedLegacyQueryParams,
   legacyResponseEdgeTtlSeconds,
   v1EdgeCacheTtlSeconds,
 } from "../worker/edge-cache";
@@ -996,6 +997,213 @@ describe("Worker-level post-auth edge caching", () => {
     expect(defaultCache.match).toHaveBeenCalledTimes(matchCallsBefore);
     expect(upstream).toHaveBeenCalledTimes(cacheableCases.length + 3);
     expect(defaultCache.put).toHaveBeenCalledTimes(cacheableCases.length);
+  });
+
+  it("strips non-allowlisted query params on /free-games and blocks repeated anonymous cache-busting", async () => {
+    // 1. Direct helper verification
+    expect(
+      filterAllowedLegacyQueryParams(
+        "/free-games",
+        "?country=AU&_=1795702168378&locale=en-AU&cb=99&expand=true",
+      ),
+    ).toEqual({
+      hasAllowlist: true,
+      filteredSearch: "?country=AU&locale=en-AU&expand=true",
+      allowedParams: ["country", "expand", "locale"],
+      disallowedParams: ["_", "cb"],
+      successorPath: "/v1/free-games",
+    });
+    expect(
+      filterAllowedLegacyQueryParams("/offers", "?country=US&_=123"),
+    ).toEqual({
+      hasAllowlist: false,
+      filteredSearch: "?country=US&_=123",
+      allowedParams: [],
+      disallowedParams: [],
+    });
+
+    const { caches, defaultCache } = createMockCacheStorage();
+    vi.stubGlobal("caches", caches);
+    const upstreamUrls: string[] = [];
+    const upstream = vi.fn(async (input: RequestInfo | URL) => {
+      const url =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.toString()
+            : input.url;
+      upstreamUrls.push(url);
+      return Response.json(
+        [{ id: "free-1" }],
+        {
+          headers: {
+            "Cache-Control":
+              "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+            "CDN-Cache-Control":
+              "public, max-age=300, stale-while-revalidate=3600",
+            Vary: "Accept-Encoding, Origin",
+          },
+        },
+      );
+    });
+    vi.stubGlobal("fetch", upstream);
+    const { env, keyA } = await createTestHarness();
+    env.REQUIRE_API_KEY = "false";
+    env.FIRST_PARTY_SERVICE_TOKEN = "fp-secret-token";
+    let busterAttempts = 0;
+    const cacheBusterLimiter = vi.fn(async () => {
+      busterAttempts += 1;
+      return { success: busterAttempts <= 3 };
+    });
+    env.RATE_LIMITER_CACHE_BUSTER = { limit: cacheBusterLimiter };
+    const ctx = createExecutionContext();
+
+    // 2. First cache-busting attempt strips `_` from upstream URL and caches under ?country=AU
+    const first = await handleEdgeApiProxy(
+      new Request(
+        "https://api.egdata.app/free-games?country=AU&_=1795702168378",
+        { headers: { "CF-Connecting-IP": "198.51.100.77" } },
+      ),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(first.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(1);
+    expect(upstreamUrls[0]).toBe(
+      "https://origin-api.egdata.app/free-games?country=AU",
+    );
+    expect(cacheBusterLimiter).toHaveBeenCalledTimes(1);
+    expect(cacheBusterLimiter).toHaveBeenLastCalledWith({
+      key: "cache-buster:/free-games:198.51.100.77",
+    });
+
+    // 3. Second & third attempts with different `_=` timestamps serve from edge cache (0 extra origin calls)
+    for (const ts of ["1795702179652", "1795702190111"]) {
+      const hit = await handleEdgeApiProxy(
+        new Request(`https://api.egdata.app/free-games?country=AU&_=${ts}`, {
+          headers: { "CF-Connecting-IP": "198.51.100.77" },
+        }),
+        env,
+        ctx,
+      );
+      await ctx.flush();
+      expect(hit.status).toBe(200);
+    }
+    expect(upstream).toHaveBeenCalledTimes(1);
+    expect(defaultCache.put).toHaveBeenCalledTimes(1);
+    expect(cacheBusterLimiter).toHaveBeenCalledTimes(3);
+
+    // 4. Fourth cache-busting attempt within window is blocked with 429 pointing to devs.egdata.app
+    const blocked = await handleEdgeApiProxy(
+      new Request(
+        "https://api.egdata.app/free-games?country=AU&_=1795702201234",
+        {
+          headers: {
+            "CF-Connecting-IP": "198.51.100.77",
+            Origin: "https://example.com",
+          },
+        },
+      ),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(blocked.status).toBe(429);
+    expect(blocked.headers.get("retry-after")).toBe("60");
+    expect(blocked.headers.get("link")).toBe(
+      '<https://devs.egdata.app>; rel="successor-version"',
+    );
+    expect(blocked.headers.get("access-control-allow-origin")).toBe(
+      "https://example.com",
+    );
+    const blockedBody = (await blocked.json()) as {
+      error: {
+        code: string;
+        message: string;
+        developerPortal: string;
+        successor: string;
+        allowedQueryParams: string[];
+        disallowedQueryParams: string[];
+      };
+    };
+    expect(blockedBody.error.code).toBe("CACHE_BUSTER_DETECTED");
+    expect(blockedBody.error.message).toContain("https://devs.egdata.app");
+    expect(blockedBody.error.message).toContain("/v1/free-games");
+    expect(blockedBody.error.developerPortal).toBe("https://devs.egdata.app");
+    expect(blockedBody.error.successor).toBe("/v1/free-games");
+    expect(blockedBody.error.allowedQueryParams).toEqual([
+      "country",
+      "expand",
+      "locale",
+    ]);
+    expect(blockedBody.error.disallowedQueryParams).toEqual(["_"]);
+    expect(upstream).toHaveBeenCalledTimes(1);
+
+    // HEAD returns 429 with empty body
+    const headBlocked = await handleEdgeApiProxy(
+      new Request(
+        "https://api.egdata.app/free-games?country=AU&_=1795702210000",
+        {
+          method: "HEAD",
+          headers: { "CF-Connecting-IP": "198.51.100.77" },
+        },
+      ),
+      env,
+      ctx,
+    );
+    expect(headBlocked.status).toBe(429);
+    expect(await headBlocked.text()).toBe("");
+
+    // 5. Clean requests with only allowlisted params never trigger anti-buster limiter
+    const limiterCallsBeforeClean = cacheBusterLimiter.mock.calls.length;
+    const clean = await handleEdgeApiProxy(
+      new Request(
+        "https://api.egdata.app/free-games?country=AU&locale=en-AU&expand=true",
+        { headers: { "CF-Connecting-IP": "198.51.100.77" } },
+      ),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(clean.status).toBe(200);
+    expect(cacheBusterLimiter).toHaveBeenCalledTimes(limiterCallsBeforeClean);
+    expect(upstream).toHaveBeenCalledTimes(2);
+    expect(upstreamUrls[1]).toBe(
+      "https://origin-api.egdata.app/free-games?country=AU&locale=en-AU&expand=true",
+    );
+
+    // 6. Trusted first-party & API-key requests still strip `_` but bypass the anonymous anti-buster block
+    const firstParty = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/free-games?country=AU&_=999", {
+        headers: {
+          "CF-Connecting-IP": "198.51.100.77",
+          "X-Egdata-First-Party-Token": "fp-secret-token",
+        },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(firstParty.status).toBe(200);
+    expect(cacheBusterLimiter).toHaveBeenCalledTimes(limiterCallsBeforeClean);
+
+    const authenticated = await handleEdgeApiProxy(
+      new Request("https://api.egdata.app/free-games?country=US&_=999", {
+        headers: {
+          "CF-Connecting-IP": "198.51.100.77",
+          "X-API-Key": keyA.rawKey,
+        },
+      }),
+      env,
+      ctx,
+    );
+    await ctx.flush();
+    expect(authenticated.status).toBe(200);
+    expect(cacheBusterLimiter).toHaveBeenCalledTimes(limiterCallsBeforeClean);
+    expect(upstreamUrls.at(-1)).toBe(
+      "https://origin-api.egdata.app/free-games?country=US",
+    );
   });
 
   it("isolates anonymous entries from key-authenticated responses and falls back on cache errors", async () => {

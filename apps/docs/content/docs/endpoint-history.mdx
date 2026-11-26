@@ -66,6 +66,17 @@ Record: [expand-anonymous-edge-cache-v2](https://github.com/egdata-app/egdata-ap
 
 Verification: pnpm dashboard:test; pnpm dashboard:build; pnpm build; cargo test --locked -p egdata-http-core -p egdata-routes-legacy; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
 
+## 2026-11-26 — Allowlist /free-games query parameters at the Worker edge and block repeated anonymous cache-busting
+
+Record: [free-games-query-allowlist-anti-buster](https://github.com/egdata-app/egdata-api/blob/main/changes/records/free-games-query-allowlist-anti-buster.json).
+
+- **legacy GET /free-games** (getFreeGames; changed; compatible)
+  - Before: All arbitrary query parameters (including cache-busters such as _=&lt;timestamp&gt;) were included in the Worker edge cache key and forwarded to origin without rate-limiting repeated cache-busting attempts.
+  - After: The Cloudflare Worker strips query parameters outside the /free-games allowlist (country, locale, expand) from both edge cache keys and upstream forwarding, and rejects repeated anonymous cache-busting requests (&gt;3 per minute per IP) with HTTP 429 CACHE_BUSTER_DETECTED directing callers to remove unsupported parameters or create a free account at https://devs.egdata.app.
+  - Client action: Remove unsupported query parameters (such as cache-busting timestamps) from /free-games requests, or create a free API key at https://devs.egdata.app and use /v1/free-games.
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; pnpm release:check --base origin/main; pnpm docs:check.
+
 ## 2026-11-24 — Harden anonymous /search/v2/search with migration errors, 20/min rate limit, 30-minute edge TTL, and deprecation headers
 
 Record: [harden-legacy-search-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/harden-legacy-search-v2.json).

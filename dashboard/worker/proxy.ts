@@ -2,7 +2,10 @@ import { recordApiTelemetry } from "./analytics.js";
 import { UNATTRIBUTED_LEGACY_ID } from "./analytics-types.js";
 import { sha256Hex, timingSafeStringEqual } from "./crypto.js";
 import { touchApiKeyLastUsed } from "./db.js";
-import { fetchLegacyWithEdgeCache } from "./edge-cache.js";
+import {
+  fetchLegacyWithEdgeCache,
+  filterAllowedLegacyQueryParams,
+} from "./edge-cache.js";
 import { resolveCommercialLimitsEnabled } from "./flags.js";
 import { resolveApiKeyMetadata } from "./key-cache.js";
 import { evaluateKeyPermissions } from "./permissions.js";
@@ -58,6 +61,7 @@ const LEGACY_SEARCH_PATH = "/search/v2/search";
 const LEGACY_SEARCH_ANON_MAX_LIMIT = 28;
 const LEGACY_SEARCH_ANON_MAX_PAGE = 10;
 const LEGACY_SEARCH_ANON_RPM = 20;
+const CACHE_BUSTER_ANON_RPM = 3;
 const LEGACY_SEARCH_ANON_CDN_TTL_SECONDS = 1800;
 const LEGACY_BUILDS_ANON_CDN_TTL_SECONDS = 900;
 const SITEMAP_EDGE_TTL_SECONDS = 86_400;
@@ -263,13 +267,19 @@ export async function handleEdgeApiProxy(
     });
     return response;
   };
+  const legacyQueryFilter = filterAllowedLegacyQueryParams(
+    upstreamPath,
+    reqUrl.search,
+  );
+  const effectiveSearch = legacyQueryFilter.filteredSearch;
+
   const forwardUnattributed = async () =>
     recordUnattributed(
       await forwardToUpstream(
         request,
         env,
         upstreamPath,
-        reqUrl.search,
+        effectiveSearch,
         cfProps,
       ),
     );
@@ -412,6 +422,51 @@ export async function handleEdgeApiProxy(
         }
       }
 
+      if (
+        !trustedFirstParty &&
+        legacyQueryFilter.disallowedParams.length > 0 &&
+        env.RATE_LIMITER_CACHE_BUSTER
+      ) {
+        let allowed = true;
+        try {
+          const outcome = await env.RATE_LIMITER_CACHE_BUSTER.limit({
+            key: `cache-buster:${upstreamPath}:${clientIp ?? "unknown"}`,
+          });
+          allowed = outcome.success;
+        } catch {
+          // Fail open if the edge rate limiter binding is transiently unavailable.
+        }
+        if (!allowed) {
+          const successorSuffix = legacyQueryFilter.successorPath
+            ? ` and use ${legacyQueryFilter.successorPath}`
+            : "";
+          const response = edgeErrorJson(
+            429,
+            "CACHE_BUSTER_DETECTED",
+            `Repeated requests with unsupported query parameters on ${upstreamPath} are not allowed for anonymous traffic. Remove unsupported query parameters or create a free account and API key at ${DEVELOPER_PORTAL_URL}${successorSuffix}.`,
+            originHeader,
+            {
+              "Retry-After": "60",
+              RateLimit: `limit=${CACHE_BUSTER_ANON_RPM}, remaining=0, reset=60`,
+              "RateLimit-Policy": `${CACHE_BUSTER_ANON_RPM};w=60`,
+              Link: `<${DEVELOPER_PORTAL_URL}>; rel="successor-version"`,
+            },
+            {
+              developerPortal: DEVELOPER_PORTAL_URL,
+              ...(legacyQueryFilter.successorPath
+                ? { successor: legacyQueryFilter.successorPath }
+                : {}),
+              allowedQueryParams: legacyQueryFilter.allowedParams,
+              disallowedQueryParams: legacyQueryFilter.disallowedParams,
+            },
+          );
+          return recordUnattributed(
+            upperMethod === "HEAD" ? new Response(null, response) : response,
+            "cache_buster_detected",
+          );
+        }
+      }
+
       if (isAnonymousEdgeCachePath(upstreamPath)) {
         const minTtlSeconds =
           isLegacySearch && !trustedFirstParty
@@ -423,7 +478,7 @@ export async function handleEdgeApiProxy(
           request,
           ctx,
           pathname: upstreamPath,
-          search: reqUrl.search,
+          search: effectiveSearch,
           anonymousPublic: true,
           ...(minTtlSeconds !== undefined ? { minTtlSeconds } : {}),
           fetchUpstream: (upstreamRequest) =>
@@ -431,7 +486,7 @@ export async function handleEdgeApiProxy(
               upstreamRequest,
               env,
               upstreamPath,
-              reqUrl.search,
+              effectiveSearch,
               cfProps,
             ),
         });
@@ -733,13 +788,13 @@ export async function handleEdgeApiProxy(
       request,
       ctx,
       pathname: upstreamPath,
-      search: reqUrl.search,
+      search: effectiveSearch,
       fetchUpstream: (upstreamRequest) =>
         forwardToUpstream(
           upstreamRequest,
           env,
           upstreamPath,
-          reqUrl.search,
+          effectiveSearch,
           cfProps,
           {
             headers: {
