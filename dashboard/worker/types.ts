@@ -138,6 +138,7 @@ export interface DashboardEnv
   > {
   FLAGS?: Pick<Flagship, "getBooleanValue">;
   RATE_LIMITER_LEGACY_SEARCH?: RateLimit;
+  RATE_LIMITER_CACHE_BUSTER?: RateLimit;
   EPIC_CLIENT_ID?: string;
   EPIC_CLIENT_SECRET?: string;
   DASHBOARD_SESSION_SECRET?: string;
