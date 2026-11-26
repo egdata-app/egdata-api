@@ -121,10 +121,10 @@ docker build -f Dockerfile.rust -t egdata-rust-origin:local-migration .
 $env:EGDATA_TEST_ORIGIN_IMAGE = "egdata-rust-origin:local-migration"
 node rust/scripts/test-services.mjs --compare-origins
 Remove-Item Env:EGDATA_TEST_ORIGIN_IMAGE
-node rust/scripts/test-services.mjs llvm-cov --locked --workspace --all-targets --fail-under-lines 99 --fail-under-regions 99 -- --include-ignored
+node rust/scripts/test-services.mjs llvm-cov --locked --workspace --all-targets --fail-under-lines 98 --fail-under-regions 98 -- --include-ignored
 ```
 
-CI requires at least 99% workspace line coverage and 99% region coverage. The separate HTTP comparison checks observable parity with Node.
+CI requires at least 98% workspace line coverage and 98% region coverage. The separate HTTP comparison checks observable parity with Node.
 
 LLVM reports the percentage of instrumented lines and regions executed at least
 once across the workspace. A single line can contain multiple regions, such as

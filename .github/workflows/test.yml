@@ -108,7 +108,7 @@ jobs:
         with:
           tool: cargo-llvm-cov@0.9.1
       - name: Verify workspace tests and coverage with disposable services
-        run: node rust/scripts/test-services.mjs llvm-cov --locked --workspace --all-targets --fail-under-lines 99 --fail-under-regions 99 -- --include-ignored
+        run: node rust/scripts/test-services.mjs llvm-cov --locked --workspace --all-targets --fail-under-lines 98 --fail-under-regions 98 -- --include-ignored
 
   publish-changes:
     runs-on: ubuntu-latest

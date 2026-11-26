@@ -3065,7 +3065,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"68756b7b6a87072d94988dac2f69ce80ac6a7257\""
       },
       "body": {
@@ -3327,7 +3328,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"9b8578079657bdaa50ce5c01c879ed654684aee6\""
       },
       "body": {
@@ -3646,7 +3648,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"b417c0916323a7f85b960af0b8b12eb9728b5633\""
       },
       "body": {
@@ -5862,7 +5865,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"82bce8381d16b12d21518bfc64b72c644408853e\""
       },
       "body": {
@@ -23754,7 +23758,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"2981caa4b1571efffc89b0b3093a7a4e8b80e555\""
       },
       "body": {
@@ -24794,7 +24799,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"6ed61950e486137b0f0a72003a71df9c378d7c12\""
       },
       "body": {
@@ -25253,7 +25259,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"4ec367c06aa61c394957b75f33a420874f44b12a\""
       },
       "body": {
@@ -37418,7 +37425,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"0d36c4cb5b8f8429f9bb42d7cfbd8016046c8c10\""
       },
       "body": [
@@ -41320,7 +41328,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"82fe60ac5b4bd2d8e263f8ccd102bd447d6e4726\""
       },
       "body": {
@@ -42156,7 +42165,8 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "cache-control": "public, max-age=0",
+        "cache-control": "public, max-age=60, s-maxage=900, stale-while-revalidate=600",
+        "cdn-cache-control": "public, max-age=900, stale-while-revalidate=3600",
         "etag": "\"84ce657d6c44ca3986eb2e0af5ac67504a009568\""
       },
       "body": {

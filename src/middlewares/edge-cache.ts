@@ -61,6 +61,11 @@ const rules: CacheRule[] = [
     browser: `public, max-age=${MINUTE}, s-maxage=${5 * MINUTE}, stale-while-revalidate=${10 * MINUTE}`,
     cdn: `public, max-age=${5 * MINUTE}, stale-while-revalidate=${HOUR}`,
   },
+  {
+    test: /^\/sales$/,
+    browser: `public, max-age=${MINUTE}, s-maxage=${15 * MINUTE}, stale-while-revalidate=${10 * MINUTE}`,
+    cdn: `public, max-age=${15 * MINUTE}, stale-while-revalidate=${HOUR}`,
+  },
 ];
 
 const skipExact = new Set([
@@ -140,7 +145,7 @@ export const edgeCacheHeaders = async (c: Context, next: Next) => {
     // Require an explicit country for shared caching rather than mixing cookie
     // variants. The Worker bypasses responses that vary on Cookie.
     if (
-      c.req.path === "/stats/homepage" &&
+      (c.req.path === "/stats/homepage" || c.req.path === "/sales") &&
       c.req.query("country") === undefined
     ) {
       const current = c.res.headers.get("Vary");

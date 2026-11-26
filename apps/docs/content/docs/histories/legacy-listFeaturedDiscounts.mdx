@@ -5,6 +5,17 @@ description: History for GET /offers/featured-discounts
 
 `GET /offers/featured-discounts` — active. Recorded dates are not deployment dates.
 
+## 2026-11-26 — Expand anonymous Worker edge caching to high-traffic public catalog, sales, suggestions, and builds routes
+
+Record: [expand-anonymous-edge-cache-v2](https://github.com/egdata-app/egdata-api/blob/main/changes/records/expand-anonymous-edge-cache-v2.json).
+
+- **legacy GET /offers/featured-discounts** (listFeaturedDiscounts; changed; compatible)
+  - Before: Bypassed the anonymous Worker edge cache and forwarded every anonymous GET/HEAD request to origin.
+  - After: Eligible anonymous GET/HEAD requests use the isolated public Worker edge cache with origin's 1-hour CDN TTL.
+  - Client action: None
+
+Verification: pnpm dashboard:test; pnpm dashboard:build; pnpm build; cargo test --locked -p egdata-http-core -p egdata-routes-legacy; cargo clippy --locked --workspace --all-targets -- -D warnings; pnpm release:check --base origin/main.
+
 ## 2026-11-13 — Fix container startup after Aikido removal
 
 Record: [fix-container-startup](https://github.com/egdata-app/egdata-api/blob/main/changes/records/fix-container-startup.json); corrects remove-aikido-runtime.

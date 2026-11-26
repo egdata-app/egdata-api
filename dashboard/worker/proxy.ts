@@ -37,8 +37,16 @@ const PUBLIC_UNAUTHENTICATED_PATHS = new Set([
 const ANONYMOUS_EDGE_CACHE_PATHS = new Set([
   "/countries",
   "/tags",
+  "/sales",
+  "/offers",
   "/offers/genres",
   "/offers/top-sellers",
+  "/offers/top-wishlisted",
+  "/offers/featured-discounts",
+  "/offers/upcoming",
+  "/offers/latest-achievements",
+  "/offers/latest-released",
+  "/collections/top-sellers",
   "/free-games",
   "/free-games/stats",
   "/search/v2/search",
@@ -51,6 +59,7 @@ const LEGACY_SEARCH_ANON_MAX_LIMIT = 28;
 const LEGACY_SEARCH_ANON_MAX_PAGE = 10;
 const LEGACY_SEARCH_ANON_RPM = 20;
 const LEGACY_SEARCH_ANON_CDN_TTL_SECONDS = 1800;
+const LEGACY_BUILDS_ANON_CDN_TTL_SECONDS = 900;
 const SITEMAP_EDGE_TTL_SECONDS = 86_400;
 const DEVELOPER_PORTAL_URL = "https://devs.egdata.app";
 const LEGACY_SEARCH_DEPRECATION_HEADERS = {
@@ -81,10 +90,21 @@ function withLegacySearchDeprecationHeaders(response: Response): Response {
   });
 }
 
+function isAnonymousEdgeCacheBuildsPath(pathname: string): boolean {
+  return (
+    /^\/sandboxes\/[^/]+\/builds$/.test(pathname) ||
+    /^\/items\/[^/]+\/builds$/.test(pathname)
+  );
+}
+
 function isAnonymousEdgeCachePath(pathname: string): boolean {
   return (
     ANONYMOUS_EDGE_CACHE_PATHS.has(pathname) ||
-    /^\/offers\/[^/]+\/(?:tops|assets|price)$/.test(pathname)
+    isAnonymousEdgeCacheBuildsPath(pathname) ||
+    /^\/offers\/[a-f0-9]{24,36}$/i.test(pathname) ||
+    /^\/offers\/[^/]+\/(?:tops|assets|price|suggestions|builds|regional-price)$/.test(
+      pathname,
+    )
   );
 }
 
@@ -393,15 +413,19 @@ export async function handleEdgeApiProxy(
       }
 
       if (isAnonymousEdgeCachePath(upstreamPath)) {
+        const minTtlSeconds =
+          isLegacySearch && !trustedFirstParty
+            ? LEGACY_SEARCH_ANON_CDN_TTL_SECONDS
+            : isAnonymousEdgeCacheBuildsPath(upstreamPath)
+              ? LEGACY_BUILDS_ANON_CDN_TTL_SECONDS
+              : undefined;
         const { response, cacheStatus } = await fetchLegacyWithEdgeCache({
           request,
           ctx,
           pathname: upstreamPath,
           search: reqUrl.search,
           anonymousPublic: true,
-          ...(isLegacySearch && !trustedFirstParty
-            ? { minTtlSeconds: LEGACY_SEARCH_ANON_CDN_TTL_SECONDS }
-            : {}),
+          ...(minTtlSeconds !== undefined ? { minTtlSeconds } : {}),
           fetchUpstream: (upstreamRequest) =>
             forwardToUpstream(
               upstreamRequest,
