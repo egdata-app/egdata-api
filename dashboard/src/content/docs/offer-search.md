@@ -109,6 +109,11 @@ const response = await fetch(
     },
   },
 );
+if (!response.ok) {
+  const problem = await response.json().catch(() => null);
+  throw new Error(`${problem?.code ?? response.status}: ${problem?.detail ?? ""}`);
+}
+
 const { data: facets, meta } = await response.json();
 ```
 

@@ -14,7 +14,12 @@ const response = await fetch(
     },
   },
 );
-const result = await response.json();
+if (!response.ok) {
+  const problem = await response.json().catch(() => null);
+  throw new Error(`${problem?.code ?? response.status}: ${problem?.detail ?? ""}`);
+}
+
+const { data: changes, meta } = await response.json();
 ```
 
 The response places change entries in `data` and cursor pagination state in `meta.pagination`:

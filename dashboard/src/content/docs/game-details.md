@@ -94,6 +94,12 @@ const [reviewsRes, summaryRes] = await Promise.all([
   ),
 ]);
 
+if (!reviewsRes.ok || !summaryRes.ok) {
+  const failed = !reviewsRes.ok ? reviewsRes : summaryRes;
+  const problem = await failed.json().catch(() => null);
+  throw new Error(`${problem?.code ?? failed.status}: ${problem?.detail ?? ""}`);
+}
+
 const { data: reviews, meta: reviewsMeta } = await reviewsRes.json();
 const { data: summary } = await summaryRes.json();
 ```

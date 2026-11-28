@@ -24,7 +24,12 @@ const response = await fetch(
     }),
   },
 );
-const result = await response.json();
+if (!response.ok) {
+  const problem = await response.json().catch(() => null);
+  throw new Error(`${problem?.code ?? response.status}: ${problem?.detail ?? ""}`);
+}
+
+const { data, meta } = await response.json();
 ```
 
 Send 1 to 100 candidates with unique `requestId` values. Optional `catalogHint` values can narrow a match, but they do not establish a relationship by themselves. Results retain request order inside `data.results` (with `meta.count`) and report one of four statuses:

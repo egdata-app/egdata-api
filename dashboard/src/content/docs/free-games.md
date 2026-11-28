@@ -70,6 +70,11 @@ const historyRes = await fetch(
   },
 );
 
+if (!historyRes.ok) {
+  const problem = await historyRes.json().catch(() => null);
+  throw new Error(`${problem?.code ?? historyRes.status}: ${problem?.detail ?? ""}`);
+}
+
 const { data: pastPromotions, meta: historyMeta } = await historyRes.json();
 ```
 
