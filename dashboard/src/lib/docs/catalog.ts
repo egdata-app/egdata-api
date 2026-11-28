@@ -1,9 +1,23 @@
-import { allDocs, DOC_CATEGORY_ORDER, findDoc, groupDocs } from "./entries";
+import {
+  allDocs,
+  DOC_CATEGORY_ORDER,
+  findDoc,
+  findProblemDoc,
+  groupDocs,
+  isProblemRouteDoc,
+} from "./entries";
 import { loadGuideSource } from "./guides";
 import { fieldIssueDocs, problemDocs, streamResultDocs } from "./problems";
 import type { DocEntry } from "./types";
 
-export { DOC_CATEGORY_ORDER, allDocs, findDoc, groupDocs };
+export {
+  DOC_CATEGORY_ORDER,
+  allDocs,
+  findDoc,
+  findProblemDoc,
+  groupDocs,
+  isProblemRouteDoc,
+};
 
 function escapeTableCell(value: string): string {
   return value.replaceAll("|", "\\|").replaceAll("\n", " ");

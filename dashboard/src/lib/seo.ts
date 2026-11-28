@@ -1,4 +1,4 @@
-import { findDoc } from "./docs/entries";
+import { findDoc, findProblemDoc } from "./docs/entries";
 
 export const HOMEPAGE_TITLE = "egdata Developer Portal — API Keys & Usage";
 export const HOMEPAGE_DESCRIPTION =
@@ -179,7 +179,7 @@ export function resolveDashboardSeo(
       ? normalizedPath.slice("/problems/".length)
       : "";
     const slug = rawSlug ? safeDecode(rawSlug) : "";
-    const entry = findDoc(slug || "problems");
+    const entry = findProblemDoc(slug || "problems");
 
     if (slug && !entry) {
       return {

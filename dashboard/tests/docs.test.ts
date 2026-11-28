@@ -3,6 +3,7 @@ import {
   allDocs,
   fieldIssueIndexMarkdown,
   findDoc,
+  findProblemDoc,
   groupDocs,
   loadDocSource,
   problemIndexMarkdown,
@@ -28,6 +29,21 @@ describe("docs catalog", () => {
   it("resolves common shorthand to the stable problem page", () => {
     expect(findDoc("invalid-key")?.slug).toBe("invalid-api-key");
     expect(findDoc("missing-key")?.slug).toBe("missing-api-key");
+  });
+
+  it("aliases graphql-profiles to profiles and excludes anti-abuse", () => {
+    expect(findDoc("graphql-profiles")?.slug).toBe("profiles");
+    expect(findDoc("anti-abuse")).toBeUndefined();
+  });
+
+  it("restricts findProblemDoc to problem, stream, issue, and index slugs", () => {
+    expect(findProblemDoc("missing-api-key")?.code).toBe("MISSING_API_KEY");
+    expect(findProblemDoc("catalog-root-too-large")?.kind).toBe("stream");
+    expect(findProblemDoc("invalid")?.kind).toBe("issue");
+    expect(findProblemDoc("problems")?.slug).toBe("problems");
+    expect(findProblemDoc("field-issues")?.slug).toBe("field-issues");
+    expect(findProblemDoc("get-started")).toBeUndefined();
+    expect(findProblemDoc("profiles")).toBeUndefined();
   });
 
   it("leaves camelCase operation IDs for the API explorer", () => {
@@ -113,6 +129,24 @@ describe("docs catalog", () => {
       expect(issues).toContain(`(/docs/${entry.slug})`);
     }
   });
+
+  it("documents gateway entitlement, quota, and account-status problem codes", () => {
+    const expectedCodes = [
+      "PLAN_ENTITLEMENT_REQUIRED",
+      "PERIOD_QUOTA_EXCEEDED",
+      "EXPENSIVE_BUDGET_EXCEEDED",
+      "ACCOUNT_STATUS_UNAVAILABLE",
+      "EMAIL_VERIFICATION_REQUIRED",
+      "AGREEMENT_REQUIRED",
+    ];
+    const problems = problemIndexMarkdown();
+    for (const code of expectedCodes) {
+      const entry = problemDocs.find((item) => item.code === code);
+      expect(entry, `missing problemDocs entry for ${code}`).toBeDefined();
+      expect(problems).toContain(`(/docs/${entry?.slug})`);
+      expect(problems).toContain(`[${code}]`);
+    }
+  });
 });
 
 describe("docs markdown", () => {
@@ -186,13 +220,32 @@ describe("docs markdown", () => {
     expect(rendered.html).not.toContain("<tag>");
   });
 
-  it("renders every copied guide without throwing", async () => {
+  it("renders every guide without throwing and keeps links and URLs on v1", async () => {
     for (const entry of guideDocs) {
       const source = await loadDocSource(entry);
       const parsed = parseFrontmatter(source.markdown);
       const rendered = renderMarkdown(parsed.markdown);
       expect(rendered.html.length).toBeGreaterThan(0);
       expect(rendered.html).not.toContain("\uE000");
+
+      for (const match of parsed.markdown.matchAll(
+        /\[[^\]]+\]\(\/docs\/([a-z0-9-]+)(?:#[^)\s]*)?\)/g,
+      )) {
+        const slug = match[1];
+        expect(
+          findDoc(slug),
+          `broken /docs/${slug} link in ${entry.slug}`,
+        ).toBeDefined();
+      }
+
+      const legacyUrls = [
+        ...parsed.markdown.matchAll(
+          /https:\/\/api\.egdata\.app\/(?!v1(?:\/|$|\b)|problems\/|open-api\.json)[^\s"'`)>]+/g,
+        ),
+      ].map((m) => m[0]);
+      expect(legacyUrls, `legacy api.egdata.app URL in ${entry.slug}`).toEqual(
+        [],
+      );
     }
   });
 });

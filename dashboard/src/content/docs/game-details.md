@@ -3,29 +3,45 @@ title: Game details
 description: Load an offer, discover its items, and follow catalog relationships.
 ---
 
-Search returns offer IDs. Load the complete offer with `GET /offers/{id}` and load the store items connected to it with `GET /offers/{id}/items`.
+Search returns offer IDs. Load a complete offer with `GET https://api.egdata.app/v1/offers/{id}` and load the store items connected to it with `GET https://api.egdata.app/v1/offers/{id}/items`.
 
-List endpoints such as `GET /offers`, `GET /offers/top-sellers`, and `GET /sellers/{id}` return full offer documents, including tags, items, custom attributes, and the complete key image set. Detail endpoints return the same complete offer. `GET /items` also returns full item documents.
+List endpoints such as `GET /v1/offers`, `GET /v1/offers/top-sellers`, and `GET /v1/sellers/{id}` return `{ data, meta }` with cursor-paginated or bounded arrays of offer documents, including tags, items, custom attributes, and the complete key image set.
 
 ```js
-const base = "https://api.egdata.app";
+const base = "https://api.egdata.app/v1";
 const offerId = "offer-id";
+const headers = { "X-API-Key": process.env.EGDATA_API_KEY };
+
 const [offerResponse, itemsResponse] = await Promise.all([
-  fetch(`${base}/offers/${encodeURIComponent(offerId)}?locale=en-US`),
-  fetch(`${base}/offers/${encodeURIComponent(offerId)}/items`),
+  fetch(`${base}/offers/${encodeURIComponent(offerId)}?locale=en-US`, {
+    headers,
+  }),
+  fetch(`${base}/offers/${encodeURIComponent(offerId)}/items`, { headers }),
 ]);
-const offer = await offerResponse.json();
-const items = await itemsResponse.json();
+
+if (!offerResponse.ok || !itemsResponse.ok) {
+  throw new Error("Failed to load offer details");
+}
+
+const { data: offer } = await offerResponse.json();
+const { data: items } = await itemsResponse.json();
 ```
 
-An offer response includes its catalog identity and metadata. Item results identify related catalog items; load one with `GET /items/{id}`. Items may link to multiple offers, and offers can reference direct items, subitems, or linked offers, so use the returned IDs to follow relationships instead of assuming one offer maps to one item.
+An offer response includes its catalog identity and metadata in `data`. Item results identify related catalog items; load a specific item with `GET https://api.egdata.app/v1/items/{id}`. Items may link to multiple offers, and offers can reference direct items, subitems, or linked offers, so use the returned IDs to follow relationships instead of assuming one offer maps to one item.
 
 ```json
 {
-  "id": "offer-id",
-  "title": "Example Game",
-  "namespace": "example-namespace",
-  "items": [{ "id": "item-id" }]
+  "data": {
+    "id": "offer-id",
+    "title": "Example Game",
+    "namespace": "example-namespace",
+    "items": [{ "id": "item-id" }]
+  },
+  "meta": {
+    "country": "US",
+    "region": "US",
+    "locale": "en-US"
+  }
 }
 ```
 
@@ -33,43 +49,102 @@ Offer and item IDs are opaque strings. Offers may also have catalog item IDs, na
 
 ## Technical requirements
 
-Use `GET /offers/{id}/requirements` to retrieve the offer's Windows and macOS technical requirements. The endpoint resolves each platform independently and returns `null` for a platform without a requirements record. DLCs inherit requirements only when their source confirms that they have no requirements of their own and an explicit, valid base-game relationship exists. Partial DLC requirements are returned as recorded without filling missing tiers from the parent.
+Use `GET https://api.egdata.app/v1/offers/{id}/requirements` to retrieve the offer's Windows and macOS technical requirements. The endpoint resolves each platform independently and returns `null` for a platform without a requirements record. DLCs inherit requirements only when their source confirms that they have no requirements of their own and an explicit, valid base-game relationship exists. Partial DLC requirements are returned as recorded without filling missing tiers from the parent.
 
 ```js
 const response = await fetch(
-  `https://api.egdata.app/offers/${encodeURIComponent(offerId)}/requirements`,
+  `https://api.egdata.app/v1/offers/${encodeURIComponent(offerId)}/requirements`,
+  {
+    headers: {
+      "X-API-Key": process.env.EGDATA_API_KEY,
+    },
+  },
 );
-const { windows, macos } = await response.json();
+
+if (!response.ok) {
+  const problem = await response.json().catch(() => null);
+  throw new Error(`${problem?.code ?? response.status}: ${problem?.detail ?? ""}`);
+}
+
+const {
+  data: { windows, macos },
+} = await response.json();
 ```
 
-Each non-null platform result includes its processing state, inheritance and parent metadata, observation time, and minimum and recommended requirement tiers. A 404 means the offer does not exist or neither platform has a requirements record.
+Each non-null platform result includes its processing state, inheritance and parent metadata, observation time, and minimum and recommended requirement tiers. A `404` (`OFFER_NOT_FOUND` or `REQUIREMENTS_NOT_FOUND`) means the offer does not exist or neither platform has a requirements record.
+
+## Offer reviews
+
+Retrieve community reviews and aggregated scores with `GET https://api.egdata.app/v1/offers/{id}/reviews` and `GET https://api.egdata.app/v1/offers/{id}/reviews-summary` (both require the `offers:read` scope).
+
+- `GET /v1/offers/{id}/reviews`: keyset-paginated public reviews ordered newest first. Accepts optional `verified` (`true` or `false`), `limit` (default `20`, maximum `25`), and `cursor`.
+- `GET /v1/offers/{id}/reviews-summary`: aggregates public reviews into `overallScore`, `recommendedPercentage`, `notRecommendedPercentage`, and `totalReviews`. Accepts optional `verified` (`true` or `false`).
+
+```js
+const headers = { "X-API-Key": process.env.EGDATA_API_KEY };
+
+const [reviewsRes, summaryRes] = await Promise.all([
+  fetch(
+    `https://api.egdata.app/v1/offers/${encodeURIComponent(offerId)}/reviews?verified=true&limit=20`,
+    { headers },
+  ),
+  fetch(
+    `https://api.egdata.app/v1/offers/${encodeURIComponent(offerId)}/reviews-summary?verified=true`,
+    { headers },
+  ),
+]);
+
+if (!reviewsRes.ok || !summaryRes.ok) {
+  const failed = !reviewsRes.ok ? reviewsRes : summaryRes;
+  const problem = await failed.json().catch(() => null);
+  throw new Error(`${problem?.code ?? failed.status}: ${problem?.detail ?? ""}`);
+}
+
+const { data: reviews, meta: reviewsMeta } = await reviewsRes.json();
+const { data: summary } = await summaryRes.json();
+```
+
+`reviewsMeta.pagination` carries `{ limit, hasMore, nextCursor, total }`. Pass `nextCursor` as `cursor` to read older reviews.
 
 ## Offer preview images
 
-Use `GET /offers/{id}/og.webp` for a 1200 × 630 WebP database summary, or `GET /offers/{id}/og` for the same layout as PNG. Both routes are public and accept `country` for regional pricing (for example, `?country=US`). Without it, the `EGDATA_COUNTRY` cookie is used, then `US`. The optional `v` query parameter can vary the URL for cache busting; it does not select a historical snapshot.
+Use `GET https://api.egdata.app/v1/offers/{id}/og.webp` for a 1200 x 630 WebP database summary, or `GET https://api.egdata.app/v1/offers/{id}/og` for the same layout as PNG.
 
-```text
-https://api.egdata.app/offers/af4c34934afe4db0870b8a1d82dceb94/og.webp?country=US
+- Both routes require `X-API-Key` (`offers:read` scope) and return binary `image/webp` or `image/png` (not JSON-wrapped).
+- Both accept `country` for regional pricing (for example, `?country=US`). `country` defaults to `US`; v1 never reads cookies.
+- Requests count toward the `heavy` per-minute limit and the `image-period` budget (**2,000** Free / **15,000** Pro / **50,000** Scale).
+- Shared HTTP caching is disabled (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`).
+- Unknown offer IDs return RFC 9457 Problem Details (`404 OFFER_NOT_FOUND`), and invalid country codes return `400 INVALID_COUNTRY`.
+
+```js
+const imageRes = await fetch(
+  `https://api.egdata.app/v1/offers/${encodeURIComponent(offerId)}/og.webp?country=US`,
+  {
+    headers: {
+      "X-API-Key": process.env.EGDATA_API_KEY,
+    },
+  },
+);
+
+if (!imageRes.ok) {
+  const problem = await imageRes.json().catch(() => null);
+  throw new Error(`${problem?.code ?? imageRes.status}: ${problem?.detail ?? ""}`);
+}
+
+const bytes = await imageRes.arrayBuffer();
 ```
 
-The card shows the title, offer type, publisher, release date, current regional price, last catalog modification date (UTC), and latest download size. Size uses the newest associated build, preferring assets for the offer's direct items over related subitems, and falls back to its matching asset when the build has no size. Without builds, the most recently updated associated asset is used. Size is decimal GB (1 GB = 1,000,000,000 bytes), with the platform shown when known; it is not installed size or a sum of DLC sizes. Missing dates or sizes show `Not available`, and missing or country-restricted pricing shows `Unavailable`.
-
-Responses use `image/webp` or `image/png`. Without `v`, the response sends `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. With `v`, both become long-lived (`max-age=31536000, immutable` for browsers) so a content-hashed URL can be cached indefinitely. `Vary` is `Accept-Encoding` when `country` is supplied, otherwise `Cookie, Accept-Encoding`. Unknown offer IDs and unrecognized country codes return a JSON error with status 404. Artwork is omitted if its source cannot be fetched.
-
-`robots.txt` allows offer preview image URLs, including `/og.webp` and query parameters, while retaining `Disallow: /` for ordinary API data routes.
+The card shows the title, offer type, publisher, release date, current regional price, last catalog modification date (UTC), and latest download size in decimal GB (1 GB = 1,000,000,000 bytes). Missing dates or sizes show `Not available`, and missing or country-restricted pricing shows `Unavailable`.
 
 ## Sandbox preview images
 
-Use `GET /sandboxes/{sandboxId}/og.webp` for a 1200 × 630 WebP sandbox summary, or `GET /sandboxes/{sandboxId}/og` for PNG. The card uses the same visual style as offer previews, with the base game's title and artwork, three totals for offers, items, and assets, and the sandbox's last update date (UTC).
+Use `GET https://api.egdata.app/v1/sandboxes/{sandboxId}/og.webp` for a 1200 x 630 WebP sandbox summary, or `GET https://api.egdata.app/v1/sandboxes/{sandboxId}/og` for PNG (`catalog:read` scope). The card renders the base game's title and artwork, totals for offers, items, and assets, and the sandbox's last update date (UTC).
 
-```text
-https://api.egdata.app/sandboxes/e7f4ac33ff3d4ce4b243075f0b5dba84/og.webp
-```
-
-Counts include historical/test catalog offers. Assets follow the sandbox statistics convention: stored asset records plus each release-info platform without a stored artifact. For identity, the earliest-created released, non-code-redemption base game is preferred, followed by a preorder base game and an executable item. A sandbox without either still renders its own display name and counts. Artwork is optional; missing dates show `Not available`. The date uses the sandbox's `updated`, then `lastModifiedDate`, then `updatedAt`.
-
-Both routes are public and country-independent. They accept the optional `v` URL cache buster and return `image/webp` or `image/png` with `Cache-Control: public, max-age=86400, stale-while-revalidate=604800` (or `max-age=31536000, immutable` when `v` is present) and `CDN-Cache-Control: public, max-age=2592000, stale-while-revalidate=604800`. `Vary: Accept-Encoding`. Unknown sandbox IDs return JSON with status 404. `robots.txt` allows both image paths, including query strings.
+Like offer preview images, sandbox preview routes require `X-API-Key`, return binary `image/webp` or `image/png` (with `Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`), count toward the `heavy` per-minute limit and `image-period` budget, and return RFC 9457 Problem Details (`404 SANDBOX_NOT_FOUND`) when the sandbox does not exist.
 
 ## Price history
 
-`GET /offers/{id}/price-history` returns newest-first observations. Use `since` to bound the window and `limit` (default 500, maximum 2000) to bound each region's history. Without a region parameter the response is grouped by region, and the same limit applies per request.
+`GET https://api.egdata.app/v1/offers/{id}/price-history` returns newest-first observations:
+
+- Pass `country` or `region` for forward-only cursor pagination using `cursor` and `limit` (default `20`, maximum `100`), with optional `since` (ISO 8601 timestamp) and `locale`.
+- Omit both `country` and `region` to receive a single non-paginated response grouped by pricing region.

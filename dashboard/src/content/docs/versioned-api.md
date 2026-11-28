@@ -3,24 +3,27 @@ title: Versioned v1 API
 description: API keys, exact quotas, cursor pagination, and the RFC 9457 error contract for /v1.
 ---
 
-Version 1 keeps the legacy resource path beneath `/v1` (for example `/offers/{id}` becomes `/v1/offers/{id}`). The one rename is `/search/v2/search`, which becomes `/v1/search`. Retired placeholders, private operations, mutations, admin routes, maintenance routes, and GraphQL are not part of v1.
+Version 1 is the primary public read-only API contract under `https://api.egdata.app/v1`. It keeps familiar resource paths beneath `/v1` (for example `/v1/offers/{id}`), moves offer search to `/v1/search`, enforces API key authentication, applies exact project and account quotas, uses forward-only cursor pagination, and returns RFC 9457 Problem Details on errors.
 
-Version 1 is the versioned public read-only contract. It runs beside the legacy API: existing `api.egdata.app` routes and behavior are unchanged while v1 is staged at `https://devs.egdata.app/proxy/v1`.
-
-The first v1 exposure is a staging gateway. Production cutover to `https://api.egdata.app/v1` requires a separate release; do not assume the production URL is live before that cutover is announced.
+The in-dashboard API console sends interactive requests through `https://devs.egdata.app/proxy/v1` using short-lived console sessions. Production applications should target `https://api.egdata.app/v1` with a project API key.
 
 ## Authentication
 
-Every v1 data request requires an API key, regardless of legacy anonymous-access settings or a first-party browser `Origin`.
+Every v1 data request requires an API key created in [API Keys](/keys):
 
 ```js
-const response = await fetch("https://devs.egdata.app/proxy/v1/countries", {
+const response = await fetch("https://api.egdata.app/v1/countries", {
   headers: {
     "X-API-Key": process.env.EGDATA_API_KEY,
   },
 });
 
-const body = await response.json();
+if (!response.ok) {
+  const problem = await response.json().catch(() => null);
+  throw new Error(`${problem?.code ?? response.status}: ${problem?.detail ?? ""}`);
+}
+
+const { data, meta } = await response.json();
 ```
 
 `Authorization: Bearer <key>` is also accepted. Sending `X-API-Key` and a different Bearer credential together returns `401 CONFLICTING_CREDENTIALS`.
@@ -31,61 +34,64 @@ Only these v1 requests are unauthenticated:
 - `GET /v1/open-api.json`
 - CORS preflights (`OPTIONS`)
 
-The Worker validates the key, permission scope, allowed IP/CIDR, allowed origin, allowed methods, path restrictions, and expiry before forwarding. Path restrictions are evaluated against the `/v1/...` path; a legacy grant such as `/offers/*` does not automatically grant `/v1/offers`.
+The gateway validates the key, permission scope, allowed IP/CIDR, allowed origin, allowed methods, path restrictions, and expiry before forwarding. Path restrictions are evaluated against the `/v1/...` path; a legacy grant such as `/offers/*` does not automatically grant `/v1/offers`.
 
-## Exact global quotas
+## Plans and quotas
 
-Each account's quotas are enforced atomically in a SQLite-backed Durable Object.
-Every project has an exact 60-second global allowance shared across all its API
-keys, console sessions, and authenticated legacy/v1 gateway requests, including
-cache hits and subsequent upstream errors. In addition, all free projects owned
-by an account share a single **100,000 requests/month** allowance that resets on
-the first day of each calendar month at `00:00 UTC`. Creating, rotating, or
-deleting keys or recreating projects never resets account or project usage:
+Each account's quotas are enforced atomically per project and per account. Every project has an exact 60-second global allowance shared across all of its API keys and console sessions. Creating, rotating, or deleting keys or recreating projects never resets account or project usage.
 
-| Tier | Requests per UTC-aligned minute (per project) | Monthly free-account allowance |
-| --- | ---: | --- |
-| Free | 120 | 100,000 / calendar month (shared across all free projects on the account) |
-| Pro | 1,200 | Exempt |
-| Enterprise | 6,000 | Exempt |
+| Plan | Price | Requests per minute (per project) | Period allowance |
+| --- | ---: | ---: | --- |
+| Free | EUR 0 / month | 60 | 100,000 / UTC calendar month (shared across all free projects on the account) |
+| Pro | EUR 9 / month (VAT incl.) | 200 | 300,000 / monthly billing period per project (12,000/day pacing during initial 14-day statutory withdrawal window) |
+| Scale | EUR 19 / month (VAT incl.) | 600 | 1,000,000 / monthly billing period per project (35,000/day pacing during initial 14-day window) |
+| Enterprise / Manual Grant | Custom | Custom override | Explicit overrides via operator review |
 
-A validated `customRpm` overrides the tier's per-minute default. Request more
-capacity under **Rate Limits** in the developer dashboard. An administrator can
-approve or decline the request and leave a note in your request history.
-Approval applies the requested RPM to the project's existing and future API keys
-and its API console. Existing keys can take up to five minutes to refresh; quota
-counters are not reset across tier or limit changes. An RPM increase alone on a
-`free` project does not remove the 100,000-request monthly cap; upgrading a
-project to `pro` or `enterprise` exempts that project while preserving recorded
-account usage. Custom requests use the enterprise tier with the approved RPM
-override. Legacy gateway requests use the same approved project RPM and account
-monthly counter.
+Free-tier calendar-month usage resets on the first day of each month at `00:00 UTC`. Paid plans reset on their monthly billing period and enforce an initial daily pacing cap during the 14-day statutory withdrawal window. You can request higher capacity or review custom overrides under [Rate Limits](/limits).
 
-Expensive v1 operations also have shared per-project limits (enforced identically on equivalent legacy `/proxy` paths), evaluated in the same object and the same request. Base limits at the Free tier (`120 RPM`) scale proportionally with the project's effective RPM (`effectiveRpm / 120`, capped at the project's effective RPM):
+### Expensive operation limits and budgets
 
-| Policy | Free-tier base limit (`120 RPM`) |
-| --- | ---: |
-| `offers-list` (`GET /v1/offers`) | 5/minute |
-| `search` (`GET /v1/search`) | 120/minute (300 base, capped at effective RPM) |
-| `heavy` (images, profiles, seller detail, collection, promotion detail, natural language, query counts) | 60/minute |
-| `bulk` (launcher record resolution) | 10/minute |
+Expensive v1 operation families also enforce per-minute per-project limits and, for selected capabilities, per-period budgets:
 
-Admission is persisted before edge cache lookup or origin forwarding. Failed authentication, permission denials, quota-rejected requests, and unauthenticated bypasses are excluded. A request that is admitted and hits the cache or later fails validation or upstream still consumes quota. Minute or operation exhaustion returns `429 RATE_LIMITED`, while free monthly exhaustion returns `429 MONTHLY_QUOTA_EXCEEDED` with `Retry-After` seconds until the next calendar-month reset, alongside calendar-aware `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy` headers before reaching the origin. If the quota service cannot confirm a decision, the Worker returns retryable `503 QUOTA_UNAVAILABLE` instead of using an approximate counter.
+| Per-minute policy | Covered operations | Free | Pro | Scale |
+| --- | --- | ---: | ---: | ---: |
+| `offers-list` | `GET /v1/offers` | 5 / min | 20 / min | 60 / min |
+| `search` | `GET /v1/search`, `POST /v1/search`, autocomplete, changelog search | 60 / min | 200 / min | 600 / min |
+| `heavy` | OG/cover images, profiles, seller/collection/promotion detail, natural-language search, query counts | 20 / min | 60 / min | 180 / min |
+| `bulk` | Launcher record resolution, `/v1/catalog/hydrate` | 5 / min | 15 / min | 40 / min |
 
-Each quota check is one Durable Object RPC and one bounded state-row write on admission; denials are read-only. A planning estimate of 27.14M monthly non-preflight requests implies roughly $4.05 in incremental Durable Object request charges assuming unused included allowances, while one counter-row write per admission remains below the included 50M writes. This is not a total-cost guarantee; measure actual duration and writes in staging.
+| Per-period budget | Covered operations | Free | Pro | Scale |
+| --- | --- | ---: | ---: | ---: |
+| `nl-search-period` | `POST /v1/search/natural-language` | 500 | 2,500 | 10,000 |
+| `bulk-period` | Catalog hydration and launcher bulk resolution | 1,000 | 10,000 | 40,000 |
+| `image-period` | On-demand OG and cover images | 2,000 | 15,000 | 50,000 |
 
-Shared HTTP caching is disabled on outgoing authenticated v1 data responses (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`). Every authenticated data request, including `If-None-Match` revalidation, passes API key or dashboard-session authentication, permission checks, and quota admission before the Worker serves from its internal post-auth edge cache or forwards to the origin. Conditional requests can still return `304 Not Modified`; the body is empty and the request was still admitted. `/v1/health` and `/v1/open-api.json` are unauthenticated, skip quota admission and the Worker edge cache, and successful responses use `Cache-Control: public, max-age=60` with `CDN-Cache-Control: no-store`. CORS preflights also skip authentication and quota admission.
+### Admission, exhaustion codes, and 5xx restoration
+
+Admission is checked before edge cache lookup or origin forwarding. Failed authentication, permission denials, quota-rejected requests, and unauthenticated endpoints do not consume project quota. Admitted requests that hit the post-auth edge cache or fail validation (`400`/`404`) still consume quota.
+
+If an admitted request fails with an upstream 5xx response (or `502 ORIGIN_UNAVAILABLE`), its monthly/period, daily pacing, and expensive-period budget units are automatically restored; the per-minute counter remains consumed.
+
+When a request is denied:
+
+- `403 PLAN_ENTITLEMENT_REQUIRED`: your current plan does not include the requested capability.
+- `429 RATE_LIMITED`: the per-minute project or operation-family limit is exhausted.
+- `429 MONTHLY_QUOTA_EXCEEDED`: the account's free 100,000-request UTC calendar-month allowance is exhausted.
+- `429 PERIOD_QUOTA_EXCEEDED`: the project's billing-period allowance or initial 14-day daily pacing limit is exhausted.
+- `429 EXPENSIVE_BUDGET_EXCEEDED`: the period budget (`nl-search-period`, `bulk-period`, or `image-period`) is exhausted.
+- `503 QUOTA_UNAVAILABLE`: the quota service could not confirm admission; retry after the `Retry-After` delay.
+
+Throttled responses include `Retry-After`, `RateLimit`, `RateLimit-Policy`, and `X-RateLimit-Policy` headers.
+
+### Caching and conditional requests
+
+Shared HTTP caching is disabled on outgoing authenticated v1 data responses (`Cache-Control: private, no-cache`; `CDN-Cache-Control: no-store`). Conditional requests using `If-None-Match` can still return `304 Not Modified` with an empty body after authentication, permission checks, and quota admission. `/v1/health` and `/v1/open-api.json` are unauthenticated and skip quota admission.
 
 ## Project creation
 
-Accounts include one project by default. Contact the egdata team for approval of
-additional projects. Existing projects remain usable if an account exceeds its
-allowance, but further creation is blocked. Project creation is limited to once
-every 24 hours per account, including after deletion and automatic creation at
-login. Each approved additional project has its own per-minute quota, while free
-projects on the same account share the 100,000-request monthly free allowance.
+Accounts include one project by default. Contact the egdata team for approval of additional projects. Project creation is limited to once every 24 hours per account, including after deletion and automatic creation at login. Each project has its own per-minute quota, while free projects on the same account share the 100,000-request UTC calendar-month allowance.
 
-## Response envelope
+## Response envelope and pagination
 
 Successful JSON responses always use:
 
@@ -93,39 +99,40 @@ Successful JSON responses always use:
 { "data": {}, "meta": {} }
 ```
 
-The OpenAPI document at `/v1/open-api.json` is the one metadata exception: it is returned as the raw OpenAPI document so standard tooling can consume it directly.
+The OpenAPI document at `https://api.egdata.app/v1/open-api.json` is the one metadata exception: it is returned as the raw OpenAPI document so standard tooling can consume it directly.
 
-Paginated collections put the array in `data` and pagination state under `meta.pagination`:
+Paginated collections place the array in `data` and pagination state under `meta.pagination`:
 
 ```json
 {
   "data": [/* ... */],
   "meta": {
-    "pagination": { "limit": 20, "hasMore": true, "nextCursor": "opaque-cursor" }
+    "pagination": {
+      "limit": 20,
+      "hasMore": true,
+      "nextCursor": "opaque-cursor",
+      "total": null
+    }
   }
 }
 ```
 
-Pagination is forward-only. There are no guaranteed totals or page counts. Live catalog changes can move records during traversal; use the returned cursor for the next page and do not construct cursors yourself.
+`meta.pagination.total` is an integer when available or `null` when omitted for live traversal. Pagination is strictly forward-only using `cursor` and `limit`; v1 never accepts `page` or `offset`:
 
-`POST /v1/search` is read-only and normalizes a JSON filter document into a bodyless `303` redirect to the equivalent GET URL. The redirect uses the origin's configured public v1 base (staging uses `https://devs.egdata.app/proxy/v1`).
+- `limit` defaults to `20` and is capped at `100` (or the endpoint's lower safety cap, such as `25` on free-game history and offer reviews).
+- Cursors are HMAC-signed with an origin secret and bound to the operation, normalized filters, ordering, country, locale, page size, and last sort tuple.
+- Cursors expire after 24 hours and return `400 INVALID_CURSOR`, `400 EXPIRED_CURSOR`, or `400 CURSOR_MISMATCH` when they cannot be used. Do not construct or modify cursors yourself.
 
-Cursors:
+Bounded reference lists such as `/v1/countries`, `/v1/regions`, `/v1/tags`, and install options are not paginated.
 
-- use `cursor` and `limit`; v1 does not accept `page`/`offset` for these collections;
-- default to 20 results and are capped at 100 (or the endpoint's lower safety cap);
-- are signed with a dedicated origin secret and bound to the operation, normalized filters, ordering, country, locale, page size, and last sort tuple;
-- expire after 24 hours;
-- return `400 INVALID_CURSOR`, `400 EXPIRED_CURSOR`, or `400 CURSOR_MISMATCH` when they cannot be used.
-
-Bounded reference lists such as countries, regions, tags, and install options are not paginated.
+`POST /v1/search` is read-only and normalizes a JSON filter document into a bodyless `303 See Other` redirect to the equivalent `GET https://api.egdata.app/v1/search` URL.
 
 ## Defaults and formats
 
-- `country` defaults to `US`; `locale` defaults to `en-US`. Cookies are never used for selection.
+- `country` defaults to `US`; `locale` defaults to `en-US`. Cookies are never read.
 - Unknown or invalid query parameters return `400`; unsupported request content types return `415`.
 - Timestamps are UTC ISO 8601 strings, IDs are strings, and nullable fields are explicit.
-- Price amounts are integer minor units. Use `currencyCode` and `precision` with the amount; for example GBP prices are in pence.
+- Price amounts are integer minor units. Use `currencyCode` and `precision` with the amount; for example, GBP prices (`precision: 2`) are in pence.
 - Native image and XML responses are not JSON-wrapped. Redirects, bodyless `HEAD`, `204`, and `304` responses preserve their HTTP semantics.
 
 ## Errors
@@ -145,14 +152,14 @@ Errors use `application/problem+json` per RFC 9457:
 }
 ```
 
-Every v1 response carries `X-Request-Id`; the Worker generates it and the origin propagates it. Include it when reporting an issue. Error `code` values are stable for programmatic handling; human-readable `detail` text may change.
+Every v1 response carries `X-Request-Id`. Include `requestId` when reporting an issue. Error `code` values are stable for programmatic handling; see [v1 Problem Details](/docs/v1-problems) and the [Problem details reference](/docs/problems).
 
-## Versioning policy
+## Versioning and OpenAPI
 
-Breaking changes require another major API version. Additive fields, additive operations, and additive metadata are permitted within v1. Clients should ignore unknown fields. Separate legacy and v1 OpenAPI documents are published:
+Breaking changes require another major API version. Additive fields, additive operations, and additive metadata are permitted within v1, so clients should ignore unknown fields.
 
-- legacy: `https://api.egdata.app/open-api.json`
-- v1: `https://devs.egdata.app/proxy/v1/open-api.json`
+- v1 OpenAPI document: `https://api.egdata.app/v1/open-api.json`
+- Interactive explorer: [API reference](/docs/api-reference)
 
 ## Migration notes
 
@@ -164,5 +171,3 @@ Breaking changes require another major API version. Additive fields, additive op
 | `GET /offers/{id}` | `GET /v1/offers/{id}` |
 | `GET /countries` | `GET /v1/countries` |
 | `GET /sitemap.xml` | `GET /v1/sitemap.xml` |
-
-Legacy routes remain available for website embeds and crawlers. Private account operations, mutations, admin routes, maintenance routes, GraphQL, and the placeholder routers are not part of v1.

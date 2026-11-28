@@ -90,7 +90,7 @@ body::before {
   }
 }
 
-/* Rendered documentation (copied from apps/docs) */
+/* Rendered documentation */
 .docs-markdown {
   color: var(--color-epic-text-muted);
   font-size: 0.875rem;

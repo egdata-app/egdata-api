@@ -2,8 +2,9 @@ import { fieldIssueDocs, problemDocs, streamResultDocs } from "./problems";
 import type { DocCategory, DocEntry } from "./types";
 
 /**
- * Written guides are copied from `apps/docs/content/docs` so the dashboard can
- * render them without depending on the separate docs app at runtime.
+ * `dashboard/src/content/docs/` is the authoritative source of truth for
+ * developer portal documentation so the dashboard renders guides directly
+ * without depending on any external docs app at runtime.
  */
 export const guideDocs: DocEntry[] = [
   {
@@ -75,6 +76,15 @@ export const guideDocs: DocEntry[] = [
     order: 5,
   },
   {
+    slug: "profiles",
+    kind: "guide",
+    title: "Player profiles",
+    description:
+      "Retrieve public Epic player profiles, game libraries, achievements, and leaderboards via REST.",
+    category: "Find data",
+    order: 6,
+  },
+  {
     slug: "regions-pagination-errors",
     kind: "guide",
     title: "Request essentials",
@@ -91,15 +101,6 @@ export const guideDocs: DocEntry[] = [
       "Try v1 operations with short-lived, project-scoped console access.",
     category: "Request essentials",
     order: 2,
-  },
-  {
-    slug: "anti-abuse",
-    kind: "guide",
-    title: "API sessions and abuse protection",
-    description:
-      "Initialize proof-of-work sessions and handle conditional catalog protection.",
-    category: "Request essentials",
-    order: 3,
   },
   {
     slug: "track-changes",
@@ -137,22 +138,13 @@ export const guideDocs: DocEntry[] = [
     order: 4,
   },
   {
-    slug: "graphql-profiles",
-    kind: "guide",
-    title: "GraphQL profiles",
-    description:
-      "Select public profile highlights, games, and recent activity.",
-    category: "Advanced",
-    order: 1,
-  },
-  {
     slug: "catalog-hydration",
     kind: "guide",
     title: "Catalog hydration",
     description:
       "Incrementally retrieve catalog records and relationships for discovered roots.",
     category: "Advanced",
-    order: 2,
+    order: 1,
   },
   {
     slug: "launcher-record-resolution",
@@ -161,7 +153,7 @@ export const guideDocs: DocEntry[] = [
     description:
       "Resolve parsed Windows build metadata to matching launcher records.",
     category: "Advanced",
-    order: 3,
+    order: 2,
   },
   {
     slug: "v1-problems",
@@ -208,12 +200,28 @@ const bySlug = new Map(allDocs.map((entry) => [entry.slug, entry]));
 const aliases = new Map([
   ["invalid-key", "invalid-api-key"],
   ["missing-key", "missing-api-key"],
+  ["graphql-profiles", "profiles"],
 ]);
 
 export function findDoc(slug: string | undefined): DocEntry | undefined {
   if (!slug) return undefined;
   const key = slug.toLowerCase();
   return bySlug.get(aliases.get(key) ?? key);
+}
+
+export function isProblemRouteDoc(entry: DocEntry): boolean {
+  return (
+    entry.kind === "problem" ||
+    entry.kind === "stream" ||
+    entry.kind === "issue" ||
+    entry.slug === "problems" ||
+    entry.slug === "field-issues"
+  );
+}
+
+export function findProblemDoc(slug: string | undefined): DocEntry | undefined {
+  const entry = findDoc(slug);
+  return entry && isProblemRouteDoc(entry) ? entry : undefined;
 }
 
 export const DOC_CATEGORY_ORDER: DocCategory[] = [
