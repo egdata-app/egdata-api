@@ -16,8 +16,8 @@ type ProblemGroup = {
 
 /**
  * Stable v1 problem codes emitted by the API gateway and origin. Keep this list
- * in sync with `src/v1/errors.ts`, `src/v1/router.ts`, the v1 route handlers,
- * and `dashboard/worker/v1.ts`.
+ * in sync with the Rust v1 origin (`rust/crates/egdata-core/src/v1/errors.rs`),
+ * the v1 route handlers, and `dashboard/worker/v1.ts`.
  */
 const groups: ProblemGroup[] = [
   {
@@ -61,7 +61,7 @@ const groups: ProblemGroup[] = [
         title: "Missing key context",
         summary:
           "The origin received a request that claimed to be authenticated but did not carry the Worker's signed key context. Direct origin requests cannot authenticate this way.",
-        fix: "Send requests through the documented gateway host (`devs.egdata.app/proxy/v1` or the announced production host). Never call the private origin directly.",
+        fix: "Send requests through the documented gateway host (`https://api.egdata.app/v1`). Never call the private origin directly.",
       },
       {
         code: "INVALID_KEY_CONTEXT",
@@ -138,6 +138,30 @@ const groups: ProblemGroup[] = [
         summary:
           "The key does not hold the permission scope required by the operation.",
         fix: "Grant the missing scope shown in the problem detail or in the operation's `x-egdata-scope` metadata.",
+      },
+      {
+        code: "PLAN_ENTITLEMENT_REQUIRED",
+        status: 403,
+        title: "Plan entitlement required",
+        summary:
+          "The project's current subscription plan does not include access to this capability.",
+        fix: "Upgrade the project's plan on **Rate Limits** or request an enterprise grant. Repeating a denied request does not grant access or consume quota.",
+      },
+      {
+        code: "EMAIL_VERIFICATION_REQUIRED",
+        status: 403,
+        title: "Email verification required",
+        summary:
+          "The dashboard account must verify a notification email address before using console sessions or protected portal features.",
+        fix: "Verify your email address in **Profile** (`/profile`) before restarting the console session.",
+      },
+      {
+        code: "AGREEMENT_REQUIRED",
+        status: 403,
+        title: "Developer terms acceptance required",
+        summary:
+          "The dashboard account must accept the current Developer Terms edition before using console sessions or protected portal features.",
+        fix: "Review and accept the current terms at `/profile/agreements` before restarting the console session.",
       },
     ],
   },
@@ -599,7 +623,23 @@ const groups: ProblemGroup[] = [
         title: "Monthly quota exceeded",
         summary:
           "The account exhausted its shared 100,000-request monthly free-tier allowance across all free projects, API keys, and console sessions.",
-        fix: "Wait until the next calendar month reset at 00:00 UTC (`Retry-After` seconds), or request a Pro/Enterprise tier upgrade in **Rate Limits**.",
+        fix: "Wait until the next calendar month reset at 00:00 UTC (`Retry-After` seconds), or upgrade to a Pro or Scale plan on **Rate Limits**.",
+      },
+      {
+        code: "PERIOD_QUOTA_EXCEEDED",
+        status: 429,
+        title: "Billing-period quota exceeded",
+        summary:
+          "The subscribed project exhausted its monthly billing-period allowance or its initial 14-day daily pacing allowance.",
+        fix: "Wait for `Retry-After` seconds until the next reset, or upgrade your plan on **Rate Limits**.",
+      },
+      {
+        code: "EXPENSIVE_BUDGET_EXCEEDED",
+        status: 429,
+        title: "Expensive operation budget exceeded",
+        summary:
+          "The project exhausted its per-period budget for an expensive capability (`nl-search-period`, `bulk-period`, or `image-period`).",
+        fix: "Wait for `Retry-After` seconds until the period resets, inspect `X-RateLimit-Policy`, or upgrade your plan on **Rate Limits**.",
       },
       {
         code: "QUOTA_UNAVAILABLE",
@@ -608,6 +648,14 @@ const groups: ProblemGroup[] = [
         summary:
           "The quota service could not confirm admission, so the request was not forwarded.",
         fix: "Retry after the `Retry-After` delay. Requests that receive this response do not consume quota.",
+      },
+      {
+        code: "ACCOUNT_STATUS_UNAVAILABLE",
+        status: 503,
+        title: "Account status unavailable",
+        summary:
+          "The gateway could not verify credential, account, or plan entitlement status, so the request was not forwarded.",
+        fix: "Retry after the `Retry-After` delay (typically 30 seconds). Requests that receive this response do not consume quota.",
       },
       {
         code: "INTERNAL_ERROR",

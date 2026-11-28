@@ -31,6 +31,7 @@ import {
 } from "react";
 import { useDashboardAuth } from "../lib/auth-context";
 import { type ConsoleSession, useConsoleSession } from "../lib/console-session";
+import { groupDocs, guideDocs } from "../lib/docs/entries";
 import {
   type ApiDocument,
   executable,
@@ -91,7 +92,7 @@ export function ApiExplorer({ operationId }: { operationId?: string }) {
 }
 
 function ExplorerSession({ operationId }: { operationId?: string }) {
-  const { selectedProject } = useDashboardAuth();
+  const { selectedProject, authenticated } = useDashboardAuth();
   const consoleAccess = useConsoleSession(selectedProject?.id);
   const [document, setDocument] = useState<ApiDocument | null>(null);
   const [snapshot, setSnapshot] = useState<ApiDocument | null>(null);
@@ -532,35 +533,56 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
         <h2 className="text-sm font-semibold text-white">
           Try with this project
         </h2>
-        <p className="text-xs text-epic-text-muted leading-relaxed">
-          Start a 10-minute session for{" "}
-          {selectedProject?.name ?? "the selected project"}. It works only in
-          the signed-in console. Requests count as API console usage for this
-          project, with shared console limits across sessions.
-        </p>
-        {consoleAccess.session ? (
-          <div className="flex flex-wrap items-center gap-3">
-            <Tag tone="success">
-              Expires in {Math.floor(consoleAccess.remaining / 60)}:
-              {String(consoleAccess.remaining % 60).padStart(2, "0")}
-            </Tag>
-            <Button variant="secondary" size="sm" onPress={consoleAccess.end}>
-              End console session
-            </Button>
+        {!authenticated ? (
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-epic-text-muted leading-relaxed">
+              Signed-in developers can start a 10-minute project console session
+              to run authenticated requests from the browser.
+            </p>
+            <Link
+              to="/"
+              className={buttonStyles({ variant: "secondary", size: "sm" })}
+            >
+              Sign in to start session
+            </Link>
           </div>
         ) : (
-          <Button
-            size="sm"
-            isDisabled={!selectedProject || consoleAccess.busy}
-            onPress={() => void consoleAccess.start()}
-          >
-            {consoleAccess.busy ? "Starting…" : "Start 10-minute session"}
-          </Button>
-        )}
-        {consoleAccess.error && (
-          <p role="alert" className="text-xs text-epic-warning">
-            {consoleAccess.error}
-          </p>
+          <>
+            <p className="text-xs text-epic-text-muted leading-relaxed">
+              Start a 10-minute session for{" "}
+              {selectedProject?.name ?? "the selected project"}. It works only
+              in the signed-in console. Requests count as API console usage for
+              this project, with shared console limits across sessions.
+            </p>
+            {consoleAccess.session ? (
+              <div className="flex flex-wrap items-center gap-3">
+                <Tag tone="success">
+                  Expires in {Math.floor(consoleAccess.remaining / 60)}:
+                  {String(consoleAccess.remaining % 60).padStart(2, "0")}
+                </Tag>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onPress={consoleAccess.end}
+                >
+                  End console session
+                </Button>
+              </div>
+            ) : (
+              <Button
+                size="sm"
+                isDisabled={!selectedProject || consoleAccess.busy}
+                onPress={() => void consoleAccess.start()}
+              >
+                {consoleAccess.busy ? "Starting…" : "Start 10-minute session"}
+              </Button>
+            )}
+            {consoleAccess.error && (
+              <p role="alert" className="text-xs text-epic-warning">
+                {consoleAccess.error}
+              </p>
+            )}
+          </>
         )}
       </section>
 
@@ -584,8 +606,10 @@ function ExplorerSession({ operationId }: { operationId?: string }) {
             optional <code>instance</code> and field errors. Use{" "}
             <code>code</code> for handling and <code>requestId</code> for
             support. Quota denials return 429 and <code>Retry-After</code>; an
-            uncertain quota decision returns 503. Response errors from admitted
-            requests still count as attempted endpoint use.
+            uncertain quota or account-status decision returns 503. Upstream 5xx
+            responses restore monthly and period allowance units while minute
+            limits still apply; client errors from admitted requests still count
+            toward usage.
           </p>
           <Link
             to="/docs/$slug"
@@ -691,6 +715,12 @@ function ResourceOverviewGrid({
   groups: OperationGroup[];
   onSelectResource: (name: string) => void;
 }) {
+  const guideGroups = useMemo(
+    () =>
+      groupDocs(guideDocs.filter((entry) => entry.slug !== "api-reference")),
+    [],
+  );
+
   return (
     <div className="space-y-5">
       <div className="rounded-xl border border-epic-border bg-epic-surface p-6 space-y-2">
@@ -751,6 +781,51 @@ function ResourceOverviewGrid({
           </Link>
         ))}
       </div>
+
+      <section
+        aria-label="Guides"
+        className="rounded-xl border border-epic-border bg-epic-surface p-5 space-y-4"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-semibold text-white">Guides</h2>
+            <p className="text-xs text-epic-text-muted">
+              Topic walkthroughs for search, pricing, profiles, console
+              sessions, change tracking, and error handling.
+            </p>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {guideGroups.map((group) => (
+            <div key={group.category} className="space-y-2">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-epic-text-muted">
+                {group.category}
+              </h3>
+              <ul className="space-y-1">
+                {group.entries.map((entry) => (
+                  <li key={entry.slug}>
+                    <Link
+                      to="/docs/$slug"
+                      params={{ slug: entry.slug }}
+                      className="group flex items-center justify-between gap-2 rounded-lg border border-epic-border/70 bg-epic-bg/60 px-3 py-2 text-xs transition hover:border-epic-border-hover hover:bg-epic-elevated/70"
+                    >
+                      <span className="min-w-0">
+                        <span className="block font-medium text-epic-text group-hover:text-epic-accent truncate">
+                          {entry.title}
+                        </span>
+                        <span className="block text-[11px] text-epic-text-muted truncate">
+                          {entry.description}
+                        </span>
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 shrink-0 text-epic-text-muted" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {groups.length > 0 && (
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3.5">

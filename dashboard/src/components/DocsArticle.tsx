@@ -76,7 +76,8 @@ function DocsArticleView({ entry }: { entry: DocEntry }) {
   );
 
   const operations = entry.operations ?? [];
-  const typeUrl = entry.code ? problemType(entry.code) : null;
+  const typeUrl =
+    entry.kind === "problem" && entry.code ? problemType(entry.code) : null;
 
   function copyTypeUrl() {
     if (!typeUrl) return;
@@ -90,14 +91,59 @@ function DocsArticleView({ entry }: { entry: DocEntry }) {
     const element = articleRef.current;
     if (!element) return;
 
+    const internalPrefixes = [
+      "/docs",
+      "/problems",
+      "/profile",
+      "/keys",
+      "/limits",
+      "/alerts",
+      "/analytics",
+    ];
+
     const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        event.button !== 0
+      ) {
+        return;
+      }
+
       const target = event.target as HTMLElement | null;
       const anchor = target?.closest("a");
       if (!anchor) return;
+      if (anchor.target && anchor.target !== "_self") return;
+
       const href = anchor.getAttribute("href");
-      if (!href || (href !== "/docs" && !href.startsWith("/docs/"))) return;
+      if (
+        !href ||
+        href.startsWith("#") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:")
+      ) {
+        return;
+      }
+
+      let url: URL;
+      try {
+        url = new URL(href, window.location.href);
+      } catch {
+        return;
+      }
+
+      if (url.origin !== window.location.origin) return;
+
+      const isInternalSpaPath = internalPrefixes.some(
+        (prefix) =>
+          url.pathname === prefix || url.pathname.startsWith(`${prefix}/`),
+      );
+      if (!isInternalSpaPath) return;
+
       event.preventDefault();
-      const url = new URL(href, window.location.origin);
       void navigate({
         to: url.pathname as never,
         hash: url.hash ? url.hash.slice(1) : undefined,
@@ -160,26 +206,36 @@ function DocsArticleView({ entry }: { entry: DocEntry }) {
               <code className="rounded border border-epic-border bg-epic-elevated px-2 py-0.5 font-mono font-semibold text-epic-text">
                 {entry.code}
               </code>
-              <span className="break-all font-mono text-epic-text-muted">
-                {typeUrl}
-              </span>
-              <button
-                type="button"
-                onClick={copyTypeUrl}
-                className="ml-auto inline-flex shrink-0 cursor-pointer items-center gap-1 rounded px-2 py-1 text-epic-text-muted transition-colors hover:bg-epic-elevated hover:text-epic-text"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-epic-success" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5" />
-                    Copy type
-                  </>
-                )}
-              </button>
+              {typeUrl ? (
+                <>
+                  <span className="break-all font-mono text-epic-text-muted">
+                    {typeUrl}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={copyTypeUrl}
+                    className="ml-auto inline-flex shrink-0 cursor-pointer items-center gap-1 rounded px-2 py-1 text-epic-text-muted transition-colors hover:bg-epic-elevated hover:text-epic-text"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-epic-success" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        Copy type
+                      </>
+                    )}
+                  </button>
+                </>
+              ) : (
+                <span className="font-mono text-epic-text-muted">
+                  {entry.kind === "stream"
+                    ? "NDJSON stream error code"
+                    : "Field issue code"}
+                </span>
+              )}
             </div>
           )}
 
@@ -315,7 +371,7 @@ function DocsArticleView({ entry }: { entry: DocEntry }) {
   );
 }
 
-function DocsNotFound({ slug }: { slug: string }) {
+export function DocsNotFound({ slug }: { slug: string }) {
   return (
     <div className="mx-auto max-w-2xl space-y-4 rounded-xl border border-epic-border bg-epic-surface p-8 text-center">
       <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-epic-warning/30 bg-epic-warning/10">

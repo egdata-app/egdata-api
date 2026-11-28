@@ -3,33 +3,57 @@ title: Get started
 description: Make your first request to the egdata API.
 ---
 
-The egdata API provides public Epic Games Store catalog, price, promotion, and change data as JSON. The legacy base URL is `https://api.egdata.app`.
+The egdata API provides Epic Games Store catalog, price, promotion, and change data as JSON. The primary v1 base URL is `https://api.egdata.app/v1`.
 
-A versioned `/v1` contract is staged at `https://devs.egdata.app/proxy/v1`. It requires API keys, uses exact per-project quotas shared with authenticated legacy gateway traffic, cursor pagination, and RFC 9457 Problem Details. See [Versioned v1 API](/docs/versioned-api) before migrating. Legacy public hostname routing remains unchanged until an explicit production cutover.
-
-The Worker gateway is staged separately; `api.egdata.app` continues using its current routing and authentication. The dedicated `origin-api.egdata.app` hostname requires a private `X-Egdata-Origin-Token` supplied by the Worker; direct unauthenticated requests there return `403 ORIGIN_ACCESS_DENIED`. Never put this credential in client applications. A `503 ORIGIN_NOT_CONFIGURED` or `502 ORIGIN_UNAVAILABLE` response on the staging gateway indicates a deployment problem. Moving the public API to the Worker and enabling global origin enforcement require a separate cutover.
+Every v1 data request requires an API key created in [API Keys](/keys). Send your key in the `X-API-Key` header (or as `Authorization: Bearer <key>`). For quick interactive testing from the browser, the in-dashboard API console uses `https://devs.egdata.app/proxy/v1` with short-lived console sessions.
 
 Fetch an offer by its catalog offer ID:
 
 ```js
 const response = await fetch(
-  "https://api.egdata.app/offers/offer-id?locale=en-US",
+  "https://api.egdata.app/v1/offers/offer-id?locale=en-US",
+  {
+    headers: {
+      "X-API-Key": process.env.EGDATA_API_KEY,
+    },
+  },
 );
 
 if (!response.ok) {
-  throw new Error(`egdata returned ${response.status}`);
+  const problem = await response.json().catch(() => null);
+  throw new Error(
+    `egdata returned ${response.status} (${problem?.code ?? "UNKNOWN"}): ${problem?.detail ?? ""}`,
+  );
 }
 
-const offer = await response.json();
-console.log(offer.title);
+const { data: offer, meta } = await response.json();
+console.log(offer.title, meta.locale);
 ```
 
-A successful response includes the offer ID and its catalog details:
+Successful v1 JSON responses wrap the payload in a `{ "data": ..., "meta": ... }` envelope:
 
 ```json
-{ "id": "offer-id", "title": "Example Game", "locale": "en-US" }
+{
+  "data": {
+    "id": "offer-id",
+    "title": "Example Game",
+    "locale": "en-US",
+    "localeStatus": "canonical"
+  },
+  "meta": {
+    "country": "US",
+    "region": "US",
+    "locale": "en-US"
+  }
+}
 ```
 
-Offer IDs come from search results or the Epic catalog. Responses are JSON; check the HTTP status before reading a response as successful. If an ID is unknown, the API returns `404`.
+Offer IDs come from search results or the Epic catalog. Always check `response.ok` before reading `data`—if an ID is unknown or an input is invalid, the API returns an RFC 9457 `application/problem+json` error (such as `404 OFFER_NOT_FOUND`).
 
-Start with [Find games](/docs/offer-search), then use [Game details](/docs/game-details) to load offers, items, and their relationships. See [Request essentials](/docs/regions-pagination-errors) for country, locale, pagination, and error behavior.
+## Next steps
+
+- Read [Versioned v1 API](/docs/versioned-api) for authentication, plans, quotas, and response envelopes.
+- Start with [Find games](/docs/offer-search) to query and filter the catalog.
+- Use [Game details](/docs/game-details) to load offers, items, reviews, requirements, and preview images.
+- See [Request essentials](/docs/regions-pagination-errors) for country, locale, forward-only cursor pagination, and error handling.
+- Explore [Profiles](/docs/profiles) for player profile highlights, games, and recent activity.

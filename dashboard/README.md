@@ -4,13 +4,19 @@ Cloudflare Worker full-stack project implementing:
 
 1. **Developer Portal SPA** (`TanStack Router` + `React Aria Components` styled in the Epic Games Store / `egdata.app` dark palette).
 2. **Epic Games OAuth 2.0 Authentication** (`https://www.epicgames.com/id/authorize` + HTTP Basic token exchange against `https://api.epicgames.dev/epic/oauth/v2/token` + `userInfo`, matching `egdata-app/egdata`).
-3. **Edge API Gateway** (`worker/proxy.ts`):
-   - Validates `X-API-Key` at the Cloudflare edge using an in-isolate memory cache (`30s`) + **Workers KV** (`cacheTtl: 60`) backed by **Cloudflare D1** as the relational source of truth.
+3. **Edge API Gateway** (`worker/proxy.ts` and `worker/v1.ts`):
+   - Validates `X-API-Key` (and `Authorization: Bearer egk_...` / `Authorization: Bearer <key>` on `/v1`) at the Cloudflare edge using an in-isolate memory cache (`30s`) + **Workers KV** (`cacheTtl: 60`) backed by **Cloudflare D1** as the relational source of truth.
    - Enforces fine-grained per-key permissions (**IPv4/IPv6 CIDR allowlists**, **CORS Origin patterns**, **Endpoint path globs**, **HTTP methods**, **Catalog scopes**, and **Expiration**).
-   - Enforces per-key legacy rate limits (`120` / `1,200` / `6,000` RPM) in-memory at each Cloudflare PoP via **Workers Rate Limiting bindings**. Version 1 uses exact global quotas in a SQLite-backed `ApiKeyRateLimiter` Durable Object instead: one RPC per request combines the global and any expensive-operation policy, one state row is written only on admission, and over-limit requests return Problem Details before the VM. The immutable object namespace is selected per `RATE_LIMIT_ENVIRONMENT` and internal key ID; never use the raw key as the object name.
+   - Enforces per-key legacy rate limits (`120` / `1,200` / `6,000` RPM) in-memory at each Cloudflare PoP via **Workers Rate Limiting bindings**, while `/v1` and project-level commercial quotas use exact global enforcement in SQLite-backed `ApiKeyRateLimiter` Durable Objects (`worker/plans.ts`, `worker/project-quota.ts`):
+     - **Free** (`free-v1`): `60` RPM (legacy fallback `120` RPM when commercial limits flag is off), `100,000` requests/UTC calendar month shared across all free projects on the account, plus expensive-operation minute limits (`offers-list` 5, `search` 60, `heavy` 20, `bulk` 5) and period budgets (`nl-search` 500, `bulk` 1,000, `image` 2,000).
+     - **Pro** (`pro-v1`): `200` RPM, `300,000` requests/billing period (`12,000`/day during the initial 14-day withdrawal window), expensive minute limits (`20` / `200` / `60` / `15`), and period budgets (`nl-search` 2,500, `bulk` 10,000, `image` 15,000).
+     - **Scale** (`scale-v1`): `600` RPM, `1,000,000` requests/billing period (`35,000`/day during the initial 14-day withdrawal window), expensive minute limits (`60` / `600` / `180` / `40`), and period budgets (`nl-search` 10,000, `bulk` 40,000, `image` 50,000).
+     - One RPC per request combines the global, period/daily, and any expensive-operation minute/period policies; state rows are written only on admission, and over-limit requests return Problem Details before the VM. The immutable object namespace is selected per `RATE_LIMIT_ENVIRONMENT` and internal key/account ID; never use the raw key as the object name.
    - Forwards the full path and query to the dedicated HTTPS origin with a private origin token, strips client API keys, preserves user JWTs and conditional requests, and streams bodies without buffering. CDN caching requires explicit configuration; stripping API keys alone does not enable caching.
    - Records `0ms` fire-and-forget telemetry to **Workers Analytics Engine** (`egdata_api_usage`).
-4. **Rate Limit Upgrade Requests** with email notifications and an administrator review queue.
+4. **Developer Documentation & Problem Reference**:
+   - `dashboard/src/content/docs/` and `dashboard/src/lib/docs/` are the source of truth for developer documentation guides, interactive API reference metadata, and problem-code pages.
+5. **Plans, Billing & Rate Limit Upgrade Requests** with Stripe Checkout/Billing Portal integration, 14-day statutory withdrawal handling, email notifications, and an administrator review queue.
 
 ## Usage and platform overview
 
@@ -54,16 +60,26 @@ lookup as appropriate. Unsupported Vary dimensions also prevent storage.
 Worker hits/misses are recorded under Unattributed legacy traffic, even when the
 origin's CF-Cache-Status was DYNAMIC.
 
-The follow-up allowlist also includes `/offers/:id/tops`, `/offers/:id/assets`,
-`/offers/:id/price`, `/offers/top-sellers`, `/free-games`, `/free-games/stats`,
-GET `/search/v2/search`, `/stats/homepage`, and `/autocomplete`. Offer subresource
-patterns match exactly one ID segment and one listed suffix. All country,
-locale, expansion, pagination, search and autocomplete query parameters remain
-in cache keys. Existing origin TTLs are used. Homepage stats and autocomplete
-receive consistent origin browser/CDN headers (60s/300s and 60s/60s respectively);
-deploy the origin to enable those policies. Homepage responses without an
-explicit country vary on Cookie and are not stored. POST search redirects and
-preflight requests retain their upstream behavior.
+The expanded anonymous edge cache allowlist (`worker/proxy.ts`, `worker/edge-cache.ts`)
+also covers `/sales`, `/offers`, `/offers/upcoming`, `/offers/latest-achievements`,
+`/offers/latest-released`, `/offers/top-sellers`, `/offers/top-wishlisted`,
+`/offers/featured-discounts`, `/offers/:id`, `/offers/:id/tops`, `/offers/:id/assets`,
+`/offers/:id/price`, `/offers/:id/suggestions`, `/offers/:id/builds`,
+`/offers/:id/regional-price`, `/sandboxes/:id/builds`, `/items/:id/builds`,
+`/collections/top-sellers`, `/free-games`, `/free-games/stats`, GET `/search/v2/search`,
+`/stats/homepage`, `/autocomplete`, and `*sitemap.xml` (`86,400s` TTL). Offer
+subresource patterns match one listed suffix. Country, locale, expansion,
+pagination, search, and autocomplete query parameters remain in cache keys, except
+where a route defines a strict query allowlist: `/free-games` keeps only `country`,
+`locale`, and `expand`, stripping unknown parameters (such as cache-busters like
+`&_=<timestamp>`) before cache lookup and upstream forwarding, while
+`RATE_LIMITER_CACHE_BUSTER` caps repeated anonymous cache-buster requests at `3` RPM
+with `429 CACHE_BUSTER_DETECTED`. Anonymous `/search/v2/search` is additionally
+capped at `limit<=28`, `page<=10`, and `20` RPM (`RATE_LIMITER_LEGACY_SEARCH`),
+using a minimum `1,800s` CDN TTL (`900s` for anonymous builds). Existing origin
+TTLs apply elsewhere; homepage responses without an explicit country vary on
+`Cookie` and are not stored. POST search redirects and preflight requests retain
+their upstream behavior.
 
 Private session-authenticated reporting endpoints (outside the public API
 OpenAPI/operation registry):
@@ -165,8 +181,16 @@ Admin mutation reasons are trimmed, required, and 3–2,000 characters long.
 
 Lists return `{ rows, hasMore, usage: { byId, source, start, end } }`. Missing
 records return 404, invalid fields return 400, missing sessions return 401,
-and non-admins return 403. Apply migrations through
-`0007_project_recovery.sql` before deploying this Worker/UI.
+and non-admins return 403. Apply all D1 migrations through
+`0013_web_project_identity.sql` before deploying the current Worker/UI:
+
+- `0007_project_recovery.sql`: soft-delete recovery window and retention metadata.
+- `0008_developer_accounts.sql`: developer contact profiles, immutable `legal_documents` / `legal_rollout`, `legal_acceptances`, `account_closures`, and `developer_mail`.
+- `0009_agreement_receipts.sql`: immutable `receipt_id`, `privacy_version`, and `privacy_sha256` on acceptance records.
+- `0010_privacy_operations.sql`: avatar URL purge, audit/limit-request expiry indexes, and operator-managed `privacy_requests` / `privacy_actions` tables.
+- `0011_email_delivery.sql`: `developer_mail_attempts` and `developer_mail_events` delivery lifecycle tracking.
+- `0012_paid_plans_billing.sql`: `scale` tier support, Stripe customers/subscriptions/entitlement grants, billing receipts, and 14-day withdrawal records.
+- `0013_web_project_identity.sql`: first-party `egdata.app` website project identity (`prj_egdata_web`, SSR and ephemeral browser keys).
 
 Apply `0004_limit_request_reviews.sql` before deploying this Worker/UI. It adds
 `user_roles(user_id, role, created_at)` alongside the existing `users` table,

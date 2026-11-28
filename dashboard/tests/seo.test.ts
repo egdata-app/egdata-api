@@ -457,6 +457,26 @@ describe("dashboard homepage OG image and per-route SEO", () => {
       '<meta name="robots" content="noindex, nofollow" />',
     );
     expect(html).not.toContain('rel="canonical"');
+
+    const guideUnderProblemsRes = await worker.fetch(
+      new Request("https://devs.egdata.app/problems/get-started"),
+      htmlAssetsEnv(),
+      context,
+    );
+    expect(guideUnderProblemsRes.headers.get("x-robots-tag")).toBe(
+      "noindex, nofollow",
+    );
+    const guideUnderProblemsHtml = await guideUnderProblemsRes.text();
+    expect(guideUnderProblemsHtml).toContain(
+      '<meta name="robots" content="noindex, nofollow" />',
+    );
+    expect(guideUnderProblemsHtml).not.toContain('rel="canonical"');
+    expect(
+      resolveDashboardSeo("/problems/get-started", "https://devs.egdata.app"),
+    ).toMatchObject({
+      robots: "noindex, nofollow",
+      canonicalUrl: null,
+    });
   });
 
   it("produces matching social tag sync entries when navigating away from and back to homepage", () => {

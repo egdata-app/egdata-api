@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DocsArticle } from "../components/DocsArticle";
+import { DocsArticle, DocsNotFound } from "../components/DocsArticle";
+import { findProblemDoc } from "../lib/docs/catalog";
 
 export const Route = createFileRoute("/problems/$slug")({
   component: ProblemsSlugPage,
@@ -7,5 +8,7 @@ export const Route = createFileRoute("/problems/$slug")({
 
 function ProblemsSlugPage() {
   const { slug } = Route.useParams();
-  return <DocsArticle slug={slug} />;
+  const entry = findProblemDoc(slug);
+  if (!entry) return <DocsNotFound slug={slug} />;
+  return <DocsArticle slug={entry.slug} />;
 }
