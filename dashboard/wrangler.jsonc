@@ -19,16 +19,18 @@
     "redact_query_string": true,
     "logs": {
       "enabled": true,
-      "head_sampling_rate": 1,
-      "persist": true,
-      "invocation_logs": true
+      "head_sampling_rate": 0.5,
+      "invocation_logs": true,
+      "persist": true
     },
     "traces": {
-      "enabled": false,
-      "persist": true,
-      "head_sampling_rate": 1
+      "enabled": true,
+      "head_sampling_rate": 0.5,
+      "persist": true
     },
-    "issues": { "enabled": true }
+    "issues": {
+      "enabled": true
+    }
   },
   "assets": {
     "binding": "ASSETS",
